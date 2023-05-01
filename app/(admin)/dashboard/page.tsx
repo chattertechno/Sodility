@@ -203,8 +203,8 @@ const CreatorContent = () => {
 
     getAllContents().then((res: any) => {
       if(res.data.status === 200 && res.data.msg === 'success') {
-        if(res.data.data.length > 0) {
-          const data = res.data.data.map((item: any) => {
+        if(res?.data?.data?.length > 0) {
+          const data = res?.data?.data?.map((item: any) => {
             return { articleType: {
                     content: extentionHandler(item.type || 'audio'),
                     status: item.status || ""
