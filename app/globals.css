@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.bg-black-pattern {
+  background-image: url("../assets/index/popular-creators-mask.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #111921;
+  background-size: cover;
+}
+.bg-card-pattern {
+  background-image: url("../assets/index/article.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  /* background-color: #111921; */
+}
+
+.bg-creator-banner {
+  background-image: url("../assets/creator/banner.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+}

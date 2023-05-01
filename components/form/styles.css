@@ -1,0 +1,55 @@
+/* CUSTOM RADIO BUTTONS  */
+input[type="radio"] + label span {
+  transition: background 0.2s, transform 0.2s;
+}
+
+input[type="radio"] + label span:hover,
+input[type="radio"] + label:hover span {
+  transform: scale(1.2);
+}
+
+input[type="radio"]:checked + label span {
+  background-color: black;
+  box-shadow: 0 0 0 2px white inset;
+}
+
+input[type="radio"]:checked + label {
+  color: black;
+}
+
+/* text editor quill  */
+/* .ql-toolbar.ql-snow,
+.ql-container.ql-snow {
+  border: 1px solid #bb2828 !important; */
+/* } */
+
+.ql-toolbar.ql-snow {
+  /* border: 1px solid #bb2828 !important; */
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+.ql-container.ql-snow {
+  /* border: 1px solid #bb2828 !important; */
+  border-top: 0 !important;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+/* .ql-container.ql-snow:active,
+.ql-container.ql-snow:focus {
+  outline: none;
+  border: 1px solid #bb2828 !important;
+} */
+
+/* .ql-snow.ql-toolbar button .ql-stroke,
+.ql-snow .ql-toolbar button .ql-stroke {
+  background-color: #bb2828 !important;
+  fill: white !important;
+  stroke: white !important;
+}
+.ql-snow.ql-toolbar button:hover,
+.ql-snow .ql-toolbar button:hover {
+  background-color: #bb2828 !important;
+  fill: red !important;
+  stroke: red !important;
+} */
