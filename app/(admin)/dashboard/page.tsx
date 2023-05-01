@@ -23,6 +23,7 @@ import Link from "next/link";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { getLocaleData } from "../../../service/authService";
 
 import { getAllContents, getUserProfile, getSupporterTransactions } from '../../api/admin/dashboard'
 
@@ -35,10 +36,9 @@ export default function DashboardPage() {
   const route = useRouter()
 
   useEffect(()=>{
-    const data = JSON.parse(localStorage.getItem("user") as any) as any
-    console.log(data,"rolerole")
+    const data = getLocaleData("user") as any
     if(data && data?.role != "creator" ) route.push("/")
-    else if(data==null&&userType==undefined) route.push("/")
+    else if(data==null&&userType==undefined) route.push("/login")
     setUserType(data?.role)
   },[userType])
   if(userType != "creator") return <></>
