@@ -81,7 +81,7 @@ const UserInfo = () => {
     <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10">
       <div className="flex justify-center">
         <Image
-          src={userPlaceholder}
+          src={user.avatar || userPlaceholder}
           alt="User image"
           className="rounded-full"
           width={90}

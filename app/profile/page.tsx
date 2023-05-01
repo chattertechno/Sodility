@@ -145,7 +145,7 @@ const ProfileSettings = () => {
           <div className="w-56 flex items-center gap-5">
             <P1 className="text-black">User photo: </P1>
             <Image
-              src={userPlaceholder}
+              src={user.avatar}
               alt="user placeholder"
               width={50}
               height={50}
