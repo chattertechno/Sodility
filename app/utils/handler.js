@@ -1,4 +1,5 @@
 exports.extentionHandler = function (type) {
+    // return 'video'
     contentTypes = {
         videos: {
             ext: ['mp4', 'webm', 'ogg', 'mov', 'avi', 'wmv', 'flv', 'mkv'],

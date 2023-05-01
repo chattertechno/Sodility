@@ -34,19 +34,17 @@ export const getUserProfile = () => {
 };
 
 
-// export const getUserProfile = () => {
-//     var authOptions = {
-//         method: "GET",
-//         url: process.env.NEXT_PUBLIC_BASE_URL + "api/v1/user/profile/",
-//         headers: HeaderAPI(),
-//     };
-//     return axios(authOptions)
-//     .then((response) => {
-//         return response;
-//     })
-//     .catch((error) => {
-//         console.log("error :", error);
-//     });
-// };
-
-// https://sodality-api.herokuapp.com/api/v1/user/profile/
+export const getSupporterTransactions = (userId) => {
+    var authOptions = {
+        method: "GET",
+        url: process.env.NEXT_PUBLIC_BASE_URL + `/api/v1/creator/${userId}/supporters/record`,
+        headers: HeaderAPI(),
+    };
+    return axios(authOptions)
+        .then((response) => {
+            return response;
+        })
+        .catch((error) => {
+            console.log("error :", error);
+        });
+};
