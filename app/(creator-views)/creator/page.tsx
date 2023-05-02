@@ -329,6 +329,9 @@ const CreatorContent = () => {
           }
         }): <div className="flex justify-center items-center h-96"><>No any article posted yet</></div>
       }
+      <div className="">
+        <Pagination title="Posts" />
+      </div>
     </div>
   );
 };
