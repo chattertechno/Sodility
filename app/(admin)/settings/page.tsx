@@ -31,7 +31,7 @@ import { useAppDispatch } from "@/context/hooks";
 
 // API ==============================================
 import { getUserProfile } from '../../api/admin/dashboard'
-
+import { getNotificationSetting, updateNotificationSetting } from '../../api/admin/settings'
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
@@ -264,17 +264,55 @@ const ProfileSettings = () => {
 };
 
 const NotificationSettings = () => {
-  const initialValues = {
-    email: "",
-    supporterAlerts: false,
-    weeklyTips: false,
-    supporterSummary: false,
-    cryptoAlerts: false,
-  };
+
+  const [loadingProfile, setLoadingProfile] = React.useState(true)
+  const [user, setUser] = React.useState<any>({
+      email: "",
+      supporterAlerts: false,
+      weeklyTips: false,
+      supporterSummary: false,
+      cryptoAlerts: false,
+  })
+
+  useEffect(() => {
+    getNotificationSetting().then((res: any) => {
+      if(res.data?.status === 200 && res.data?.msg === 'success') {
+        setUser({
+          email: res.data?.data?.email || "",
+          supporterAlerts: res.data?.data?.new_supporters_alerts || false,
+          weeklyTips: res.data?.data?.weekly_tips || false,
+          supporterSummary: res.data?.data?.weekly_supporter_summary || false,
+          cryptoAlerts: res.data?.data?.new_crypto_support || false,
+        })
+        setLoadingProfile(false)
+      } else {
+        setLoadingProfile(false)
+        alert("Unable to fetch user profile")
+        console.log('error')
+      }
+    })
+  }, [])
+
+  
 
   const handleSubmit = (values: any) => {
-    alert("Submitted");
     console.log("Values: ", values);
+
+    const data = { email: values.email,
+      new_supporters_alerts: values.supporterAlerts,
+      weekly_tips: values.weeklyTips,
+      weekly_supporter_summary: values.supporterSummary,
+      new_crypto_support: values.cryptoAlerts
+    }
+
+    updateNotificationSetting(data).then((res: any) => {
+      if(res.data?.status === 200 && res.data?.msg === 'success') {
+        alert("Notification settings updated successfully");
+      } else {
+        alert("Unable to update notification settings")
+        console.log('error')
+      }
+    })
   };
 
   return (
@@ -284,8 +322,9 @@ const NotificationSettings = () => {
         <H5>Notifications Settings</H5>
       </div>
       {/* links   */}
+      {loadingProfile ?(<>Loading...</>):
       <div>
-        <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Formik initialValues={user} onSubmit={handleSubmit}>
           {formik => (
             <Form className="px-5 md:px-10 py-5 space-y-5">
               <div className="flex items-center gap-5">
@@ -337,6 +376,8 @@ const NotificationSettings = () => {
           )}
         </Formik>
       </div>
+}
+
     </div>
   );
 };
