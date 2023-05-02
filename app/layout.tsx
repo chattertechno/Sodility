@@ -4,8 +4,13 @@ import Header from "@/components/layout/Header";
 import ReadyToGetStarted from "@/components/layout/ReadyToGetStarted";
 import Provider from "@/context/Provider";
 import "./globals.css";
+import 'react-toastify/dist/ReactToastify.css'
 import AppModal from "@/components/layout/AppModal";
 import { usePathname } from "next/navigation";
+import { ToastContainer } from "react-toastify"
+import dynamic from "next/dynamic";
+
+const ShareHead = dynamic(()=> import("@/components/layout/Header"),{ssr:false})
 
 const metadata = {
   title: "Sodality",
@@ -23,7 +28,8 @@ export default function RootLayout({
       <html lang="en">
         <body>
           <Provider>
-            <Header />
+          <ToastContainer />
+            <ShareHead />
             {children}
           </Provider>
         </body>
@@ -34,7 +40,8 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <Provider>
-          <Header />
+        <ToastContainer />
+          <ShareHead />
           {children}
           <ReadyToGetStarted />
           <Footer />

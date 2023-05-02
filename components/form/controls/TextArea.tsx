@@ -34,8 +34,6 @@ const TextArea = ({ label, name, placeholder, subHeader }: TextAreaProps) => {
           const { setFieldValue } = form;
           const { value } = field;
 
-          console.log("field: ", field);
-
           return (
             <Editor
               editorState={value}

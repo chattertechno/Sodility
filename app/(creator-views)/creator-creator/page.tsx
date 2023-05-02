@@ -28,7 +28,7 @@ import { openModal } from "@/context/features/modal/modalSlice";
 import { useAppDispatch } from "@/context/hooks";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { getLocaleData } from "../../../service/authService";
 // ======================================================
 // CREATOR PAGE COMPONENT ===============================
 // ======================================================
@@ -38,10 +38,9 @@ export default function CreatorAdminPage() {
   const route = useRouter()
   
   useEffect(()=>{
-    const data = JSON.parse(localStorage.getItem("user") as any) as any
-    console.log(data,"rolerole")
+    const data = getLocaleData("user") as any
     if(data && data?.role != "creator" ) route.push("/")
-    else if(data==null&&userType==undefined) route.push("/")
+    else if(data==null&&userType==undefined) route.push("/login")
     setUserType(data?.role)
   },[userType])
   if(userType != "creator") return <></>

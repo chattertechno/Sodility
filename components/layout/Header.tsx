@@ -14,16 +14,22 @@ import { FaAngleDown } from "react-icons/fa";
 // ASSETS
 import userPlaceholder from "@/assets/index/avatar.png";
 import logo from "@/assets/logo.png";
+import { useAppDispatch } from "@/context/hooks";
+import { openModal } from "@/context/features/modal/modalSlice";
+import { getLocaleData,removeLocaleData } from "../../service/authService";
+import { successToast } from "../../helper/toster";
 
 // ==========================================
 // HEADER LAYOUT COMPONENT ==================
 // ==========================================
 export default function Header() {
   const [userType, setUserType]= useState("public");
+  const [user, setUser]= useState(null);
 
   useEffect(()=>{
-    const user = JSON.parse(localStorage.getItem("user") as any) as any
-    setUserType(user?.role || "public")
+    const _user = getLocaleData("user") as any
+    setUser(_user)
+    setUserType(_user?.role || "public")
   },[userType])
   const pathname = usePathname();
   const connectedUser =
@@ -66,11 +72,11 @@ export default function Header() {
         {userType === "supporter" 
         // && connectedUser 
         ? (
-          <SupporterNavigation />
+          <SupporterNavigation user={user} />
         ) : userType === "creator" 
         // && true 
         ? (
-          <CreatorNavigation />
+          <CreatorNavigation user={user} />
         ) : userType !== "public" 
         && !connectedUser 
         ? (
@@ -133,7 +139,7 @@ const Navigation = () => {
   ];
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = getLocaleData('token');
     setAuth(token);
   }, [auth]);
   // RETURN ==============================================================
@@ -236,8 +242,6 @@ const Navigation = () => {
         key={"logout"}
         href="/"
         onClick={() => {
-          localStorage.removeItem("token")
-          localStorage.removeItem("user")
           window.location.href = "/"
         }}
         className={`${
@@ -254,7 +258,7 @@ const Navigation = () => {
   );
 };
 
-const SupporterNavigation = () => {
+const SupporterNavigation = ({user}:any) => {
   const pathname = usePathname();
   const [dropDownActive, setDropDownActive] = useState(false);
 
@@ -297,7 +301,7 @@ const SupporterNavigation = () => {
       className="flex gap-2 items-center cursor-pointer relative"
       onClick={() => setDropDownActive(!dropDownActive)}
     >
-      <P1>JohnDoe</P1>
+      <P1>{user?.username}</P1>
       <div className="">
         <Image
           src={userPlaceholder}
@@ -326,10 +330,12 @@ const SupporterNavigation = () => {
                 key={navItem.name}
                 href={navItem.link}
                 onClick={navItem.name== "Log Out"?(()=>{
-                  localStorage.removeItem("token")
-                  localStorage.removeItem("user")
+                  removeLocaleData("token")
+                  removeLocaleData("user")
                   // router.push("/")
-                  window.location.href = '/';
+                  successToast("LogOut SuccessFully")
+                  if(typeof window !== "undefined")
+                    window.location.href = '/';
                 }):(() => setDropDownActive(!dropDownActive))}
                 className={`${
                   navItem.active
@@ -347,8 +353,9 @@ const SupporterNavigation = () => {
   );
 };
 
-const CreatorNavigation = () => {
+const CreatorNavigation = ({user}:any) => {
   const pathname = usePathname();
+  const dispatch = useAppDispatch();
   const [dropDownActive, setDropDownActive] = useState(false);
 
   const navList = [
@@ -359,13 +366,13 @@ const CreatorNavigation = () => {
     },
     {
       name: "Add Post",
-      link: "/",
+      link: pathname,
       active: pathname === "/add post",
     },
     {
       name: "My Page",
-      link: "/",
-      active: pathname === "/page-settings",
+      link: "/dashboard",
+      active: pathname === "/dashboard",
     },
     {
       name: "Creator Settings",
@@ -374,7 +381,7 @@ const CreatorNavigation = () => {
     },
     {
       name: "My Profile",
-      link: "/",
+      link: "/profile",
       active: pathname === "/profile",
     },
     {
@@ -395,7 +402,7 @@ const CreatorNavigation = () => {
       className="flex gap-2 items-center cursor-pointer relative"
       onClick={() => setDropDownActive(!dropDownActive)}
     >
-      <P1>JohnDoe</P1>
+      <P1>{user?.username}</P1>
       <div className="">
         <Image
           src={userPlaceholder}
@@ -424,11 +431,13 @@ const CreatorNavigation = () => {
                 key={navItem.name}
                 href={navItem.link}
                 onClick={navItem.name== "Log Out"?(()=>{
-                  localStorage.removeItem("token")
-                  localStorage.removeItem("user")
+                  removeLocaleData("token")
+                  removeLocaleData("user")
                   // router.push("/")
-                  window.location.href = '/';
-                }):(() => setDropDownActive(!dropDownActive))}
+                  successToast("LogOut SuccessFully")
+                  if(typeof window !== "undefined")
+                    window.location.href = '/';
+                }):(navItem.name== "Add Post"?(()=>dispatch(openModal("addPost"))):() => setDropDownActive(!dropDownActive))}
                 className={`${
                   navItem.active
                     ? "text-primary"

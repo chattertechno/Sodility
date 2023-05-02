@@ -1,16 +1,39 @@
 "use client";
 import { useForm } from 'react-hook-form';
 import {registerApi} from '../../http'
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
-import { Console } from 'console';
+import { errorToast } from '@/helper/toster';
+import { getLocaleData } from "../../service/authService";
 // ==========================================================
 // LOGIN PAGE COMPONENT =================================
 // ==========================================================
 export default function Register() {
+  const [userType , setUserType] = useState("")
   const router = useRouter();
   const { register, handleSubmit,  formState:{ errors } } = useForm();
   const [loading, setLoading] = useState(false)
+
+  useEffect(()=>{
+    const data = getLocaleData("user") as any
+    if(data) {
+      if(data?.role=="creator"){
+        setUserType("creator")
+        router.push("/dashboard")
+      }else if(data?.role=="supporter"){
+        setUserType("supporter")
+        router.push("/supporter")
+      }else{
+        errorToast("invalid role")
+        router.push("/")
+      }
+    }
+    else if(!data){
+      if(userType){
+        setUserType("")
+      }
+      }
+  },[userType])
 
   const onSubmit = (data:any) => {
     setLoading(true)
@@ -19,6 +42,8 @@ export default function Register() {
       if(result)router.push("/login")
     })
   };
+
+  if(userType=="creator" || userType=="supporter") return <></>
   return (
     <>
       <div className="h-full mt-5  bg-white-200  flex items-center  align-middle w-full justify-center">

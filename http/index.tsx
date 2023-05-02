@@ -1,13 +1,15 @@
+import { errorToast,successToast } from "../helper/toster";
 const baseUrl = `https://sodality-api.herokuapp.com/api/v1`;
 const LOGIN = `${baseUrl}/user/login`;
 const REGISTER = `${baseUrl}/user/register`;
 const GET_PROFILE =`${baseUrl}/user/profile/`
 const UPDATE_PROFILE =`${baseUrl}/user/update`
+import { getLocaleData, setLocaleData } from "../service/authService";
 
 // ================================= CONTENT ======================================
 const CREATE_CONTENT =`${baseUrl}/content/post`
 
-const token = localStorage.getItem("token")
+const token = getLocaleData("token")
 
 export const signInApi = async (data: any) => {
   try {
@@ -21,12 +23,14 @@ export const signInApi = async (data: any) => {
       }
     const post = await res.json();
     const user = await getProfileApi(post.msg)
-    localStorage.setItem("token", post.msg);
-    localStorage.setItem("user", JSON.stringify(user.data));
-    return {token:post.msg,user:user.data}
-  } catch (error) {
-    alert(error)
-    console.log("error", error);
+
+    setLocaleData("token", post.msg);
+    setLocaleData("user", user);
+    successToast("sign in successfully")
+    return {token:post.msg,user}
+  } catch (error:any) {
+    errorToast(error.toString())
+    console.log("error", error.toString());
     return null 
   }
 };
@@ -42,9 +46,10 @@ export const registerApi = async (data: any) => {
       throw err.msg;
     }
     // const post = await res.json();
+    successToast("Register successfully")
     return true
-  } catch (error) {
-    alert(error)
+  } catch (error:any) {
+    errorToast(error.toString())
     console.log("error", JSON.stringify(error));
     return false
   }
@@ -64,9 +69,10 @@ export const getProfileApi = async (_token:string) => {
       throw err.msg;
     }
     const result = await res.json();
-    return result
-  } catch (error) {
-    alert(error)
+    // successToast("Fetched successfully")
+    return result.data
+  } catch (error:any) {
+    errorToast(error.toString())
     console.log("error", JSON.stringify(error));
   }
 };
@@ -87,11 +93,12 @@ export const updateProfileApi = async (_token:string,data: any) => {
       }
       const post = await res.json();
       const user = await getProfileApi(post.msg)
-      localStorage.setItem("token", post.msg);
-      localStorage.setItem("user", JSON.stringify(user.data));
+      setLocaleData("token", post.msg);
+      setLocaleData("user", user.data);
+      successToast("updated successfully")
     return user.data
-  } catch (error) {
-    alert(error)
+  } catch (error:any) {
+    errorToast(error.toString())
     console.log("error", error);
   }
 };
@@ -115,8 +122,8 @@ export const contentApi = async (_token:string , data: any) => {
     }
     // const post = await res.json();
     return true
-  } catch (error) {
-    alert(error)
+  } catch (error:any) {
+    errorToast(error.toString())
     console.log("error", JSON.stringify(error));
   }
 };

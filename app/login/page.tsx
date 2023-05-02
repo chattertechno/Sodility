@@ -1,8 +1,11 @@
 "use client";
 import { useForm } from 'react-hook-form';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {signInApi} from '../../http'
 import Link from 'next/link';
+import { errorToast } from "../../helper/toster";
+import { useRouter } from "next/navigation";
+import { getLocaleData, removeLocaleData } from "../../service/authService";
 
 
 
@@ -10,32 +13,58 @@ import Link from 'next/link';
 // LOGIN PAGE COMPONENT =================================
 // ==========================================================
 export default function Login() {
-  
+  const [userType , setUserType] = useState("")
+  const route = useRouter()
   const { register, handleSubmit,  formState:{ errors } } = useForm();
   const [loading, setLoading] = useState(false)
+  useEffect(()=>{
+    const data = getLocaleData("user") as any
+    if(data) {
+      if(data?.role=="creator"){
+        setUserType("creator")
+        route.push("/dashboard")
+      }else if(data?.role=="supporter"){
+        setUserType("supporter")
+        route.push("/supporter")
+      }else{
+        errorToast("invalid role")
+        route.push("/")
+      }
+    }
+    else if(!data){
+      if(userType){
+        setUserType("")
+      }
+      }
+  },[userType])
+  //
   const onSubmit = (data:any) => {
     setLoading(true)
     signInApi(data).then((result)=>{
       if(!result){
         setLoading(false)
+        // errorToast("erro")
         return
       }
       setLoading(false)
       if(result?.user?.role == "supporter") {
-        window.location.href = '/supporter';
+        if(typeof window !== "undefined")
+          window.location.href = '/supporter';
         // router.push("/supporter")
       }
       else if(result?.user?.role == "creator") {
         // router.push("/dashboard")
-        window.location.href = '/dashboard';
+        if(typeof window !== "undefined")
+          window.location.href = '/dashboard';
       }else{
-        alert("invalid role")
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
+        errorToast("invalid role")
+        removeLocaleData("token")
+        removeLocaleData("user")
       }
       
     })
   };
+  if(userType=="creator" || userType=="supporter") return <></>
   return (
     <>
     
@@ -86,7 +115,7 @@ export default function Login() {
               disabled={loading}
               type="submit"
               // className={`${loading?"bg-blue-200 text-white font-bold py-2 px-4 rounded":"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"}`}
-              className={`font-bold py-2 w-full  text-white rounded bg-primary ${loading?"bg-blue-200 " : "hover:bg-blue-500  hover:shadow-blue-500 hover:shadow-md focus:outline-none focus:bg-primary focus:shadow-outline"}`}
+              className={`font-bold py-2 w-full  text-white rounded  ${loading?"bg-blue-200 " : "bg-primary hover:bg-blue-500  hover:shadow-blue-500 hover:shadow-md focus:outline-none focus:bg-primary focus:shadow-outline"}`}
             >
               Sign In
             </button>

@@ -1,6 +1,6 @@
 "use client";
-import { ReactNode } from "react";
-
+import { ReactNode, useEffect, useState } from "react";
+import React from "react";
 import { Form, Formik } from "formik";
 import { Url } from "next/dist/shared/lib/router/router";
 import Image from "next/image";
@@ -22,11 +22,24 @@ import { HiOutlineLockClosed } from "react-icons/hi2";
 // REDUX ============================================
 import { openModal } from "@/context/features/modal/modalSlice";
 import { useAppDispatch } from "@/context/hooks";
+import { getProfileApi } from "../../http";
+import { getLocaleData } from "../../service/authService";
 
+import { getUserProfile } from '../api/admin/dashboard'
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
 export default function ProfilePage() {
+  const [user , setUser] = useState(null)
+  const api = async ()=>{
+    const token = getLocaleData("token") as any
+    const _user = await getProfileApi(token)
+    setUser(_user)
+  }
+  useEffect(()=>{
+    api()
+  },[])
+  if(!user) return null
   return (
     <section className="md:py-14 py-8 pb-24 md:w-[90%] mx-auto  px-6 flex flex-col md:flex-row gap-8">
       {/* left - info  */}
@@ -37,7 +50,7 @@ export default function ProfilePage() {
 
       {/* right - content  */}
       <div className="flex-1 space-y-8">
-        <ProfileSettings />
+        <ProfileSettings  />
         <NotificationSettings />
         <SecuritySettings />
       </div>
@@ -114,6 +127,20 @@ const UserSettingsLinks = () => {
 };
 
 const ProfileSettings = () => {
+  const [user, setUser] = React.useState<any>({})
+  const [loadingProfile, setLoadingProfile] = React.useState<boolean>(true)
+  useEffect(() => {
+    getUserProfile().then((res: any) => {
+      if(res.data.status === 200 && res.data.msg === 'success') {
+        setLoadingProfile(false)
+        setUser(res.data.data)
+      } else {
+        setLoadingProfile(false)
+        alert("Unable to fetch user profile")
+        console.log('error')
+      }
+    })
+  }, [])
   return (
     <div className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
@@ -124,13 +151,13 @@ const ProfileSettings = () => {
       <div className="px-5 md:px-10 py-5 space-y-5">
         <div className="flex gap-5">
           <P1 className="text-black">Username: </P1>
-          <P1 className="">JohnDoe </P1>
+          <P1 className="">{user?.username} </P1>
         </div>
         <div className="flex items-center gap-5">
           <div className="w-56 flex items-center gap-5">
             <P1 className="text-black">User photo: </P1>
             <Image
-              src={userPlaceholder}
+              src={user.avatar}
               alt="user placeholder"
               width={50}
               height={50}
