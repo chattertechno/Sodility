@@ -6,17 +6,21 @@ import Link from 'next/link';
 import { errorToast } from "../../helper/toster";
 import { useRouter } from "next/navigation";
 import { getLocaleData, removeLocaleData } from "../../service/authService";
-
+import ReCAPTCHA from "react-google-recaptcha";
+import PasswordStrengthBar from 'react-password-strength-bar'
 
 
 // ==========================================================
 // LOGIN PAGE COMPONENT =================================
 // ==========================================================
 export default function Login() {
+  const [password , setPassword] = useState("")
   const [userType , setUserType] = useState("")
   const route = useRouter()
-  const { register, handleSubmit,  formState:{ errors } } = useForm();
+  const { register, handleSubmit, getValues, formState:{ errors } } = useForm();
   const [loading, setLoading] = useState(false)
+  const TEST_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+
   useEffect(()=>{
     const data = getLocaleData("user") as any
     if(data) {
@@ -101,6 +105,9 @@ export default function Login() {
               id="password"
               type="password"
               placeholder="Password"
+              onInput={(e:any)=>{
+                setPassword(e.target.value)}
+              }
               className={`shadow appearance-none border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 rounded-md w-full py-3 px-3  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20 
                 ${(errors.password) ? 'border-red-500' : ''
               }`}
@@ -110,6 +117,16 @@ export default function Login() {
               <p className="text-red-500 text-xs italic">Please enter a password</p>
             )}
           </div>
+          <PasswordStrengthBar
+                      style={{ marginTop: 12 }}
+                      password={getValues('password')}
+                    />
+
+          <ReCAPTCHA
+              sitekey={TEST_SITE_KEY}
+              // ref={captchaRef}
+              onChange={(data)=>{console.log(data)}}
+            />
           <div className=" pt-4 flex justify-center ">
             <button
               disabled={loading}
