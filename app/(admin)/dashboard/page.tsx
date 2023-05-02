@@ -209,6 +209,7 @@ const CreatorContent = () => {
                     content: extentionHandler(item.type || 'audio'),
                     status: item.status || ""
                 },
+                content: item.body || "",
                 img: cardUserImgPlaceholder,
                 video: (item.ipfs_url ? {
                   blurDataURL: item.ipfs_url,
