@@ -304,7 +304,6 @@ const NotificationSettings = () => {
 
   const handleSubmit = (values: any) => {
     console.log("Values: ", values);
-
     const data = { email: values.email,
       new_supporters_alerts: values.supporterAlerts,
       weekly_tips: values.weeklyTips,
@@ -313,7 +312,7 @@ const NotificationSettings = () => {
     }
 
     updateNotificationSetting(data).then((res: any) => {
-      if(res.data?.status === 200 && res.data?.msg === 'success') {
+      if(res.data?.status === 200) {
         alert("Notification settings updated successfully");
       } else {
         alert("Unable to update notification settings")
