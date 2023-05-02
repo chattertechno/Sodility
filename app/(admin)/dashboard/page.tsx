@@ -115,7 +115,7 @@ const Supporting = () => {
       if(res.data.status === 200 && res.data.msg === 'success') {
         getSupporterTransactions(res.data.data._id).then((res: any) => {
           if(res.data.status === 200 && res.data.msg === 'success') {
-            if(res.data.data && res.data.data.length > 0) {
+            if(res?.data?.data?.length > 0) {
               setSupporters(res.data.data)
             } else {
               setSupporters([]);
@@ -203,7 +203,7 @@ const CreatorContent = () => {
 
     getAllContents().then((res: any) => {
       if(res.data.status === 200 && res.data.msg === 'success') {
-        if(res.data.data.length > 0) {
+        if(res?.data?.data?.length > 0) {
           const data = res.data.data.map((item: any) => {
             return { articleType: {
                     content: extentionHandler(item.type || 'audio'),
@@ -237,11 +237,11 @@ const CreatorContent = () => {
           setLoading(false);
         } else {
           setLoading(false);
-          alert('No data found');
         }
       
       } else {
         setLoading(false);
+        setContent([]);
         alert('Unable to fetch data');
       }
     })
@@ -252,7 +252,7 @@ const CreatorContent = () => {
     
     <div className="flex-1 space-y-8">
       {
-        loading ? <div className="flex justify-center items-center h-96"><>loading....</></div> :
+        loading ? <div className="flex justify-center items-center h-96"><>loading...</></div> :
         content.length > 0 ? 
         content.map((item: any, index: number) => {
           if(item.articleType.content === 'video') {
@@ -264,7 +264,7 @@ const CreatorContent = () => {
           } else if(item.articleType.content === 'image') {
             return <ImageArticle content={item} key={index} />
           }
-        }): <div className="flex justify-center items-center h-96"><>No data found</></div>
+        }): <div className="flex justify-center items-center h-96"><>No any article posted yet</></div>
       }
     </div>
   );
