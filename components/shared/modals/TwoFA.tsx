@@ -1,5 +1,6 @@
 import { H4, P1, SubH2 } from "@/components/typography";
 import Button from "../Button";
+import QRCode from 'qrcode.react'
 
 // ASSETS ===========================================
 import qrCode from "@/assets/qr.png";
@@ -10,6 +11,7 @@ import * as Yup from "yup";
 
 const TwoFA = () => {
   const [step, setStep] = useState(1);
+  const [otpauthUrl, setOtpauthUrl] = useState('');
 
   return (
     <>
@@ -19,6 +21,7 @@ const TwoFA = () => {
             {/* image - qr  */}
             <div>
               <Image src={qrCode} alt="qr code" width={150} height={150} />
+              {/* <QRCode value={otpauthUrl} /> */}
               <SubH2 className="text-center mt-2">
                 Secret: <span className="text-primary">AGH19V1283JM</span>
               </SubH2>

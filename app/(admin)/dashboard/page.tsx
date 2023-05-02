@@ -40,6 +40,7 @@ export default function DashboardPage() {
     if(data && data?.role != "creator" ) route.push("/")
     else if(data==null&&userType==undefined) route.push("/login")
     setUserType(data?.role)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userType])
   if(userType != "creator") return <></>
   return (

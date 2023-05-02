@@ -58,6 +58,7 @@ export default function Register() {
         setUserType("")
       }
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userType])
 
   useEffect(()=>{
@@ -79,6 +80,7 @@ export default function Register() {
         setUserType("")
       }
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userType])
 
   const onSubmit = (data:any) => {
@@ -110,7 +112,7 @@ export default function Register() {
               id="username"
               type="username"
               placeholder="Email"
-              className={`shadow  border w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
+              className={`shadow w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
               ${
                 (errors&&errors.username) ? 'border-red-500' : ''
               }
@@ -129,7 +131,7 @@ export default function Register() {
               autoComplete="off"
               id="role"
               placeholder="Role"
-              className={`shadow  border w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
+              className={`shadow w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
               ${
                 (errors&&errors.role) ? 'border-red-500' : ''
               }
@@ -155,7 +157,7 @@ export default function Register() {
               onInput={(e:any)=>{
                 setPassword(e.target.value)}
               }
-              className={`shadow  border w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
+              className={`shadow w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
                 ${(errors.password) ? 'border-red-500' : ''
               }`}
               {...register("password", { required: true })}
@@ -173,7 +175,7 @@ export default function Register() {
               id="confirmpassword"
               type="password"
               placeholder="Confirm Password"
-              className={`shadow  border w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
+              className={`shadow w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
                 ${(errors.password) ? 'border-red-500' : ''
               }`}
               {...register("confirmpassword", { required: true })}

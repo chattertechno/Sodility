@@ -23,18 +23,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  if(pathname == "/login" || pathname == "/register") return (
-    <>
-      <html lang="en">
-        <body>
-          <Provider>
-          <ToastContainer />
-            <ShareHead />
-            {children}
-          </Provider>
-        </body>
-      </html>
-    </>)
+  // if(pathname == "/login" || pathname == "/register") return (
+  //   <>
+  //     <html lang="en">
+  //       <body>
+  //         <Provider>
+  //         <ToastContainer />
+  //           <ShareHead />
+  //           {children}
+  //         </Provider>
+  //       </body>
+  //     </html>
+  //   </>)
     
   return (
     <html lang="en">
@@ -43,9 +43,13 @@ export default function RootLayout({
         <ToastContainer />
           <ShareHead />
           {children}
+          {pathname == "/login" || pathname == "/register"?<>
+          </>:<>
           <ReadyToGetStarted />
           <Footer />
           <AppModal/>
+          </>
+          }
         </Provider>
       </body>
     </html>
