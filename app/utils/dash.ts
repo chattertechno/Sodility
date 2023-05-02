@@ -1,4 +1,4 @@
-"use client";
+"use server";
 import { Client } from 'dash'
 
 export const getDashAccount = async (mnemonic:any) => {
