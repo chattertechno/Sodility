@@ -199,12 +199,14 @@ const ProfileSettings = () => {
           <P1 className="text-black">Title: </P1>
           <input
             placeholder="Digital Cash Network"
+            value={user?.title || ''}
             className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
           />
         </div>
         <div className="space-y-1">
           <P1 className="text-black">Subtitle: </P1>
           <input
+            value={user?.subtitle || ''}
             placeholder="Joël Valenzuela is documenting the global digital cash revolution."
             className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
           />
@@ -212,6 +214,7 @@ const ProfileSettings = () => {
         <div className="space-y-1">
           <P1 className="text-black">Description: </P1>
           <textarea
+            value={user?.description || ''}
             placeholder="Documenting the global digital cash revolution, the greatest financial revolution the world has seen in recent times.
              Podcasts, news videos, interviews, articles, and more about the exciting world of cryptocurrency, blockchain tech, and decentralization."
             className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
@@ -224,6 +227,7 @@ const ProfileSettings = () => {
             <div className="space-y-1 flex-1">
               <P1 className="text-black">Facebook: </P1>
               <input
+                value={user?.facebook || ''}
                 placeholder="https://www.facebook.com/DashPay/"
                 className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
               />
@@ -231,6 +235,7 @@ const ProfileSettings = () => {
             <div className="space-y-1 flex-1">
               <P1 className="text-black">Twitter: </P1>
               <input
+                value={user?.twitter || ''}
                 placeholder="https://twitter.com/dashincubator"
                 className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
               />
@@ -240,6 +245,7 @@ const ProfileSettings = () => {
             <div className="space-y-1 flex-1">
               <P1 className="text-black">Youtube: </P1>
               <input
+                value={user?.youtube || ''}
                 placeholder="https://www.youtube.com/channel/UCA"
                 className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
               />
@@ -247,6 +253,7 @@ const ProfileSettings = () => {
             <div className="space-y-1 flex-1">
               <P1 className="text-black">Odysee: </P1>
               <input
+                value={user?.odysee || ''}
                 placeholder="https://odysee.com/@DigitalCashNetwo"
                 className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
               />
