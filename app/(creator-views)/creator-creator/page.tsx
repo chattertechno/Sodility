@@ -1,5 +1,5 @@
 "use client";
-
+import React from "react";
 import Image, { StaticImageData } from "next/image";
 // COMPONENTS
 import {
@@ -32,6 +32,12 @@ import { getLocaleData } from "../../../service/authService";
 // ======================================================
 // CREATOR PAGE COMPONENT ===============================
 // ======================================================
+
+// API
+import { getAllContents, getUserProfile } from '../../api/admin/dashboard'
+
+import { extentionHandler } from '../../utils/handler'
+
 export default function CreatorAdminPage() {
   const dispatch = useAppDispatch();
   const [userType , setUserType] = useState("")
@@ -235,7 +241,8 @@ const SideBar = () => {
 };
 
 const CreatorContent = () => {
-  const content = [
+  
+  const content1 = [
     {
       articleType: {
         content: "video",
@@ -279,15 +286,78 @@ const CreatorContent = () => {
     },
   ];
 
+
+  const [content, setContent] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  
+  useEffect(() => {
+
+    getAllContents().then((res: any) => {
+      if(res.data.status === 200 && res.data.msg === 'success') {
+        if(res?.data?.data?.length > 0) {
+          const data = res.data.data.map((item: any) => {
+            return { articleType: {
+                    content: extentionHandler(item.type || 'audio'),
+                    status: item.status || ""
+                },
+                content: item.body || "",
+                img: cardUserImgPlaceholder,
+                video: (item.ipfs_url ? {
+                  blurDataURL: item.ipfs_url,
+                  blurHeight: 4,
+                  blurWidth: 8,
+                  height: 431,
+                  src: item.ipfs_url,
+                  width: 768
+                } : videoPlaceholder),
+                metadata: item.created_at,
+                title: item.title,
+                image: (
+                  item.ipfs_url ?
+                  {
+                    "src":item.ipfs_url,
+                    "height":61,
+                    "width":60,
+                    "blurDataURL":item.ipfs_url,
+                    "blurWidth":8,
+                    "blurHeight":8
+                } : ""
+                ),
+            }
+          })
+          setContent(data);
+          setLoading(false);
+        } else {
+          setLoading(false);
+        }
+      
+      } else {
+        setLoading(false);
+        setContent([]);
+        alert('Unable to fetch data');
+      }
+    })
+
+  }, []);
+
   return (
+
     <div className="flex-1 space-y-8">
-      <VideoArticle content={content[0]} />
-      <AudioArticle content={content[1]} />
-      <TextArticle content={content[2]} />
-      <ImageArticle content={content[3]} />
-      <div className="">
-        <Pagination title="Posts" />
-      </div>
+      {
+        loading ? <div className="flex justify-center items-center h-96"><>loading...</></div> :
+        content.length > 0 ? 
+        content.map((item: any, index: number) => {
+          if(item.articleType.content === 'video') {
+            return <VideoArticle content={item} key={index} />
+          } else if(item.articleType.content === 'audio') {
+            return <AudioArticle content={item} key={index} />
+          } else if(item.articleType.content === 'text') {
+            return <TextArticle content={item} key={index} />
+          } else if(item.articleType.content === 'image') {
+            return <ImageArticle content={item} key={index} />
+          }
+        }): <div className="flex justify-center items-center h-96"><>No any article posted yet</></div>
+      }
     </div>
   );
 };
