@@ -298,7 +298,7 @@ const CreatorContent = () => {
           const data = res.data.data.map((item: any) => {
             return { articleType: {
                     content: extentionHandler(item.type || 'audio'),
-                    status: item.status || ""
+                    status: item.locked ? 'locked' : ""
                 },
                 content: item.body || "",
                 img: cardUserImgPlaceholder,

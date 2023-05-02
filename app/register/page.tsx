@@ -60,6 +60,27 @@ export default function Register() {
       }
   },[userType])
 
+  useEffect(()=>{
+    const data = getLocaleData("user") as any
+    if(data) {
+      if(data?.role=="creator"){
+        setUserType("creator")
+        router.push("/dashboard")
+      }else if(data?.role=="supporter"){
+        setUserType("supporter")
+        router.push("/supporter")
+      }else{
+        errorToast("invalid role")
+        router.push("/")
+      }
+    }
+    else if(!data){
+      if(userType){
+        setUserType("")
+      }
+      }
+  },[userType])
+
   const onSubmit = (data:any) => {
     setLoading(true)
     if(data.password!=data.confirmpassword){

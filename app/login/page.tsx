@@ -15,12 +15,12 @@ import PasswordStrengthBar from 'react-password-strength-bar'
 // ==========================================================
 export default function Login() {
   const [password , setPassword] = useState("")
-  const [userType , setUserType] = useState("")
   const route = useRouter()
   const { register, handleSubmit, getValues, formState:{ errors } } = useForm();
-  const [loading, setLoading] = useState(false)
   const TEST_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+  const [userType , setUserType] = useState("")
 
+  const [loading, setLoading] = useState(false)
   useEffect(()=>{
     const data = getLocaleData("user") as any
     if(data) {
