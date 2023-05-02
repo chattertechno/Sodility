@@ -49,3 +49,17 @@ export const getSupporterTransactions = (userId) => {
         });
 };
 
+
+export const getAllContentsForSupporter = () => {
+    var authOptions = {
+        method: "GET",
+        url: process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/content/all",
+    };
+    return axios(authOptions)
+        .then((response) => {
+            return response;
+        })
+        .catch((error) => {
+            console.log("error :", error);
+        });
+};

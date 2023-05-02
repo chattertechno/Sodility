@@ -34,7 +34,7 @@ import { getLocaleData } from "../../../service/authService";
 // ======================================================
 
 // API
-import { getAllContents, getUserProfile } from '../../api/admin/dashboard'
+import { getAllContentsForSupporter, getUserProfile } from '../../api/admin/dashboard'
 
 import { extentionHandler } from '../../utils/handler'
 
@@ -292,10 +292,11 @@ const CreatorContent = () => {
   
   useEffect(() => {
 
-    getAllContents().then((res: any) => {
+    getAllContentsForSupporter().then((res: any) => {
       if(res.data.status === 200 && res.data.msg === 'success') {
         if(res?.data?.data?.length > 0) {
           const data = res.data.data.map((item: any) => {
+            item.ipfs_url = item.ipfs_url && item.ipfs_url.includes('http') ? item.ipfs_url : "";
             return { articleType: {
                     content: extentionHandler(item.type || 'audio'),
                     status: item.locked ? 'locked' : ""
