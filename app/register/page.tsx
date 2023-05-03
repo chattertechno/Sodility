@@ -19,7 +19,7 @@ export default function Register() {
   const [accountInfo, setAccountInfo] = useState<any>({})
   const [isAccountCreated, setAccountCreated] = useState(false)
   const [password , setPassword] = useState("")
-
+  const [passowordStrength , setPassowordStrength] = useState(0)
   useEffect(() => {
     const mnemonic = getMnemonic()
     getDashAccount(mnemonic || null)
@@ -83,10 +83,19 @@ export default function Register() {
 
   const onSubmit = (data:any) => {
     setLoading(true)
+    console.log({data})
     if(data.password!=data.confirmpassword){
       errorToast("Confirm password doesn't match with the Password")
+      setLoading(false)
       return
     }
+    console.log({passowordStrength})
+    if(passowordStrength<2){
+      errorToast("Password is weak")
+      setLoading(false)
+      return
+    }
+    data.dash=accountInfo?.address
     registerApi(data).then((result)=>{
       setLoading(false)
       if(result)router.push("/login")
@@ -96,14 +105,14 @@ export default function Register() {
   if(userType=="creator" || userType=="supporter") return <></>
   return (
     <>
-      <div className="h-full mt-5  bg-white-200  flex items-center  align-middle w-full justify-center">
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white-500 shadow-xl shadow-gray-500/20  border w-96 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
-        <div className='flex justify-center  font-medium text-2xl  mb-4'>Registeration</div>
-        <h4>Your Dash Address is</h4>
-            <div>{accountInfo?.address}</div>
+      <div className="h-full mt-3  bg-white-200  flex items-center  align-middle w-full justify-center">
+        <form onSubmit={handleSubmit(onSubmit)} className="bg-white-500 shadow-xl shadow-gray-500/20  border w-1/3 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
+        <div className='flex justify-center  font-medium text-2xl  mb-2'>Registeration</div>
+        <h4 >Your Dash Address is:<div className='font-bold'>{accountInfo?.address}</div></h4>
+            <hr className='my-2 border-black-500 border'/>
           <div className="mb-4">
             <label htmlFor="username" className="block text-gray-700  font-medium mb-2">
-              Email
+              Username
             </label>
             <input
               autoComplete="off"
@@ -165,7 +174,7 @@ export default function Register() {
             )}
           </div>
           <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700  font-medium mb-2">
+            <label htmlFor="confirmpassword" className="block text-gray-700  font-medium mb-2">
               Confirm Password
             </label>
             <input
@@ -174,7 +183,7 @@ export default function Register() {
               type="password"
               placeholder="Confirm Password"
               className={`shadow  border w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
-                ${(errors.password) ? 'border-red-500' : ''
+                ${(errors.confirmpassword) ? 'border-red-500' : ''
               }`}
               {...register("confirmpassword", { required: true })}
             />
@@ -185,13 +194,15 @@ export default function Register() {
           <PasswordStrengthBar
                       style={{ marginTop: 12 }}
                       password={getValues('password')}
+                      minLength={6}
+                      onChangeScore={(score)=>setPassowordStrength(score)}
                     />
           <div className="mb-4 pt-3">
             <button
               type="submit"
               className={ `text-white font-bold py-2 px-4 rounded w-full ${loading?"bg-blue-200":"bg-primary hover:bg-blue-500  rounded text-white font-bold py-2 hover:shadow-blue-500 hover:shadow-md focus:outline-none focus:bg-primary focus:shadow-outline"}`}
             >
-              Register
+              Create
             </button>
           </div>
           
