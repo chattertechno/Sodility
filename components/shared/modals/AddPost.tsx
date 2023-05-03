@@ -63,10 +63,19 @@ const AddPost = () => {
   
 
   const handleSubmit = (values: any) => {
+    let body =""
+    if(values.body){
+      console.log(values)
+      const parsBody = JSON.parse(values.body)
+      body = parsBody.blocks[0].text
+    }
+    // return
     setLoading(true)
     const token = getLocaleData("token")
     let data = {
-      ...values,
+      title:values.title,
+      ipfs_url:values.ipfs_url,
+      body,
       type: selectedPostType,
       content_type: selectedLockedFor,
       currency_type:"USD"
