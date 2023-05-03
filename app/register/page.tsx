@@ -7,6 +7,7 @@ import { errorToast, successToast} from '@/helper/toster';
 import { getLocaleData } from "../../service/authService";
 import { getDashAccount, getMnemonic } from '../utils'
 import PasswordStrengthBar from 'react-password-strength-bar'
+import { Modal } from "../../components/shared";
 
 // ==========================================================
 // LOGIN PAGE COMPONENT =================================
@@ -20,6 +21,8 @@ export default function Register() {
   const [isAccountCreated, setAccountCreated] = useState(false)
   const [password , setPassword] = useState("")
   const [passowordStrength , setPassowordStrength] = useState(0)
+  const [showModal , setShowModal] = useState(false)
+  const [mnemonicPhrase , setMnemonic] = useState("")
   useEffect(() => {
     const mnemonic = getMnemonic()
     getDashAccount(mnemonic || null)
@@ -32,6 +35,7 @@ export default function Register() {
         if (balance === 0) {
           successToast(`Please charge your account`)
         }
+        setMnemonic(account.mnemonic || "")
         localStorage.setItem('mnemonic', mnemonic || "")
         setAccountCreated(true)
       })
@@ -98,7 +102,11 @@ export default function Register() {
     data.dash=accountInfo?.address
     registerApi(data).then((result)=>{
       setLoading(false)
-      if(result)router.push("/login")
+      if(result){
+        setShowModal(true)     
+      }else{
+        console.log("RESULT",result)
+      }
     })
   };
 
@@ -208,6 +216,25 @@ export default function Register() {
           
         </form>
       </div>
+      {showModal && (
+        <Modal
+        >
+          <div>
+            <h1>Your mnemonic is: </h1>
+            <hr className='my-3'/>
+            <p className='font-bold'>{mnemonicPhrase}</p>
+            <button
+              type="submit"
+              className={"text-white font-bold mt-4 py-2 px-4 rounded w-full bg-primary hover:bg-blue-500  rounded text-white font-bold py-2 hover:shadow-blue-500 hover:shadow-md focus:outline-none focus:bg-primary focus:shadow-outline"}
+              onClick={()=>{
+                router.push("/login")
+              }}
+            >
+              Ok
+            </button>
+            </div>      
+        </Modal>
+      )}
     </>
   );
 }

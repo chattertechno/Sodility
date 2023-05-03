@@ -31,6 +31,7 @@ export default function RootLayout({
           <ToastContainer />
             <ShareHead />
             {children}
+            <AppModal/>
           </Provider>
         </body>
       </html>
