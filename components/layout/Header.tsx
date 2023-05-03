@@ -88,7 +88,7 @@ export default function Header() {
 }
 
 // EXTENDED COMPONENTS ======================
-const Navigation = ({userType}:{userType:userType}) => {
+const Navigation = ({userType}:any) => {
   const pathname = usePathname();
   const [auth, setAuth] = useState<any>("")
 

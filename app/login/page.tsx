@@ -16,6 +16,7 @@ import { userService } from "../../service/authService";
 // ==========================================================
 export default function Login() {
   const [password , setPassword] = useState("")
+  const [recaptcha , setRecaptcha] = useState("")
   const route = useRouter()
   const { register, handleSubmit, getValues, formState:{ errors } } = useForm();
   const TEST_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
@@ -45,6 +46,11 @@ export default function Login() {
   //
   const onSubmit = (data:any) => {
     setLoading(true)
+    if (!recaptcha){
+      setLoading(false)
+      errorToast("reCAPTCHA Failed")
+      return
+    }
     signInApi(data).then((result)=>{
       userService.userSubject.next(data)
       if(!result){
@@ -76,11 +82,11 @@ export default function Login() {
     <>
     
       <div className="h-full mt-5  bg-white-200  flex items-center  align-middle w-full justify-center">
-        <form onSubmit={handleSubmit(onSubmit)} className="  bg-white-500 shadow-xl shadow-gray-500/20  border w-96 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="  bg-white-500 shadow-xl shadow-gray-500/20  border  w-1/3 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
           <div className='flex justify-center  font-medium text-2xl  mb-4'>Login</div>
           <div className="mb-4  " >
             <label htmlFor="username" className=" block text-gray-700  font-medium mb-2">
-              Email
+              Username
             </label>
             <input
             
@@ -128,7 +134,16 @@ export default function Login() {
           <ReCAPTCHA
               sitekey={TEST_SITE_KEY}
               // ref={captchaRef}
-              onChange={(data)=>{console.log(data)}}
+              onChange={(data)=>{
+                console.log(data)
+                setRecaptcha( data||"")
+              }}
+              onError={()=>{
+                setRecaptcha("")
+              }}
+              onExpired={()=>{
+                setRecaptcha("")
+              }}
             />
           <div className=" pt-4 flex justify-center ">
             <button
@@ -137,7 +152,7 @@ export default function Login() {
               // className={`${loading?"bg-blue-200 text-white font-bold py-2 px-4 rounded":"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"}`}
               className={`font-bold py-2 w-full  text-white rounded  ${loading?"bg-blue-200 " : "bg-primary hover:bg-blue-500  hover:shadow-blue-500 hover:shadow-md focus:outline-none focus:bg-primary focus:shadow-outline"}`}
             >
-              Sign In
+              Unlock
             </button>
           </div>
           <div className="mb-4 pt-2 flex justify-center ">
@@ -146,7 +161,7 @@ export default function Login() {
               href='/register'
               className="bg-gray-400 hover:bg-gray-500 text-center btn rounded text-white font-bold w-full py-2 hover:shadow-gray-500 hover:shadow-md focus:outline-none focus:bg-gray-400 focus:shadow-outline"
             >
-              Register
+              Create Wallet
             </Link>
           </div>
         </form>

@@ -42,12 +42,12 @@ export default function RootLayout({
         <Provider>
         <ToastContainer />
           <ShareHead />
+          <AppModal/>
           {children}
           {pathname == "/login" || pathname == "/register"?<>
           </>:<>
           <ReadyToGetStarted />
           <Footer />
-          <AppModal/>
           </>
           }
         </Provider>
