@@ -23,7 +23,7 @@ import { HiOutlineLockClosed } from "react-icons/hi2";
 import { openModal } from "@/context/features/modal/modalSlice";
 import { useAppDispatch } from "@/context/hooks";
 import { getProfileApi } from "../../http";
-import { getLocaleData } from "../../service/authService";
+import { getLocaleData } from "../../service/localStorageService";
 
 import { getUserProfile } from '../api/admin/dashboard'
 import { getNotificationSetting, updateNotificationSetting } from '../api/admin/settings'

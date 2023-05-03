@@ -5,9 +5,10 @@ import {signInApi} from '../../http'
 import Link from 'next/link';
 import { errorToast } from "../../helper/toster";
 import { useRouter } from "next/navigation";
-import { getLocaleData, removeLocaleData } from "../../service/authService";
+import { getLocaleData, removeLocaleData } from "../../service/localStorageService";
 import ReCAPTCHA from "react-google-recaptcha";
-import PasswordStrengthBar from 'react-password-strength-bar'
+import PasswordStrengthBar from 'react-password-strength-bar';
+import { userService } from "../../service/authService";
 
 
 // ==========================================================
@@ -45,6 +46,7 @@ export default function Login() {
   const onSubmit = (data:any) => {
     setLoading(true)
     signInApi(data).then((result)=>{
+      userService.userSubject.next(data)
       if(!result){
         setLoading(false)
         // errorToast("erro")
@@ -62,6 +64,7 @@ export default function Login() {
           window.location.href = '/dashboard';
       }else{
         errorToast("invalid role")
+        userService.userSubject.next(null)
         removeLocaleData("token")
         removeLocaleData("user")
       }

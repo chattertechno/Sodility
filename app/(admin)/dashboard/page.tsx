@@ -23,7 +23,7 @@ import Link from "next/link";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getLocaleData } from "../../../service/authService";
+import { getLocaleData } from "../../../service/localStorageService";
 
 import { getAllContents, getUserProfile, getSupporterTransactions } from '../../api/admin/dashboard'
 

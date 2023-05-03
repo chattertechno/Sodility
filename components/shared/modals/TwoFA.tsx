@@ -1,3 +1,4 @@
+"use client"
 import { H4, P1, SubH2 } from "@/components/typography";
 import Button from "../Button";
 import QRCode from 'qrcode.react'
@@ -21,7 +22,7 @@ const TwoFA = () => {
             {/* image - qr  */}
             <div>
               <Image src={qrCode} alt="qr code" width={150} height={150} />
-              {/* <QRCode value={otpauthUrl} /> */}
+              <QRCode value={`otpauth://totp/sodality.com:abcd0123?algorithm=SHA1&digits=6&issuer=sodality.com&period=30&secret=KZDAU4JFV5PXP2HMBHA7MP2L`} />
               <SubH2 className="text-center mt-2">
                 Secret: <span className="text-primary">AGH19V1283JM</span>
               </SubH2>

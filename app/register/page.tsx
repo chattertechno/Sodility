@@ -1,10 +1,10 @@
 "use client";
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import {registerApi} from '../../http'
 import { useState, useEffect } from "react";
 import { useRouter } from 'next/navigation';
 import { errorToast, successToast} from '@/helper/toster';
-import { getLocaleData } from "../../service/authService";
+import { getLocaleData } from "../../service/localStorageService";
 import { getDashAccount, getMnemonic } from '../utils'
 import PasswordStrengthBar from 'react-password-strength-bar'
 
@@ -14,7 +14,7 @@ import PasswordStrengthBar from 'react-password-strength-bar'
 export default function Register() {
   const [userType , setUserType] = useState("")
   const router = useRouter();
-  const { register, handleSubmit, getValues, formState:{ errors } } = useForm();
+  const { control,register, handleSubmit, getValues,  formState:{ errors } } = useForm();
   const [loading, setLoading] = useState(false)
   const [accountInfo, setAccountInfo] = useState<any>({})
   const [isAccountCreated, setAccountCreated] = useState(false)
@@ -84,6 +84,7 @@ export default function Register() {
   },[userType])
 
   const onSubmit = (data:any) => {
+    console.log(data)
     setLoading(true)
     if(data.password!=data.confirmpassword){
       errorToast("Confirm password doesn't match with the Password")
@@ -124,7 +125,29 @@ export default function Register() {
             )}
           </div>
           <div className="mb-4">
-            <label htmlFor="role" className="block text-gray-700  font-medium mb-2">
+          <label htmlFor="role" className="block text-gray-700  font-medium mb-2">Select a Role:</label>
+          <Controller
+            name="role"
+            control={control}
+            defaultValue=""
+            rules={{ required: true }}
+            render={({ field }) => (
+              <select
+              className={`shadow w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
+              ${
+                (errors&&errors.role) ? 'border-red-500' : ''
+              }`}
+              {...field}>
+                <option value="">Select a Role</option>
+                <option value="creator">Creator</option>
+                <option value="supporter">Supporter</option>
+              </select>
+            )}
+            />
+            {  errors?.role && (
+              <p className="text-red-500 text-xs italic">Please enter an role</p>
+            )}
+            {/* <label htmlFor="role" className="block text-gray-700  font-medium mb-2">
               Role
             </label>
             <select
@@ -143,7 +166,7 @@ export default function Register() {
             </select>
             {  errors.role && (
               <p className="text-red-500 text-xs italic">Please enter an role</p>
-            )}
+            )} */}
           </div>
           <div className="mb-4">
             <label htmlFor="password" className="block text-gray-700  font-medium mb-2">

@@ -16,7 +16,7 @@ import userPlaceholder from "@/assets/index/avatar.png";
 import logo from "@/assets/logo.png";
 import { useAppDispatch } from "@/context/hooks";
 import { openModal } from "@/context/features/modal/modalSlice";
-import { getLocaleData,removeLocaleData } from "../../service/authService";
+import { getLocaleData,removeLocaleData } from "../../service/localStorageService";
 import { successToast } from "../../helper/toster";
 
 // ==========================================
@@ -56,9 +56,9 @@ export default function Header() {
         </div>
 
         {/* navigation  */}
-        {userType === "public" && (
           <div className="flex flex-col md:flex-row gap-6 md:items-center">
-            <Navigation />
+            <Navigation userType={userType}/>
+        {userType === "public" && (
             <Button
               variant="primary"
               className="py-3"
@@ -67,8 +67,8 @@ export default function Header() {
             >
               Get Started
             </Button>
+            )}
           </div>
-        )}
         {userType === "supporter" 
         // && connectedUser 
         ? (
@@ -88,7 +88,7 @@ export default function Header() {
 }
 
 // EXTENDED COMPONENTS ======================
-const Navigation = () => {
+const Navigation = ({userType}:{userType:userType}) => {
   const pathname = usePathname();
   const [auth, setAuth] = useState<any>("")
 
@@ -130,13 +130,19 @@ const Navigation = () => {
       active: pathname === "/about",
       hasDropDown: false,
     },
-     {
-      name: "Login",
-      link: "/login",
-      active: pathname === "/login",
-      hasDropDown: false,
-    },
+    //  {
+    //   name: "Login",
+    //   link: "/login",
+    //   active: pathname === "/login",
+    //   hasDropDown: false,
+    // },
   ];
+  if(userType == "public") navList.push({
+    name: "Login",
+    link: "/login",
+    active: pathname === "/login",
+    hasDropDown: false,
+  })
 
   useEffect(() => {
     const token = getLocaleData('token');

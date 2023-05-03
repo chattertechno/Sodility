@@ -1,5 +1,6 @@
 "use client";
 
+import Select from "./controls/Select";
 import {
   CheckBox,
   Input,
@@ -9,7 +10,7 @@ import {
 } from "./index";
 
 type FormControlType = {
-  control: string;
+  control?: string;
   label?: string;
   type?: string;
   name: string;
@@ -62,8 +63,7 @@ const FormControl = ({
         />
       );
 
-    // case "select":
-    //   return <Select label={label} name={name} options={options!} />;
+    case "select": return <Select label={label} name={name} options={["a"]} />;
 
     // case "radio":
     //   return <RadioButtons label={label} name={name} options={options!} />;
