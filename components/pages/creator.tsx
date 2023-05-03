@@ -84,7 +84,7 @@ export const VideoArticle = ({ content }: any) => {
             </div>
           </div>
         )}
-        <ReactPlayer url = {content.video.src} controls={true} 
+        <ReactPlayer url = {content?.video?.src || ""} controls={true} 
         // url='https://www.youtube.com/watch?v=wWgIAphfn2U'
         width={980} 
         height={300}/>
@@ -186,7 +186,7 @@ export const AudioArticle = ({ content }: any) => {
           <audio
           className="flex justify-between"
         controls
-        src= {content.video.src}>
+        src= {content?.video?.src || ''}>
             Your browser does not support the
             <code>audio</code> element.
     </audio>
