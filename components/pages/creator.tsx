@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import ReactPlayer from 'react-player'
 import { useState } from "react";
 
 // COMPONENTS
@@ -83,12 +84,16 @@ export const VideoArticle = ({ content }: any) => {
             </div>
           </div>
         )}
-        <Image
+        <ReactPlayer url = {content.video.src} controls={true} 
+        // url='https://www.youtube.com/watch?v=wWgIAphfn2U'
+        width={980} 
+        height={300}/>
+        {/* <Image
           src={content.video}
           alt="video placeholder"
           width={980}
           // height={300}
-        />
+        /> */}
       </div>
     </article>
   );
@@ -173,26 +178,40 @@ export const AudioArticle = ({ content }: any) => {
         )}
         {/* audio */}
         <div className="p-8 bg-gray-100 flex gap-3 items-center">
-          <Image
+
+        {/* <ReactPlayer url = {content.video.src} controls={true} 
+        // url='https://www.youtube.com/watch?v=wWgIAphfn2U'
+        // width={980} 
+        /> */}
+          <audio
+          className="flex justify-between"
+        controls
+        src= {content.video.src}>
+            Your browser does not support the
+            <code>audio</code> element.
+    </audio>
+          {/* <Image
             src={audioPlayIcon}
             alt="audio play icon"
             width={40}
             height={40}
-          />
+          /> */}
           {/* progress bar  */}
-          <div className="flex-1">
+          
+          {/* <div className="flex-1"> */}
             {/* top - time */}
-            <div className="flex justify-between">
+            {/* <div className="flex justify-between">
               <P1 className="">0:00</P1>
               <P1 className="">3:00</P1>
-            </div>
+            </div> */}
             {/* bottom - bar  */}
-            <div className="bg-[#7F8C9869] h-1 w-full rounded-full mt-2">
+            {/* <div className="bg-[#7F8C9869] h-1 w-full rounded-full mt-2">
               <div
                 className={`bg-appGray-500 h-full w-[${progress.toString()}%] rounded-full`}
               ></div>
             </div>
-          </div>
+          </div> */}
+
         </div>
       </div>
     </article>
