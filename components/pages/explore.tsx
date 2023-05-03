@@ -16,7 +16,7 @@ export const CreatorsListSection = ({
   pagination = true,
   link,
   title,
-  padding,
+  padding
 }: {
   list: any[];
   pagination?: boolean;
@@ -25,7 +25,13 @@ export const CreatorsListSection = ({
   padding?: string;
 }) => {
   // const [page, setPage] = useState(1);
+  console.log("explore page ", JSON.stringify(cardUserImgPlaceholder));
+  list = list.map((item) => {
+    item.avatar = item.avatar || cardUserImgPlaceholder
+    return item;
+  });
 
+  console.log("explore page ", list);
   return (
     <section className={padding ? padding : "py-16"}>
       <div className="md:w-[90%] mx-auto  px-6">
@@ -42,11 +48,11 @@ export const CreatorsListSection = ({
           {list.map((item, i) => (
             <CreatorCard
               key={i}
-              img={cardUserImgPlaceholder}
-              username="TheDesertLynx"
-              title="Digital Cash Network"
-              description="Interviews, news breakdowns, and more about the exciting world of crypto..."
-              supporters={100}
+              img={item.avatar || cardUserImgPlaceholder}
+              username={item.username || "N/A"}
+              title={item.title || "N/A"}
+              description={item.description || "N/A"}
+              supporters={item.supporters || 0}
             />
           ))}
         </div>
