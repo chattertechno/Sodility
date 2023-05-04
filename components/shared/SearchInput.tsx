@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 const SearchInput = () => {
   const route = useRouter()
   const [search, setSearch] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<any[]>([{username:"farooq"},{username:"farooq"}]);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const [dropDownActive, setDropDownActive] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -51,6 +51,13 @@ const SearchInput = () => {
     }
   };
 
+  const bebouncingBlur = debounce(()=>setDropDownActive(false),500)
+ 
+
+  const handleFocus = (event:any) => {
+    setDropDownActive(true);
+  };
+
   return (
     <div className="relative ">
       <input
@@ -59,8 +66,9 @@ const SearchInput = () => {
         placeholder="Search Creators"
         value={search}
         onChange={handleSearch}
-        onBlur={_ => setDropDownActive(false)}
+        onBlur={_ => bebouncingBlur()}
         onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
       />
       <svg
         className="h-5 w-5 text-[#a0bbdb] absolute top-3 left-3"
@@ -85,13 +93,13 @@ const SearchInput = () => {
         >
       { isLoading ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>:
           <ul className="p-3 pt-4 bg-white relative flex flex-col justify-between ">
-           {searchResults.length>0 ? searchResults.map((itm)=>{
+           {searchResults.length>0 ? searchResults.map((itm, index)=>{
            return (<div key={itm._id}>
               <SearchItem
                 name={itm.username}
                 username={itm.username||""}
                 img={itm.avatar}
-                link={`/${itm._id}`}
+                link={`/creator?key=${itm._id}`}
               />
             </div>)
 
@@ -122,7 +130,7 @@ const SearchItem = ({
     <Link href={link} className="flex gap-3">
       <div className="">
         <Image
-          src={img||"https://pic.onlinewebfonts.com/svg/img_561543.png"}
+          src={img|| userImgPlaceholder}
           alt={name + " image"}
           className="rounded-full"
           width={50}

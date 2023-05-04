@@ -3,7 +3,7 @@
 import CreatorCard from "../shared/CreatorsCard";
 import { H4, SubH1 } from "../typography";
 
-import cardUserImgPlaceholder from "@/assets/index/avatar.png";
+import cardUserImgPlaceholder from "@/assets/avatar.jpg";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Pagination } from "../shared";
@@ -42,7 +42,7 @@ export const CreatorsListSection = ({
           {list?.length>0?(list?.map((item, i) => (
             <CreatorCard
               key={item._id}
-              img={item.avatar||"https://pic.onlinewebfonts.com/svg/img_561543.png"}
+              img={item.avatar || cardUserImgPlaceholder}
               username={`${item.username}`}
               title="Digital Cash Network"
               description="Interviews, news breakdowns, and more about the exciting world of crypto..."
