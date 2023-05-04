@@ -77,6 +77,7 @@ export const getProfileApi = async (_token:string) => {
   } catch (error:any) {
     errorToast(error.toString())
     console.log("error", JSON.stringify(error));
+    return []
   }
 };
 
@@ -103,6 +104,7 @@ export const updateProfileApi = async (_token:string,data: any) => {
   } catch (error:any) {
     errorToast(error.toString())
     console.log("error", error);
+    return false
   }
 };
 
@@ -128,6 +130,7 @@ export const contentApi = async (_token:string , data: any) => {
   } catch (error:any) {
     errorToast(error.toString())
     console.log("error", JSON.stringify(error));
+    return false
   }
 };
 

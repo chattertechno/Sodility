@@ -3,8 +3,6 @@ import { errorToast, successToast } from "../helper/toster";
 
 export const AddContentApi = async (_token:string, data:any) => {
     try {
-        console.log(_token,"_token_token_token_token",data)
-        // return
       const res = await fetch(ADD_POST, {
         method: "POST",
         body: JSON.stringify(data),
@@ -13,9 +11,11 @@ export const AddContentApi = async (_token:string, data:any) => {
             "Authorization": `Bearer ${_token}`
           },
       });
+      console.log(res)
       if (!res.ok) {
         const err = await res.json();
         errorToast(err.msg)
+        return false
       }
       console.log(res.ok,"res.okres.okres.okres.ok")
       const post = await res.json();
