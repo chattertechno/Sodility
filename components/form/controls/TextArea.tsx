@@ -1,5 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
+import { EditorState, ContentState, convertFromRaw, convertToRaw } from 'draft-js';
 
 // rich text editor
 // import { Editor } from "react-draft-wysiwyg";
@@ -31,18 +32,25 @@ const TextArea = ({ label, name, placeholder, subHeader }: TextAreaProps) => {
 
       <Field name={name}>
         {({ form, field }: FieldProps) => {
-          const { setFieldValue } = form;
-          const { value } = field;
-
+          // const { setFieldValue } = form;
+          // const { value } = field;
+          const onEditorStateChange = (editorState:any) => {
+            form.setFieldValue(field.name, JSON.stringify(convertToRaw(editorState.getCurrentContent())));
+          };
+        
+          const contentState = field.value ? convertFromRaw(JSON.parse(field?.value)) : ContentState.createFromText('');
           return (
             <Editor
-              editorState={value}
-              toolbarClassName="border-0 rounded-md"
+            toolbarClassName="border-0 rounded-md"
               wrapperClassName="border border-appGray-450 rounded-md"
               editorClassName="h-32 overflow-x-hidden leading-0 border-t border-t-appGray-450"
-              onEditorStateChange={(val: any) =>
-                JSON.parse(JSON.stringify(setFieldValue(name, val)))
-              }
+              editorState={EditorState.createWithContent(contentState)}
+              onEditorStateChange={onEditorStateChange}
+              //   (val: any) =>
+              //  { 
+              //   console.log(val.getCurrentContent(),"pol")
+              //   JSON.parse(JSON.stringify(setFieldValue(name, val)))}
+              // }
               placeholder={placeholder}
             />
           );

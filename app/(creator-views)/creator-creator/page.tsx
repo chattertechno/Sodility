@@ -28,7 +28,7 @@ import { openModal } from "@/context/features/modal/modalSlice";
 import { useAppDispatch } from "@/context/hooks";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getLocaleData } from "../../../service/authService";
+import { getLocaleData } from "../../../service/localStorageService";
 // ======================================================
 // CREATOR PAGE COMPONENT ===============================
 // ======================================================

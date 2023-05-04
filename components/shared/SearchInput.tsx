@@ -14,14 +14,15 @@ import userImgPlaceholder from "../../assets/index/avatar.png";
 // ===========================================
 // SEARCH INPUT COMPONENT ====================
 // ===========================================
-const SearchInput = () => {
-  const [search, setSearch] = useState<string>("");
+const SearchInput = (props:any) => {
+  const {setSearch,search,placeholder} = props
+  // const [search, setSearch] = useState<string>("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [dropDownActive, setDropDownActive] = useState(false);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-    setDropDownActive(true);
+    // setDropDownActive(true);
   };
 
   return (
@@ -29,7 +30,7 @@ const SearchInput = () => {
       <input
         className="p-2.5 text-base pl-10 md:w-80 w-full rounded-md border border-appGray-400 relative hover:shadow-sm focus:outline-none focus:border focus:border-[#a0bbdb]"
         type="text"
-        placeholder="Search Creators"
+        placeholder={placeholder?placeholder:"Search Creators"}
         value={search}
         onChange={handleSearch}
         onBlur={_ => setDropDownActive(false)}
