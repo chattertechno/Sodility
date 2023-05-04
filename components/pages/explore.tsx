@@ -39,16 +39,16 @@ export const CreatorsListSection = ({
         )}
         {/* cards - list  */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {list.map((item, i) => (
+          {list?.length>0?(list?.map((item, i) => (
             <CreatorCard
-              key={i}
-              img={cardUserImgPlaceholder}
-              username="TheDesertLynx"
+              key={item._id}
+              img={item.avatar||"https://pic.onlinewebfonts.com/svg/img_561543.png"}
+              username={`${item.username}`}
               title="Digital Cash Network"
               description="Interviews, news breakdowns, and more about the exciting world of crypto..."
-              supporters={100}
+              supporters={0}
             />
-          ))}
+          ))):<>No data found</>}
         </div>
         {/* pagination  */}
         {pagination && <Pagination title="Results" />}

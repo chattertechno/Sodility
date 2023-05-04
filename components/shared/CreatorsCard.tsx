@@ -29,6 +29,7 @@ const CreatorCard = ({
           src={img}
           alt={username}
           width={40}
+          height={40}
           className="absolute rounded-full -bottom-6 right-6 border-4 border-white"
         />
       </div>

@@ -1,61 +1,52 @@
 "use client"
-// COMPONENTS
 import { CreatorsListSection } from "@/components/pages/explore";
 import { H1, P1 } from "@/components/typography";
-import { SearchInput, Button } from "../../../components/shared";
-import { useState } from "react";
-import { searchContentApi } from "../../../http/contentApi";
+import { useRouter,useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { searchCreatorApi } from "../../../http/creatorApi";
 
 // ======================================================
 // SEARCH CREATORS PAGE COMPONENT =======================
 // ======================================================
 export default function SearchCreatorsPage() {
-  const [isLoading, setLoading] = useState(false)
-  const [search, setSearch] = useState<string>("");
-  const [list,setList] = useState<any>([1,2,3])
-  const handleSubmit = ()=>{
-    console.log(search)
-    searchContentApi(search).then((data)=>{
-      if(!data){
-        setList([])
-      }else{
-        setList(data)
-      }
+  const searchParams = useSearchParams();
+const searchQuery = searchParams.get('key');
+const [data, setData] = useState([])
+const [isLoading, setIsLoading] = useState(false)
+useEffect(()=>{
+  console.log(searchQuery)
+  setIsLoading(true)
+  if(searchQuery){
+    searchCreatorApi(searchQuery||"").then((_data)=>{
+      console.log(_data)
+      setIsLoading(false)
+      setData(_data)
     })
-
+  }else{
+    setIsLoading(false)
   }
-  console.log(search,"popopopp")
-  if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>
+
+},[searchQuery])
+ if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>
   return (
     <main>
-      <HeroSection handleSubmit={handleSubmit} search={search} setSearch={setSearch} />
+      <HeroSection />
       <div className="md:w-[90%] mx-auto  px-6 pt-8 -mb-10">
-        <P1>Results {`(${list.length})`}</P1>
+        <P1>Results {`(${data?.length})`}</P1>
       </div>
-      <CreatorsListSection list={list} pagination={false} />
+      <CreatorsListSection list={data} pagination={false} />
     </main>
   );
 }
 
 // EXTENDED COMPONENTS =================================
-const HeroSection = (props:any) => {
-  const {search, setSearch, handleSubmit} = props
-  
+const HeroSection = () => {
   return (
     <section className="bg-primaryGradient py-16">
       <div className="md:w-[90%] mx-auto  px-6 flex flex-col items-center">
         {/* top - heading  */}
         <div className=" w-full space-y-3">
-        <div className="flex items-center">
-        <SearchInput 
-          placeholder="Search Content"
-          setSearch ={setSearch}
-          search={search}
-        />
-        <button type="button" 
-        onClick={handleSubmit}
-        className="text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-3 text-center">Search</button>
-        </div>
+          <H1 className="text-secondary">Search: {"placeholder"}</H1>
         </div>
       </div>
     </section>

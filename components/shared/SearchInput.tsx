@@ -7,22 +7,48 @@ import { useState } from "react";
 // Components
 import { P1 } from "../typography";
 import DropDown from "./DropDown";
+import { debounce } from 'lodash';
+import { searchCreatorApi } from "../../http/creatorApi";
 
 // ASSETS
 import userImgPlaceholder from "../../assets/index/avatar.png";
+import { useRouter } from "next/navigation";
 
 // ===========================================
 // SEARCH INPUT COMPONENT ====================
 // ===========================================
-const SearchInput = (props:any) => {
-  const {setSearch,search,placeholder} = props
-  // const [search, setSearch] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+const SearchInput = () => {
+  const route = useRouter()
+  const [search, setSearch] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<any[]>([{username:"farooq"},{username:"farooq"}]);
   const [dropDownActive, setDropDownActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const debouncingSearch = debounce((src:any) => {
+    searchCreatorApi(src).then((data:any)=>{
+      console.log(data)
+      if(data){
+        setSearchResults(data.slice(0,6))
+        setIsLoading(false)
+      }else{
+        setSearchResults([])
+        setIsLoading(false)
+      }
+    })
+  }, 500);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-    // setDropDownActive(true);
+    setIsLoading(true)
+    debouncingSearch(e.target.value)
+    setDropDownActive(true);
+  };
+  const handleKeyDown = (event:any) => {
+    if (event.key === 'Enter') {
+      // Handle the Enter key press event here
+      console.log('Enter key pressed');
+      route.push(`/search?key=${search}`)
+    }
   };
 
   return (
@@ -30,10 +56,11 @@ const SearchInput = (props:any) => {
       <input
         className="p-2.5 text-base pl-10 md:w-80 w-full rounded-md border border-appGray-400 relative hover:shadow-sm focus:outline-none focus:border focus:border-[#a0bbdb]"
         type="text"
-        placeholder={placeholder?placeholder:"Search Creators"}
+        placeholder="Search Creators"
         value={search}
         onChange={handleSearch}
         onBlur={_ => setDropDownActive(false)}
+        onKeyDown={handleKeyDown}
       />
       <svg
         className="h-5 w-5 text-[#a0bbdb] absolute top-3 left-3"
@@ -42,6 +69,7 @@ const SearchInput = (props:any) => {
         viewBox="0 0 24 24"
         stroke="currentColor"
         aria-hidden="true"
+        onClick={()=>{console.log("hellow")}}
       >
         <path
           strokeLinecap="round"
@@ -55,16 +83,23 @@ const SearchInput = (props:any) => {
           parentPositionAndPadding="top-14 left-0 p-2"
           arrowPosition="-top-2 left-8"
         >
-          <ul className="p-3 pt-4 bg-white relative flex justify-between">
-            <div>
+      { isLoading ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>:
+          <ul className="p-3 pt-4 bg-white relative flex flex-col justify-between ">
+           {searchResults.length>0 ? searchResults.map((itm)=>{
+           return (<div key={itm._id}>
               <SearchItem
-                name="John Doe"
-                username="johndoe"
-                img={userImgPlaceholder}
-                link="/"
+                name={itm.username}
+                username={itm.username||""}
+                img={itm.avatar}
+                link={`/${itm._id}`}
               />
-            </div>
-          </ul>
+            </div>)
+
+           }
+
+           ):<li>No Data Found</li>
+            }
+          </ul>}
         </DropDown>
       )}
     </div>
@@ -87,7 +122,7 @@ const SearchItem = ({
     <Link href={link} className="flex gap-3">
       <div className="">
         <Image
-          src={img}
+          src={img||"https://pic.onlinewebfonts.com/svg/img_561543.png"}
           alt={name + " image"}
           className="rounded-full"
           width={50}
