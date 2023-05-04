@@ -27,14 +27,15 @@ useEffect(()=>{
   }
 
 },[searchQuery])
- if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>
+ 
   return (
     <main>
       <HeroSection />
       <div className="md:w-[90%] mx-auto  px-6 pt-8 -mb-10">
         <P1>Results {`(${data?.length})`}</P1>
       </div>
-      <CreatorsListSection list={data} pagination={false} />
+      {isLoading?<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>
+       :<CreatorsListSection list={data} pagination={false} />}
     </main>
   );
 }

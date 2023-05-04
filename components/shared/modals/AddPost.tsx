@@ -30,7 +30,6 @@ import { closeModal } from "../../../context/features/modal/modalSlice";
 const AddPost = () => {
   const dispatch = useAppDispatch();
   const postType = ["video", "audio", "image", "text"];
-  // const fileType = ["mp4", "mp3"];
   const [selectedPostType, setSelectedPostType] = useState("video");
   const [isLoading, setLoading] = useState(false)
 

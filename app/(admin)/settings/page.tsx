@@ -14,7 +14,7 @@ import { H5, P1 } from "@/components/typography";
 
 // ASSETS ===========================================
 import banner from "@/assets/creator/banner.png";
-import { default as userPlaceholder } from "@/assets/index/avatar.png";
+import { default as userPlaceholder } from "@/assets/avatar.png";
 import { BsCloudUpload } from "react-icons/bs";
 import {
   FaRegBell,

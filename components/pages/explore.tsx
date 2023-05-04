@@ -3,7 +3,7 @@
 import CreatorCard from "../shared/CreatorsCard";
 import { H4, SubH1 } from "../typography";
 
-import cardUserImgPlaceholder from "@/assets/avatar.jpg";
+import cardUserImgPlaceholder from "@/assets/avatar.png";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Pagination } from "../shared";

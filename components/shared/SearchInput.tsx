@@ -11,7 +11,7 @@ import { debounce } from 'lodash';
 import { searchCreatorApi } from "../../http/creatorApi";
 
 // ASSETS
-import userImgPlaceholder from "../../assets/index/avatar.png";
+import userImgPlaceholder from "../../assets/avatar.png";
 import { useRouter } from "next/navigation";
 
 // ===========================================
@@ -88,13 +88,13 @@ const SearchInput = () => {
       </svg>
       {dropDownActive && (
         <DropDown
-          parentPositionAndPadding="top-14 left-0 p-2"
+          parentPositionAndPadding="top-14 left-0"
           arrowPosition="-top-2 left-8"
         >
-      { isLoading ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>:
-          <ul className="p-3 pt-4 bg-white relative flex flex-col justify-between ">
+      { isLoading ? <div className="flex flex-col  rounded border border-appGray-450 hover:shadow-sm text-center py-10"> loadding </div>:
+          <ul className="pt-4 bg-white relative flex flex-col justify-between">
            {searchResults.length>0 ? searchResults.map((itm, index)=>{
-           return (<div key={itm._id}>
+           return (<div key={itm._id} className="my-2 py-2 px-5 hover:bg-blue-200 ">
               <SearchItem
                 name={itm.username}
                 username={itm.username||""}
@@ -105,7 +105,7 @@ const SearchInput = () => {
 
            }
 
-           ):<li>No Data Found</li>
+           ):<li className="px-5 mb-3">No Data Found</li>
             }
           </ul>}
         </DropDown>
@@ -128,7 +128,7 @@ const SearchItem = ({
 }) => {
   return (
     <Link href={link} className="flex gap-3">
-      <div className="">
+      <div>
         <Image
           src={img|| userImgPlaceholder}
           alt={name + " image"}
