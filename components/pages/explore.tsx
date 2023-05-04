@@ -16,7 +16,7 @@ export const CreatorsListSection = ({
   pagination = true,
   link,
   title,
-  padding,
+  padding
 }: {
   list: any[];
   pagination?: boolean;
@@ -42,11 +42,11 @@ export const CreatorsListSection = ({
           {list.map((item, i) => (
             <CreatorCard
               key={i}
-              img={cardUserImgPlaceholder}
-              username="TheDesertLynx"
-              title="Digital Cash Network"
-              description="Interviews, news breakdowns, and more about the exciting world of crypto..."
-              supporters={100}
+              img={item.avatar || cardUserImgPlaceholder}
+              username={item.username || "N/A"}
+              title={item.title || "N/A"}
+              description={item.description || "N/A"}
+              supporters={item.supporters || 0}
             />
           ))}
         </div>

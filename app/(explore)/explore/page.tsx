@@ -1,96 +1,53 @@
+import React from "react";
 // COMPONENTS
 import { CreatorsListSection } from "@/components/pages/explore";
 import { H1, P1 } from "@/components/typography";
 
+import cardUserImgPlaceholder from "@/assets/index/avatar.png";
 // ======================================================
 // EXPLORE PAGE COMPONENT ===============================
 // ======================================================
-export default function ExplorePage() {
+
+import { getAllCreatorList } from '../../api/explore/explore'
+// import { useEffect } from "react";
+export default async function ExplorePage() {
+  
+
+  let data: any
+  data = await getAllCreatorList();
+  if(data?.data?.status === 200 && data?.data?.msg === 'success') { 
+    data = data.data.data
+    data = data.map((item: any)=>{
+    item.avatar = item.avatar ? ({
+      "src": item.avatar,
+      "height":61,
+      "width":60,
+      "blurDataURL": item.avatar,
+      "blurWidth":8,
+      "blurHeight":8
+      }) : cardUserImgPlaceholder
+      return item;
+    })
+  } else {
+    data = []
+  }
+
+  
   return (
     <main>
       <HeroSection />
+
       <div className="py-16">
         {/* Writers & Journalists */}
         <CreatorsListSection
           title="Writers & Journalists"
           link="/explore/writers-and-journalists"
-          list={[1, 2, 3]}
+          list={data}
           pagination={false}
           padding="pb-10"
-        />
-        {/* Gaming Creators */}
-        <CreatorsListSection
-          title="Gaming Creators"
-          link="/explore/gaming-creators"
-          list={[1, 2, 3]}
-          pagination={false}
-          padding="pb-10"
-        />
-        {/* Video Creators */}
-        <CreatorsListSection
-          title="Video Creators"
-          link="/explore/video-creators"
-          list={[1, 2, 3]}
-          pagination={false}
-          padding="pb-10"
-        />
-        {/* Musicians */}
-        <CreatorsListSection
-          title="Musicians"
-          link="/explore/musicians"
-          list={[1, 2, 3]}
-          pagination={false}
-          padding="pb-10"
-        />
-        {/* Visual Artists */}
-        <CreatorsListSection
-          title="Visual Artists"
-          link="/explore/visual-artists"
-          list={[1, 2, 3]}
-          pagination={false}
-          padding="pb-10"
-        />
-        {/* Communities */}
-        <CreatorsListSection
-          title="Communities"
-          link="/explore/communities"
-          list={[1, 2, 3]}
-          pagination={false}
-          padding="pb-10"
-        />
-        {/* Podcasters */}
-        <CreatorsListSection
-          title="Podcasters"
-          link="/explore/podcasters"
-          list={[1, 2, 3]}
-          pagination={false}
-          padding="pb-10"
-        />
-        {/* Tutorials & Education */}
-        <CreatorsListSection
-          title="Tutorials & Education"
-          link="/explore/tutorials-and-education"
-          list={[1, 2, 3]}
-          pagination={false}
-          padding="pb-10"
-        />
-        {/* Local Business */}
-        <CreatorsListSection
-          title="Local Business"
-          link="/explore/local-business"
-          list={[1, 2, 3]}
-          pagination={false}
-          padding="pb-10"
-        />
-        {/* Non-Profits */}
-        <CreatorsListSection
-          title="Non-Profits"
-          link="/explore/non-profits"
-          list={[1, 2, 3]}
-          pagination={false}
-          padding="pb-5"
         />
       </div>
+      
     </main>
   );
 }
