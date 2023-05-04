@@ -23,7 +23,7 @@ import Link from "next/link";
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getLocaleData } from "../../../service/authService";
+import { getLocaleData } from "../../../service/localStorageService";
 
 import { getAllContents, getUserProfile, getSupporterTransactions } from '../../api/admin/dashboard'
 
@@ -40,6 +40,7 @@ export default function DashboardPage() {
     if(data && data?.role != "creator" ) route.push("/")
     else if(data==null&&userType==undefined) route.push("/login")
     setUserType(data?.role)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userType])
   if(userType != "creator") return <></>
   return (
@@ -207,7 +208,7 @@ const CreatorContent = () => {
           const data = res.data.data.map((item: any) => {
             return { articleType: {
                     content: extentionHandler(item.type || 'audio'),
-                    status: item.status || ""
+                    status: ''//item.locked ? 'locked' : ""
                 },
                 content: item.body || "",
                 img: cardUserImgPlaceholder,
@@ -267,6 +268,9 @@ const CreatorContent = () => {
           }
         }): <div className="flex justify-center items-center h-96"><>No any article posted yet</></div>
       }
+      <div className="">
+        <Pagination title="Posts" />
+      </div>
     </div>
   );
 };

@@ -29,6 +29,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/not-found.tsx"
-  ],
+, "app/utils/handler.js"  ],
   "exclude": ["node_modules"]
 }

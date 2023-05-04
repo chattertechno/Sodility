@@ -5,17 +5,23 @@ import {signInApi} from '../../http'
 import Link from 'next/link';
 import { errorToast } from "../../helper/toster";
 import { useRouter } from "next/navigation";
-import { getLocaleData, removeLocaleData } from "../../service/authService";
-
+import { getLocaleData, removeLocaleData } from "../../service/localStorageService";
+import ReCAPTCHA from "react-google-recaptcha";
+import PasswordStrengthBar from 'react-password-strength-bar';
+import { userService } from "../../service/authService";
 
 
 // ==========================================================
 // LOGIN PAGE COMPONENT =================================
 // ==========================================================
 export default function Login() {
-  const [userType , setUserType] = useState("")
+  const [password , setPassword] = useState("")
+  const [recaptcha , setRecaptcha] = useState("")
   const route = useRouter()
-  const { register, handleSubmit,  formState:{ errors } } = useForm();
+  const { register, handleSubmit, getValues, formState:{ errors } } = useForm();
+  const TEST_SITE_KEY = "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI";
+  const [userType , setUserType] = useState("")
+
   const [loading, setLoading] = useState(false)
   useEffect(()=>{
     const data = getLocaleData("user") as any
@@ -40,7 +46,13 @@ export default function Login() {
   //
   const onSubmit = (data:any) => {
     setLoading(true)
+    if (!recaptcha){
+      setLoading(false)
+      errorToast("reCAPTCHA Failed")
+      return
+    }
     signInApi(data).then((result)=>{
+      userService.userSubject.next(data)
       if(!result){
         setLoading(false)
         // errorToast("erro")
@@ -58,6 +70,7 @@ export default function Login() {
           window.location.href = '/dashboard';
       }else{
         errorToast("invalid role")
+        userService.userSubject.next(null)
         removeLocaleData("token")
         removeLocaleData("user")
       }
@@ -69,11 +82,11 @@ export default function Login() {
     <>
     
       <div className="h-full mt-5  bg-white-200  flex items-center  align-middle w-full justify-center">
-        <form onSubmit={handleSubmit(onSubmit)} className="  bg-white-500 shadow-xl shadow-gray-500/20  border w-96 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="  bg-white-500 shadow-xl shadow-gray-500/20  border  w-1/3 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
           <div className='flex justify-center  font-medium text-2xl  mb-4'>Login</div>
           <div className="mb-4  " >
             <label htmlFor="username" className=" block text-gray-700  font-medium mb-2">
-              Email
+              Username
             </label>
             <input
             
@@ -101,6 +114,9 @@ export default function Login() {
               id="password"
               type="password"
               placeholder="Password"
+              onInput={(e:any)=>{
+                setPassword(e.target.value)}
+              }
               className={`shadow appearance-none border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 rounded-md w-full py-3 px-3  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20 
                 ${(errors.password) ? 'border-red-500' : ''
               }`}
@@ -110,6 +126,25 @@ export default function Login() {
               <p className="text-red-500 text-xs italic">Please enter a password</p>
             )}
           </div>
+          <PasswordStrengthBar
+                      style={{ marginTop: 12 }}
+                      password={getValues('password')}
+                    />
+
+          <ReCAPTCHA
+              sitekey={TEST_SITE_KEY}
+              // ref={captchaRef}
+              onChange={(data)=>{
+                console.log(data)
+                setRecaptcha( data||"")
+              }}
+              onError={()=>{
+                setRecaptcha("")
+              }}
+              onExpired={()=>{
+                setRecaptcha("")
+              }}
+            />
           <div className=" pt-4 flex justify-center ">
             <button
               disabled={loading}
@@ -117,7 +152,7 @@ export default function Login() {
               // className={`${loading?"bg-blue-200 text-white font-bold py-2 px-4 rounded":"bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"}`}
               className={`font-bold py-2 w-full  text-white rounded  ${loading?"bg-blue-200 " : "bg-primary hover:bg-blue-500  hover:shadow-blue-500 hover:shadow-md focus:outline-none focus:bg-primary focus:shadow-outline"}`}
             >
-              Sign In
+              Unlock
             </button>
           </div>
           <div className="mb-4 pt-2 flex justify-center ">
@@ -126,7 +161,7 @@ export default function Login() {
               href='/register'
               className="bg-gray-400 hover:bg-gray-500 text-center btn rounded text-white font-bold w-full py-2 hover:shadow-gray-500 hover:shadow-md focus:outline-none focus:bg-gray-400 focus:shadow-outline"
             >
-              Register
+              Create Wallet
             </Link>
           </div>
         </form>

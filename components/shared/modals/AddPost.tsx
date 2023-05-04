@@ -1,3 +1,4 @@
+"use client"
 import { Form, Formik } from "formik";
 import Image from "next/image";
 import { useState } from "react";
@@ -18,13 +19,19 @@ import textIcon from "@/assets/text.png";
 import videoIcon from "@/assets/video.png";
 import { FaAngleDown } from "react-icons/fa";
 import { DropDown } from "..";
+import { AddContentApi } from "../../../http/contentApi";
+import { getLocaleData } from "../../../service/localStorageService";
+import { useAppDispatch } from "@/context/hooks";
+import { closeModal } from "../../../context/features/modal/modalSlice";
 
 // =============================================
 // ADD POST MODAL COMPONENT ====================
 // =============================================
 const AddPost = () => {
-  const postType = ["video", "audio", "image", "text"];
-  const [selectedPostType, setSelectedPostType] = useState("video");
+  const dispatch = useAppDispatch();
+  const postType = ["mp4", "mp3", "jpg", "text"];
+  const [selectedPostType, setSelectedPostType] = useState("mp4");
+  const [isLoading, setLoading] = useState(false)
 
   const lockedFor = [
     "All donators",
@@ -38,24 +45,53 @@ const AddPost = () => {
 
   const initialValues = {
     title: "",
-    video: "",
-    audio: "",
-    image: "",
-    content: "",
+    // video: "",
+    // audio: "",
+    // image: "",
+    ipfs_url:"",
+    body: "",
   };
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Required"),
-    video: Yup.string(),
-    audio: Yup.string(),
-    image: Yup.string(),
-    content: Yup.string(),
+    ipfs_url: Yup.string(),
+    // video: Yup.string(),
+    // audio: Yup.string(),
+    // image: Yup.string(),
+    body: Yup.string(),
   });
+  
 
   const handleSubmit = (values: any) => {
-    console.log(values,"valuesvalues")
+    let body =""
+    if(values.body){
+      console.log(values)
+      const parsBody = JSON.parse(values.body)
+      body = parsBody.blocks[0].text
+    }
+    // return
+    setLoading(true)
+    const token = getLocaleData("token")
+    let data = {
+      title:values.title,
+      ipfs_url:values.ipfs_url,
+      body,
+      type: selectedPostType,
+      content_type: selectedLockedFor,
+      currency_type:"USD"
+    }
+    if(token)
+    AddContentApi(token,data).then((data)=>{
+      if(data){
+        setLoading(false)
+        dispatch( closeModal())
+      }else{
+        setLoading(false)
+        dispatch(closeModal())
+      }
+    })
   };
-
+  if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>
   return (
     <Formik
       initialValues={initialValues}
@@ -73,6 +109,14 @@ const AddPost = () => {
               type="text"
               placeholder="Placeholder"
               subHeader="100 characters"
+            />
+          </div>
+          <div className="mt-4">
+            <FormControl
+              control="select"
+              label="Category"
+              name="category_name"
+              options={["a","b"]}
             />
           </div>
           {/* buttons  */}
@@ -93,31 +137,31 @@ const AddPost = () => {
           </div>
           {/* form fields  */}
           <div className="">
-            {selectedPostType === "video" && (
+            {selectedPostType === "mp4" && (
               <FormControl
                 control="input"
                 label="Video URL"
-                name="video"
+                name="ipfs_url"
                 type="text"
                 placeholder="https://odysee.com/@JulianC:9/juliansquarantineday1:9"
                 subHeader="Embed supported from: Odysee, Youtube, Vimeo"
               />
             )}
-            {selectedPostType === "audio" && (
+            {selectedPostType === "mp3" && (
               <FormControl
                 control="input"
                 label="Audio URL"
-                name="audio"
+                name="ipfs_url"
                 type="text"
                 placeholder="https://soundcloud.com/heryptohow/olga-feldmeir-and-robert-wieko-smartvalorcom"
                 subHeader="Embed supported from: Buzzsprout, Soundcloud"
               />
             )}
-            {selectedPostType === "image" && (
+            {selectedPostType === "jpg" && (
               <FormControl
                 control="input"
                 label="Image URL"
-                name="image"
+                name="ipfs_url"
                 type="text"
                 placeholder="Placeholder"
                 subHeader="Embed supported from: ..."
@@ -127,7 +171,7 @@ const AddPost = () => {
               <FormControl
                 control="textarea"
                 label="Content"
-                name="content"
+                name="body"
                 type="text"
                 placeholder="Start typing..."
                 subHeader="500 characters remaining"
