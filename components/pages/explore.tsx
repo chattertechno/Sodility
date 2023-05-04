@@ -3,7 +3,7 @@
 import CreatorCard from "../shared/CreatorsCard";
 import { H4, SubH1 } from "../typography";
 
-import cardUserImgPlaceholder from "@/assets/index/avatar.png";
+import cardUserImgPlaceholder from "@/assets/avatar.png";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Pagination } from "../shared";
@@ -39,16 +39,18 @@ export const CreatorsListSection = ({
         )}
         {/* cards - list  */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {list.map((item, i) => (
+          {list?.length>0?(list?.map((item, i) => (
             <CreatorCard
-              key={i}
+              key={item._id}
               img={item.avatar || cardUserImgPlaceholder}
-              username={item.username || "N/A"}
+              username={`${item.username ||  "N/A"}`}
               title={item.title || "N/A"}
               description={item.description || "N/A"}
-              supporters={item.supporters || 0}
+              supporters={item.supporters}
+              link={item._id}
+              header_image={item.header_image}
             />
-          ))}
+          ))):<>No data found</>}
         </div>
         {/* pagination  */}
         {pagination && <Pagination title="Results" />}

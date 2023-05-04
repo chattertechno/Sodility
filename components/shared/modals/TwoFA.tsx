@@ -31,7 +31,7 @@ const TwoFA = () => {
       }
     })
   }, [])
-  if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>
+  if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loading </div>
   if(!data) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> Something went wrong </div>
   return (
     <>
