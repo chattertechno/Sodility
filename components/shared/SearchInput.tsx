@@ -25,8 +25,8 @@ const SearchInput = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncingSearch = debounce((src:any) => {
+    if(src) {
     searchCreatorApi(src).then((data:any)=>{
-      console.log(data)
       if(data){
         setSearchResults(data.slice(0,6))
         setIsLoading(false)
@@ -34,7 +34,11 @@ const SearchInput = () => {
         setSearchResults([])
         setIsLoading(false)
       }
-    })
+    })}
+    else {
+      setIsLoading(false)
+      setSearchResults([])
+    }
   }, 500);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
