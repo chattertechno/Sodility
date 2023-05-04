@@ -167,6 +167,8 @@ const PopularCreators = () => {
             title="Digital Cash Network"
             description="Interviews, news breakdowns, and more about the exciting world of crypto..."
             supporters={100}
+            link=""
+            header_image=""
           />
           <CreatorsCard
             img={cardUserImgPlaceholder}
@@ -174,6 +176,8 @@ const PopularCreators = () => {
             title="Digital Cash Network"
             description="Interviews, news breakdowns, and more about the exciting world of crypto..."
             supporters={100}
+            link=""
+            header_image=""
           />
           <CreatorsCard
             img={cardUserImgPlaceholder}
@@ -181,6 +185,8 @@ const PopularCreators = () => {
             title="Digital Cash Network"
             description="Interviews, news breakdowns, and more about the exciting world of crypto..."
             supporters={100}
+            link=""
+            header_image=""
           />
         </div>
       </div>
