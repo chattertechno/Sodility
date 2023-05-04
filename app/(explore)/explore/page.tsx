@@ -66,18 +66,20 @@ const allCategries = Object.keys(categoriesWise)
       <HeroSection />
      
         {/* Writers & Journalists */}
+        <div className="py-16" >
         { allCategries.map((category: any, index: any)=> {
           if(categoriesWise[category]?.length) {
             return (
-                <div className="py-16">
+                
                   <CreatorsListSection
+                  key = {index}
                     title= {category}
                     link="/explore/writers-and-journalists"
                     list={categoriesWise[category]}
                     pagination={false}
                     padding="pb-10"
                   />
-                </div>
+                
               )
           } else {
             return null
@@ -85,7 +87,7 @@ const allCategries = Object.keys(categoriesWise)
           
             
             })}
-
+            </div>
       
     </main>
   );
