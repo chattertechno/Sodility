@@ -25,13 +25,7 @@ export const CreatorsListSection = ({
   padding?: string;
 }) => {
   // const [page, setPage] = useState(1);
-  console.log("explore page ", JSON.stringify(cardUserImgPlaceholder));
-  list = list.map((item) => {
-    item.avatar = item.avatar || cardUserImgPlaceholder
-    return item;
-  });
 
-  console.log("explore page ", list);
   return (
     <section className={padding ? padding : "py-16"}>
       <div className="md:w-[90%] mx-auto  px-6">

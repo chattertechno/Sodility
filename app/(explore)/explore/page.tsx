@@ -1,3 +1,4 @@
+import React from "react";
 // COMPONENTS
 import { CreatorsListSection } from "@/components/pages/explore";
 import { H1, P1 } from "@/components/typography";
@@ -6,33 +7,32 @@ import cardUserImgPlaceholder from "@/assets/index/avatar.png";
 // ======================================================
 // EXPLORE PAGE COMPONENT ===============================
 // ======================================================
-export default function ExplorePage() {
- let data: any = []
- data = [{
-      username: "username1",
-      avatar: "https://placehold.co/400x400/501017/f00100.png",
-      title: "title",
-      description: "this is the description describe1",
-      supporters: 6,
-  }, {
-      username: "username2",
-      avatar: "https://placehold.co/400x400/501017/f00100.png",
-      title: "title",
-      description: "this is the description describe2",
-      supporters: 9,
-  }]
 
-  data = data.map((item: any)=>{
-      item.avatar = item.avatar ? ({
-        "src": item.avatar,
-        "height":61,
-        "width":60,
-        "blurDataURL": item.avatar,
-        "blurWidth":8,
-        "blurHeight":8
-    }) : cardUserImgPlaceholder
-      return item
-  })
+import { getAllCreatorList } from '../../api/explore/explore'
+// import { useEffect } from "react";
+export default async function ExplorePage() {
+  
+
+  let data: any
+  data = await getAllCreatorList();
+  if(data?.data?.status === 200 && data?.data?.msg === 'success') { 
+    data = data.data.data
+    data = data.map((item: any)=>{
+    item.avatar = item.avatar ? ({
+      "src": item.avatar,
+      "height":61,
+      "width":60,
+      "blurDataURL": item.avatar,
+      "blurWidth":8,
+      "blurHeight":8
+      }) : cardUserImgPlaceholder
+      return item;
+    })
+  } else {
+    data = []
+  }
+
+  
   return (
     <main>
       <HeroSection />
