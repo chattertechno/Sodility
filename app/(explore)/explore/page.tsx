@@ -12,6 +12,18 @@ import { getAllCreatorList } from '../../api/explore/explore'
 // import { useEffect } from "react";
 export default async function ExplorePage() {
   
+  const categories = [
+    "Writers & Journalists",
+    "Gaming Creators",
+    "Video Creators",
+    "Musicians",
+    "Visual Artists",
+    "Communities",
+    "Podcasters",
+    "Tutorials & Education",
+    "Local Business",
+    "Non-Profits",
+  ]
 
   let data: any
   data = await getAllCreatorList();
