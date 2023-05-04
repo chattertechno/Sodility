@@ -11,16 +11,18 @@ const CreatorCard = ({
   title,
   description,
   supporters,
+  link=""
 }: {
   img: StaticImageData;
   username: string;
   title: string;
   description: string;
   supporters: number;
+  link:string;
 }) => {
   return (
     <Link
-      href="/creator"
+      href={`/creator?key=${link}`}
       className="rounded overflow-hidden bg-white md:w-[22rem]"
     >
       {/* top  */}

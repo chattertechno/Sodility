@@ -47,6 +47,7 @@ export const CreatorsListSection = ({
               title="Digital Cash Network"
               description="Interviews, news breakdowns, and more about the exciting world of crypto..."
               supporters={0}
+              link={item._id}
             />
           ))):<>No data found</>}
         </div>
