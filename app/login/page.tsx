@@ -93,7 +93,7 @@ export default function Login() {
               autoComplete="off"
               id="username"
               type="username"
-              placeholder="Email"
+              placeholder="Username"
               className={` shadow  border w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20 
               ${
                 (errors&&errors.username) ? 'border-red-500' : ''
