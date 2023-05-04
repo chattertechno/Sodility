@@ -7,13 +7,32 @@ import QRCode from 'qrcode.react'
 import qrCode from "@/assets/qr.png";
 import { useFormik } from "formik";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as Yup from "yup";
+import { PostVarifyOTPApi, getGenerateUrlApi } from "../../../http/securityApi";
+import { getLocaleData } from "@/service/localStorageService";
+import { closeModal } from "@/context/features/modal/modalSlice";
+import { useAppDispatch } from "@/context/hooks";
 
 const TwoFA = () => {
   const [step, setStep] = useState(1);
-  const [otpauthUrl, setOtpauthUrl] = useState('');
+  const [data, setData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false)
 
+  useEffect(() => {
+    const token = getLocaleData("token") as any
+    setIsLoading(true)
+    getGenerateUrlApi(token).then((data: any) => {
+      if(!data) {
+        setIsLoading(false)
+      } else {
+        setIsLoading(false)
+        setData(data);
+      }
+    })
+  }, [])
+  if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>
+  if(!data) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> Something went wrong </div>
   return (
     <>
         {step === 1 && (
@@ -21,10 +40,10 @@ const TwoFA = () => {
           
             {/* image - qr  */}
             <div>
-              <Image src={qrCode} alt="qr code" width={150} height={150} />
-              <QRCode value={`otpauth://totp/sodality.com:abcd0123?algorithm=SHA1&digits=6&issuer=sodality.com&period=30&secret=KZDAU4JFV5PXP2HMBHA7MP2L`} />
+              {/* <Image src={qrCode} alt="qr code" width={150} height={150} /> */}
+              <QRCode value={data?.otpauth_url} />
               <SubH2 className="text-center mt-2">
-                Secret: <span className="text-primary">AGH19V1283JM</span>
+                Secret: <span className="text-primary">{data?.otp_secret}</span>
               </SubH2>
             </div>
             {/* text  */}
@@ -55,6 +74,7 @@ const TwoFA = () => {
 export default TwoFA;
 
 const VerificationForm = () => {
+  const dispatch = useAppDispatch();
   const formik = useFormik({
     initialValues: {
       code: "",
@@ -62,8 +82,13 @@ const VerificationForm = () => {
     validationSchema: Yup.object({
       code: Yup.number().required("Verification code is required"),
     }),
-    onSubmit: values => {
-      alert(values.code);
+    onSubmit: (values:any) => {
+      const token = getLocaleData("token")
+      if(values?.code?.length<6) alert("all field must be fill");
+      PostVarifyOTPApi(token, {token:values?.code?.join("")}).then(()=>{
+        dispatch(closeModal())
+      })
+      // alert(values?.code)
     },
   });
 

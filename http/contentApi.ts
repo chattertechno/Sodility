@@ -31,7 +31,7 @@ export const AddContentApi = async (_token:string, data:any) => {
 
 export const searchContentApi = async (search:string) => {
     try {
-      const res = await fetch(`SEARCH_CONTENT/${search}`, {
+      const res = await fetch(`${SEARCH_CONTENT}/${search}`, {
         method: "GET",
         // headers: {
         //   "Content-Type": "application/json",
