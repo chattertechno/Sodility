@@ -11,7 +11,6 @@ import cardUserImgPlaceholder from "@/assets/index/avatar.png";
 import { getAllCreatorList } from '../../api/explore/explore'
 // import { useEffect } from "react";
 export default async function ExplorePage() {
-  
   const categories = [
     "Writers & Journalists",
     "Gaming Creators",
@@ -44,21 +43,49 @@ export default async function ExplorePage() {
     data = []
   }
 
-  
+  const categoriesWise = categories.reduce((acc: any, curr: any)=> { acc[curr]=[]; return acc}, {});
+  categoriesWise['Unknown category'] = [];
+
+  for(let i=0; i<data.length; i++) {
+    if(data[i]?.categories?.length) {
+        for(let j=0; j<data[i].categories.length; j++) {
+            if(categoriesWise[data[i].categories[j]]) {
+                categoriesWise[data[i].categories[j]].push(data[i])
+            } else {
+                categoriesWise['Unknown category'].push(data[i])
+            }
+        }
+    } else {
+        categoriesWise['Unknown category'].push(data[i])
+    }
+}
+
+const allCategries = Object.keys(categoriesWise)
   return (
     <main>
       <HeroSection />
-
-      <div className="py-16">
+     
         {/* Writers & Journalists */}
-        <CreatorsListSection
-          title="Writers & Journalists"
-          link="/explore/writers-and-journalists"
-          list={data}
-          pagination={false}
-          padding="pb-10"
-        />
-      </div>
+        { allCategries.map((category: any, index: any)=> {
+          if(categoriesWise[category]?.length) {
+            return (
+                <div className="py-16">
+                  <CreatorsListSection
+                    title= {category}
+                    link="/explore/writers-and-journalists"
+                    list={categoriesWise[category]}
+                    pagination={false}
+                    padding="pb-10"
+                  />
+                </div>
+              )
+          } else {
+            return null
+          }
+          
+            
+            })}
+
       
     </main>
   );
