@@ -30,24 +30,24 @@ useEffect(()=>{
  
   return (
     <main>
-      <HeroSection />
+      <HeroSection text={searchQuery} />
       <div className="md:w-[90%] mx-auto  px-6 pt-8 -mb-10">
         <P1>Results {`(${data?.length})`}</P1>
       </div>
-      {isLoading?<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>
+      {isLoading?<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loading </div>
        :<CreatorsListSection list={data} pagination={false} />}
     </main>
   );
 }
 
 // EXTENDED COMPONENTS =================================
-const HeroSection = () => {
+const HeroSection = ({text}:any) => {
   return (
     <section className="bg-primaryGradient py-16">
       <div className="md:w-[90%] mx-auto  px-6 flex flex-col items-center">
         {/* top - heading  */}
         <div className=" w-full space-y-3">
-          <H1 className="text-secondary">Search: {"placeholder"}</H1>
+          <H1 className="text-secondary">Search: {`${text}`}</H1>
         </div>
       </div>
     </section>

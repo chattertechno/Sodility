@@ -22,6 +22,7 @@ const SearchInput = () => {
   const [search, setSearch] = useState<string>("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [dropDownActive, setDropDownActive] = useState(false);
+  const [noData, setNoData] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncingSearch = debounce((src:any) => {
@@ -32,12 +33,14 @@ const SearchInput = () => {
         setIsLoading(false)
       }else{
         setSearchResults([])
+        setNoData("No Data Found")
         setIsLoading(false)
       }
     })}
     else {
       setIsLoading(false)
       setSearchResults([])
+      setNoData("No Data Found")
     }
   }, 500);
 
@@ -90,15 +93,15 @@ const SearchInput = () => {
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
         />
       </svg>
-      {dropDownActive && (
+      {(dropDownActive && search!="") && (
         <DropDown
           parentPositionAndPadding="top-14 left-0"
           arrowPosition="-top-2 left-8"
         >
-      { isLoading ? <div className="flex flex-col  rounded border border-appGray-450 hover:shadow-sm text-center py-10"> loadding </div>:
+      { isLoading ? <div className="flex flex-col  rounded border border-appGray-450 hover:shadow-sm text-center py-10"> loading </div>:
           <ul className="pt-4 bg-white relative flex flex-col justify-between">
            {searchResults.length>0 ? searchResults.map((itm, index)=>{
-           return (<div key={itm._id} className="my-2 py-2 px-5 hover:bg-blue-200 ">
+           return (<div key={itm._id} className="py-2 px-5 hover:bg-blue-200 ">
               <SearchItem
                 name={itm.username}
                 username={itm.username||""}
@@ -109,7 +112,7 @@ const SearchInput = () => {
 
            }
 
-           ):<li className="px-5 mb-3">No Data Found</li>
+           ):<li className="px-5 mb-3">{noData}</li>
             }
           </ul>}
         </DropDown>

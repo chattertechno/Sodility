@@ -44,10 +44,11 @@ export const CreatorsListSection = ({
               key={item._id}
               img={item.avatar || cardUserImgPlaceholder}
               username={`${item.username}`}
-              title="Digital Cash Network"
-              description="Interviews, news breakdowns, and more about the exciting world of crypto..."
-              supporters={0}
+              title={item.title}
+              description={item.description}
+              supporters={item.supporters}
               link={item._id}
+              header_image={item.header_image}
             />
           ))):<>No data found</>}
         </div>

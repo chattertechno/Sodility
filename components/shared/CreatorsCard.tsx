@@ -11,7 +11,8 @@ const CreatorCard = ({
   title,
   description,
   supporters,
-  link=""
+  link="",
+  header_image
 }: {
   img: StaticImageData;
   username: string;
@@ -19,6 +20,7 @@ const CreatorCard = ({
   description: string;
   supporters: number;
   link:string;
+  header_image:string;
 }) => {
   return (
     <Link
@@ -28,7 +30,7 @@ const CreatorCard = ({
       {/* top  */}
       <div className="pt-2 bg-card-pattern relative h-40">
         <Image
-          src={img}
+          src={header_image||img}
           alt={username}
           width={40}
           height={40}

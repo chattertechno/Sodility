@@ -78,7 +78,7 @@ const UserInfo = () => {
   }, [])
 
   return (<>
-    { loadingProfile ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>:
+    { loadingProfile ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loading </div>:
     <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10">
       <div className="flex justify-center">
         <Image
