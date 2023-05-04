@@ -93,6 +93,11 @@ export default function Register() {
       setLoading(false)
       return
     }
+    if(data.username.length>20){
+      errorToast("Username must not be greater than 20 characters")
+      setLoading(false)
+      return
+    }
     console.log({passowordStrength})
     if(passowordStrength<2){
       errorToast("Password is weak")
@@ -116,7 +121,7 @@ export default function Register() {
       <div className="h-full mt-3  bg-white-200  flex items-center  align-middle w-full justify-center">
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white-500 shadow-xl shadow-gray-500/20  border w-1/3 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
         <div className='flex justify-center  font-medium text-2xl  mb-2'>Registration</div>
-        <h4 >Your Dash Address is:<div className='font-bold'>{accountInfo?.address}</div></h4>
+        <h4 >Your Dash Address is:<div className='font-bold text-blue-500'>{accountInfo?.address}</div></h4>
             <hr className='my-2 border-black-500 border'/>
           <div className="mb-4">
             <label htmlFor="username" className="block text-gray-700  font-medium mb-2">

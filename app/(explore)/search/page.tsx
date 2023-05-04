@@ -34,7 +34,7 @@ useEffect(()=>{
       <div className="md:w-[90%] mx-auto  px-6 pt-8 -mb-10">
         <P1>Results {`(${data?.length})`}</P1>
       </div>
-      {isLoading?<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loading </div>
+      {isLoading?<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> Loading ... </div>
        :<CreatorsListSection list={data} pagination={false} />}
     </main>
   );

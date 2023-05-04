@@ -54,6 +54,7 @@ const SearchInput = () => {
     if (event.key === 'Enter') {
       // Handle the Enter key press event here
       console.log('Enter key pressed');
+      setDropDownActive(false)
       route.push(`/search?key=${search}`)
     }
   };
@@ -98,7 +99,7 @@ const SearchInput = () => {
           parentPositionAndPadding="top-14 left-0"
           arrowPosition="-top-2 left-8"
         >
-      { isLoading ? <div className="flex flex-col  rounded border border-appGray-450 hover:shadow-sm text-center py-10"> loading </div>:
+      { isLoading ? <div className="flex flex-col  rounded border border-appGray-450 hover:shadow-sm text-center py-10"> Loading ... </div>:
           <ul className="pt-4 bg-white relative flex flex-col justify-between">
            {searchResults.length>0 ? searchResults.map((itm, index)=>{
            return (<div key={itm._id} className="py-2 px-5 hover:bg-blue-200 ">
