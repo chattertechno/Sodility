@@ -310,14 +310,11 @@ const ProfileSettings = () => {
                   </div>
                 </div>
               </div>
-
               <div className="flex items-center gap-5">
                 <div className="flex items-center gap-5">
-                  <P1 className="text-black">Creator Categories: </P1>
                   {/* create a checkbox group */}
                   <div className="flex flex-col gap-2">
-
-
+                    <P1 className="text-black">Creator Categories: </P1>
                     {
                       categories.map((category, index) => (
                         <FormControl
@@ -327,16 +324,7 @@ const ProfileSettings = () => {
                           control="checkbox"
                           label={category}
                     />))
-              
                     }
-
-                    <FormControl
-                      name="supporterAlerts"
-                      type="checkbox"
-                      control="checkbox"
-                      label="New supporter alerts"
-                    />
-                   
                   </div>
                 </div>
               </div>
