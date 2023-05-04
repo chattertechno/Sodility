@@ -32,9 +32,6 @@ export default function Register() {
           mnemonic:any,
           balance: { confirmed: balance },
         } = account
-        if (balance === 0) {
-          successToast(`Please charge your account`)
-        }
         setMnemonic(account.mnemonic || "")
         localStorage.setItem('mnemonic', mnemonic || "")
         setAccountCreated(true)
@@ -118,7 +115,7 @@ export default function Register() {
     <>
       <div className="h-full mt-3  bg-white-200  flex items-center  align-middle w-full justify-center">
         <form onSubmit={handleSubmit(onSubmit)} className="bg-white-500 shadow-xl shadow-gray-500/20  border w-1/3 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
-        <div className='flex justify-center  font-medium text-2xl  mb-2'>Registeration</div>
+        <div className='flex justify-center  font-medium text-2xl  mb-2'>Registration</div>
         <h4 >Your Dash Address is:<div className='font-bold'>{accountInfo?.address}</div></h4>
             <hr className='my-2 border-black-500 border'/>
           <div className="mb-4">
@@ -129,7 +126,7 @@ export default function Register() {
               autoComplete="off"
               id="username"
               type="username"
-              placeholder="Email"
+              placeholder="Username"
               className={`shadow w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20
               ${
                 (errors&&errors.username) ? 'border-red-500' : ''
@@ -245,17 +242,19 @@ export default function Register() {
         <Modal
         >
           <div>
-            <h1>Your mnemonic is: </h1>
+            <h1>Back up mnemonic phrase </h1>
             <hr className='my-3'/>
-            <p className='font-bold'>{mnemonicPhrase}</p>
+            <p>Write down or copy these words in the right order and keep them in a safe place. You are advised to write them down</p>
+            <p className='mt-3 font-bold text-blue-500'>{mnemonicPhrase}</p>
             <button
               type="submit"
               className={"text-white font-bold mt-4 py-2 px-4 rounded w-full bg-primary hover:bg-blue-500  rounded text-white font-bold py-2 hover:shadow-blue-500 hover:shadow-md focus:outline-none focus:bg-primary focus:shadow-outline"}
               onClick={()=>{
+                navigator.clipboard.writeText(mnemonicPhrase)
                 router.push("/login")
               }}
             >
-              Ok
+              Copy
             </button>
             </div>      
         </Modal>

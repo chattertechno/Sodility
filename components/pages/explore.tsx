@@ -16,7 +16,7 @@ export const CreatorsListSection = ({
   pagination = true,
   link,
   title,
-  padding,
+  padding
 }: {
   list: any[];
   pagination?: boolean;
@@ -43,9 +43,9 @@ export const CreatorsListSection = ({
             <CreatorCard
               key={item._id}
               img={item.avatar || cardUserImgPlaceholder}
-              username={`${item.username}`}
-              title={item.title}
-              description={item.description}
+              username={`${item.username ||  "N/A"}`}
+              title={item.title || "N/A"}
+              description={item.description || "N/A"}
               supporters={item.supporters}
               link={item._id}
               header_image={item.header_image}
