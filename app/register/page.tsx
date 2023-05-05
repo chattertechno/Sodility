@@ -33,7 +33,6 @@ export default function Register() {
           balance: { confirmed: balance },
         } = account
         setMnemonic(account.mnemonic || "")
-        localStorage.setItem('mnemonic', mnemonic || "")
         setAccountCreated(true)
       })
       .catch((e) => {
