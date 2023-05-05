@@ -2,12 +2,12 @@
 
 import { FaDiscord, FaFacebookF, FaTwitter, FaYoutube } from "react-icons/fa";
 
-const SocialMedias = () => {
+const SocialMedias = ({facebook,twitter,youtube }:any) => {
   return (
     <div className="flex space-x-4 mt-4">
       <a
         className="text-appGray-500 hover:text-blue-600 "
-        href="http://"
+        href={facebook||"#"}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -15,7 +15,7 @@ const SocialMedias = () => {
       </a>
       <a
         className="text-appGray-500 hover:text-blue-400 "
-        href="http://"
+        href={twitter||"#"}
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -23,7 +23,7 @@ const SocialMedias = () => {
       </a>
       <a
         className="text-appGray-500 hover:text-blue-600 "
-        href="http://"
+        href="#"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -31,7 +31,7 @@ const SocialMedias = () => {
       </a>
       <a
         className="text-appGray-500 hover:text-red-600 "
-        href="http://"
+        href={youtube||"#"}
         target="_blank"
         rel="noopener noreferrer"
       >

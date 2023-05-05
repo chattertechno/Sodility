@@ -1,7 +1,7 @@
 "use client"
 import { CreatorsListSection } from "@/components/pages/explore";
 import { H1, P1 } from "@/components/typography";
-import { useRouter,useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { searchCreatorApi } from "../../../http/creatorApi";
 
