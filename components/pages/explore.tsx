@@ -46,14 +46,14 @@ export const CreatorsListSection = ({
               username={`${item.username ||  "N/A"}`}
               title={item.title || "N/A"}
               description={item.description || "N/A"}
-              supporters={item.supporters}
+              supporters={item.supporters||0}
               link={item._id}
               header_image={item.header_image}
             />
           ))):<>No data found</>}
         </div>
         {/* pagination  */}
-        {pagination && <Pagination title="Results" />}
+        {list?.length>0 && <Pagination title="Results" />}
       </div>
     </section>
   );
