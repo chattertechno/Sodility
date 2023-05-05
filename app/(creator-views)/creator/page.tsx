@@ -17,7 +17,7 @@ import { H2, H3, H4, H5, P1, SubH1, SubH2 } from "@/components/typography";
 import imagePlaceholder from "@/assets/creator/image-article-placeholder.png";
 import videoPlaceholder from "@/assets/creator/post-video.png";
 import heartIcon from "@/assets/heart.png";
-import cardUserImgPlaceholder from "@/assets/index/avatar.png";
+import cardUserImgPlaceholder from "@/assets/avatar.png";
 import userIcon from "@/assets/user.png";
 
 // support
@@ -27,6 +27,9 @@ import superFanIcon from "@/assets/creator/super-fan.png";
 import supporterIcon from "@/assets/creator/supporter.png";
 import { openModal } from "@/context/features/modal/modalSlice";
 import { useAppDispatch } from "@/context/hooks";
+import { useSearchParams } from "next/navigation";
+import { getCreatorByIdApi } from "../../../http/creatorApi";
+import { errorToast } from "../../../helper/toster";
 
 // ======================================================
 // CREATOR PAGE COMPONENT ===============================
@@ -38,20 +41,39 @@ import { getAllContentsForSupporter } from '../../api/admin/dashboard'
 import { extentionHandler } from '../../utils/handler'
 
 export default function CreatorPage() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get('key');
+  const [data, setData] = useState<any>(null)
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(()=>{
+    setIsLoading(true)
+    if(searchQuery){
+      getCreatorByIdApi(searchQuery||"").then((_data)=>{
+        setIsLoading(false)
+        setData(_data)
+      })
+    }else{
+      setIsLoading(false)
+      setData(null)
+      errorToast("creator doesn't existed")
+    }
+  },[searchQuery])
   return (
     <main>
       <section className="bg-creator-banner py-28" />
       <section className="md:w-[90%] mx-auto  px-6 py-8 pb-28">
         <CreatorInfo
-          img={cardUserImgPlaceholder}
-          username="TheDesertLynx"
-          bio="Joël Valenzuela is documenting the global digital cash revolution."
-          supporters={7392}
-          followers={1390}
+          img={data?.avatar||cardUserImgPlaceholder}
+          username={data?.username||"N/A"}
+          bio={data?.bio || "N/A"}
+          supporters={data?.supporters||0}
+          followers={data?.followers||0}
+          isLoading={ isLoading}
         />
         <SupportSection />
         <div className="flex flex-col md:flex-row gap-8">
-          <SideBar />
+          <SideBar mediaLink = {{facebook: data?.facebook, twitter:data?.twitter, youtube:data?.youtube}}/>
           <CreatorContent />
         </div>
       </section>
@@ -64,17 +86,20 @@ const CreatorInfo = ({
   img,
   username,
   bio,
-
   supporters,
   followers,
+  isLoading
 }: {
   img: StaticImageData;
   username: string;
   bio: string;
   supporters: number;
   followers: number;
+  isLoading:boolean;
 }) => {
   const dispatch = useAppDispatch();
+
+  if(isLoading) return<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> Loading ... </div>
 
   return (
     <div className="flex flex-col md:flex-row gap-4 justify-between">
@@ -191,7 +216,7 @@ const SupportSection = () => {
   );
 };
 
-const SideBar = () => {
+const SideBar = ({mediaLink}:any) => {
   return (
     <aside className="h-fit rounded border border-appGray-450 p-8  md:w-72 hover:shadow-sm flex justify-center">
       <div className="space-y-4">
@@ -206,7 +231,7 @@ const SideBar = () => {
           decentralization.
         </P1>
         {/* social media  */}
-        <SocialMedias />
+        <SocialMedias {...mediaLink} />
       </div>
     </aside>
   );
