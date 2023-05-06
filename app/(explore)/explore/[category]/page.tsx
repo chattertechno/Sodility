@@ -72,7 +72,10 @@ useEffect(()=>{
     <main>
       <HeroSection title={category} />
       {isLoading?<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> Loading ... </div>:
-    <ContentCard list={data}/>}
+      <div className="px-5">
+        <ContentCard list={data}/>
+      </div>
+        }
     </main>
   );
 }
