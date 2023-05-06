@@ -69,7 +69,7 @@ export const VideoArticle = ({ content }: any) => {
       {/* bottom - content  */}
       <div className="relative">
         {content.articleType.status === "locked" && (
-          <div className="absolute top-0 left-0 h-full w-full  backdrop-blur-md">
+          <div className="z-10 absolute top-0 left-0 h-full w-full  backdrop-blur-md">
             <div className=" flex flex-col items-center justify-center h-full">
               <div className="flex gap-3 mb-3 items-center">
                 <Image src={lockIcon} alt="lock icon" width={20} height={20} />
@@ -154,7 +154,7 @@ export const AudioArticle = ({ content }: any) => {
       {/* bottom - content  */}
       <div className="relative border-t border-appGray-450">
         {content.articleType.status === "locked" && (
-          <div className="absolute top-0 left-0 h-full w-full  backdrop-blur-md bg-[#0B0F3B]/70 py-8">
+          <div className="z-10 absolute top-0 left-0 h-full w-full  backdrop-blur-md bg-[#0B0F3B]/70 py-8">
             <div className="flex flex-col md:flex-row items-center md:justify-between justify-center px-10 h-full">
               <div className="">
                 <div className="flex gap-3 mb-3 items-center justify-center md:justify-normal">
@@ -353,7 +353,7 @@ export const ImageArticle = ({ content }: any) => {
       {/* bottom - content  */}
       <div className="relative">
         {content.articleType.status === "locked" && (
-          <div className="absolute top-0 left-0 h-full w-full  backdrop-blur-md">
+          <div className="z-10 absolute top-0 left-0 h-full w-full  backdrop-blur-md">
             <div className=" flex flex-col items-center justify-center h-full">
               <div className="flex gap-3 mb-3 items-center">
                 <Image src={lockIcon} alt="lock icon" width={20} height={20} />
