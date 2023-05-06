@@ -4,7 +4,7 @@ import { Pagination } from "../shared";
 
 export default function ContentCard ({list}:any){
     return (
-      <div className="flex-1 space-y-8">
+      <div className="flex-1 justify-items-center py-2 px-10 space-y-8">
         {
           list.length > 0 ? 
           list.map((item: any, index: number) => {
