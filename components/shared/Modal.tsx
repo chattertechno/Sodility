@@ -3,8 +3,10 @@ import { ReactNode } from "react";
 // Redux
 import { closeModal } from "@/context/features/modal/modalSlice";
 import { useAppDispatch } from "@/context/hooks";
+import { useRouter } from "next/navigation";
 
 const Modal = ({ children }: { children: ReactNode }) => {
+  const route =  useRouter()
   const dispatch = useAppDispatch();
 
   return (
@@ -15,7 +17,10 @@ const Modal = ({ children }: { children: ReactNode }) => {
         <div className="flex justify-end">
           <button
             className="focus:outline-none"
-            onClick={() => dispatch(closeModal())}
+            onClick={() => {
+              route.push("/login")
+              dispatch(closeModal()
+              )}}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
