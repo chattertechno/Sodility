@@ -5,7 +5,7 @@ import { closeModal } from "@/context/features/modal/modalSlice";
 import { useAppDispatch } from "@/context/hooks";
 import { useRouter } from "next/navigation";
 
-const Modal = ({ children }: { children: ReactNode }) => {
+const Modal = ({ children,closeCall=false }: { children: ReactNode ,closeCall?:boolean}) => {
   const route =  useRouter()
   const dispatch = useAppDispatch();
 
@@ -18,7 +18,7 @@ const Modal = ({ children }: { children: ReactNode }) => {
           <button
             className="focus:outline-none"
             onClick={() => {
-              route.push("/login")
+              if(closeCall) route.push("./")
               dispatch(closeModal()
               )}}
           >

@@ -16,7 +16,7 @@ const DropDown = ({
 }: DropDownProps) => {
   return (
     <div
-      className={`absolute cursor-auto bg-white  rounded-md shadow-appShadow-sm pt-0 w-96 ${parentPositionAndPadding}` }
+      className={`z-50 absolute cursor-auto bg-white  rounded-md shadow-appShadow-sm pt-0 w-96 ${parentPositionAndPadding}` }
       style={{zIndex:'50 !important'}}
     >
       <div

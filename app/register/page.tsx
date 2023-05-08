@@ -244,6 +244,7 @@ export default function Register() {
       </div>
       {showModal && (
         <Modal
+        closeCall={true}
         >
           <div>
             <h1 className='font-bold'>Back up mnemonic phrase </h1>
