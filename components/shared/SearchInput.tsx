@@ -22,25 +22,25 @@ const SearchInput = () => {
   const [search, setSearch] = useState<string>("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [dropDownActive, setDropDownActive] = useState(false);
-  const [noData, setNoData] = useState("");
+  // const [noData, setNoData] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncingSearch = debounce((src:any) => {
-    if(src) {
+    if(src&& src.length>1) {
     searchCreatorApi(src).then((data:any)=>{
-      if(data){
+      if(Array.isArray(data)&& data.length>0){
         setSearchResults(data.slice(0,6))
         setIsLoading(false)
       }else{
-        setSearchResults([])
-        setNoData("No Data Found")
         setIsLoading(false)
+        setSearchResults([])
+        // setNoData("No Data Found")
       }
     })}
     else {
       setIsLoading(false)
       setSearchResults([])
-      setNoData("No Data Found")
+      // setNoData("No Data Found")
     }
   }, 500);
 
@@ -94,7 +94,7 @@ const SearchInput = () => {
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
         />
       </svg>
-      {(dropDownActive && search!="") && (
+      {(dropDownActive && search.length>1) && (
         <DropDown
           parentPositionAndPadding="top-14 left-0"
           arrowPosition="-top-2 left-8"
@@ -113,7 +113,7 @@ const SearchInput = () => {
 
            }
 
-           ):<li className="px-5 mb-3">{noData}</li>
+           ):<li className="px-5 mb-3">No Data Found</li>
             }
           </ul>}
         </DropDown>
