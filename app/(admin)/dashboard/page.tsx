@@ -66,7 +66,7 @@ export default function DashboardPage() {
           const data = res.data.data.map((item: any) => {
             return { articleType: {
                     content: extentionHandler(item.type || 'audio'),
-                    status: ''//item.locked ? 'locked' : ""
+                    status: item?.locked ? 'locked' : ""
                 },
                 content: item.body || "",
                 img: cardUserImgPlaceholder,
@@ -279,7 +279,7 @@ const CreatorContent = ({content}:any) => {
         // loading ? <div className="flex justify-center items-center h-96"><>loading...</></div> :
         content.length > 0 ? 
         content.map((item: any, index: number) => {
-          if(item.articleType.content === 'video') {
+          if(item?.articleType?.content === 'video') {
             return <VideoArticle content={item} key={index} />
           } else if(item.articleType.content === 'audio') {
             return <AudioArticle content={item} key={index} />
