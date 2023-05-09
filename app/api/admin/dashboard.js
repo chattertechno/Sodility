@@ -4,9 +4,10 @@ import { userService } from "../../../service/authService";
 import { baseUrl  } from "../../../http/index";
 
 export const getAllContents = () => {
+    console.log(baseUrl + "/api/v1/creator/all/content")
     var authOptions = {
         method: "GET",
-        url: baseUrl + "/api/v1/creator/all/content",
+        url: baseUrl + "/creator/all/content",
         headers: HeaderAPI(),
     };
     return axios(authOptions)
@@ -23,7 +24,7 @@ export const getAllContents = () => {
 export const getUserProfile = () => {
     var authOptions = {
         method: "GET",
-        url: baseUrl + "/api/v1/user/profile/",
+        url: baseUrl + "/user/profile/",
         headers: HeaderAPI(),
     };
     return axios(authOptions)
@@ -42,7 +43,7 @@ export const getUserProfile = () => {
 export const getSupporterTransactions = (userId) => {
     var authOptions = {
         method: "GET",
-        url: baseUrl + `/api/v1/creator/${userId}/supporters/record`,
+        url: baseUrl + `/creator/${userId}/supporters/record`,
         headers: HeaderAPI(),
     };
     return axios(authOptions)
@@ -58,7 +59,7 @@ export const getSupporterTransactions = (userId) => {
 export const getAllContentsForSupporter = () => {
     var authOptions = {
         method: "GET",
-        url: baseUrl + "/api/v1/content/all",
+        url: baseUrl + "/content/all",
     };
     return axios(authOptions)
         .then((response) => {

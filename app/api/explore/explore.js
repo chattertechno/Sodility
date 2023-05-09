@@ -4,7 +4,7 @@ import { baseUrl  } from "../../../http/index";
 export const getAllCreatorList = () => {
     var authOptions = {
         method: "GET",
-        url: baseUrl + "/api/v1/creator/all"
+        url: baseUrl + "/creator/all"
     };
     return axios(authOptions)
         .then((response) => {
