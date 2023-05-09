@@ -8,7 +8,7 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 const Editor = dynamic(
   () => import("react-draft-wysiwyg").then(editor => editor.Editor),
   {
-    loading: () => <p>Loading...</p>,
+    loading: () => <p><Loaders /></p>,
   }
 );
 
@@ -17,6 +17,7 @@ import ErrorText from "./ErrorText";
 import { TextAreaProps } from "./aaa.types";
 
 import { P1, SubH2 } from "@/components/typography";
+import { Loaders } from "@/ui-kits/Loaders";
 
 const animation = "transition duration-300 easeInOut";
 

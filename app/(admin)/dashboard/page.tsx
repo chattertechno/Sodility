@@ -28,8 +28,7 @@ import { getLocaleData } from "../../../service/localStorageService";
 import { getAllContents, getUserProfile, getSupporterTransactions } from '../../api/admin/dashboard'
 
 import { extentionHandler } from '../../utils/handler'
-import { errorToast } from "@/helper/toster";
-import ReactLoading from 'react-loading';
+import { Loaders } from "@/ui-kits/Loaders";
 // ==========================================================
 // DASHBOARD PAGE COMPONENT =================================
 // ==========================================================
@@ -147,7 +146,8 @@ const UserInfo = ({user}:any) => {
   //   })
   // }, [])
 
-  return (<>
+  return (
+  <>
     {/* { loadingProfile ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loading </div>: */}
     <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10">
       <div className="flex justify-center">
@@ -238,7 +238,7 @@ const Supporting = () => {
     <div className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       {loadingSupporters ?
-      <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding.... </div>
+      <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> <Loaders /> </div>
       :<><div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Supporters</H5>
       </div>

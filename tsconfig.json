@@ -29,6 +29,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/not-found.tsx"
-, "app/utils/handler.js"  ],
+, "app/utils/handler.js", "app/(explore)/explore/search/[page].jsx"  ],
   "exclude": ["node_modules"]
 }

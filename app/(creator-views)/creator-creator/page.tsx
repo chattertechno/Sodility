@@ -37,6 +37,7 @@ import { getLocaleData } from "../../../service/localStorageService";
 import { getAllContentsForSupporter, getUserProfile } from '../../api/admin/dashboard'
 
 import { extentionHandler } from '../../utils/handler'
+import { Loaders } from "@/ui-kits/Loaders";
 
 export default function CreatorAdminPage() {
   const dispatch = useAppDispatch();
@@ -345,7 +346,7 @@ const CreatorContent = () => {
 
     <div className="flex-1 space-y-8">
       {
-        loading ? <div className="flex justify-center items-center h-96"><>loading...</></div> :
+        loading ? <div className="flex justify-center items-center h-96"><><Loaders /></></div> :
         content.length > 0 ? 
         content.map((item: any, index: number) => {
           if(item.articleType.content === 'video') {

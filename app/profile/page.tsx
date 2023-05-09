@@ -27,6 +27,7 @@ import { getLocaleData } from "../../service/localStorageService";
 
 import { getUserProfile } from '../api/admin/dashboard'
 import { getNotificationSetting, updateNotificationSetting } from '../api/admin/settings'
+import { Loaders } from "@/ui-kits/Loaders";
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
@@ -237,7 +238,7 @@ const NotificationSettings = () => {
       {/* links   */}
 
       { loadingProfile ? <div className="flex justify-center items-center h-96">
-        Loading...
+      <Loaders />
       </div> :
       <div>
         <Formik
