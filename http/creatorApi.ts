@@ -4,9 +4,9 @@ const SEARCH_CREATOR =`${baseUrl}/creator/search`;
 const GET_CREATOR_BY_ID =`${baseUrl}/user`;
 const GET_CREATOR_BY_CATEGORY =`${baseUrl}/creator/content/category`;
 
-export const searchCreatorApi = async (search:string) => {
+export const searchCreatorApi = async (search:string, limit: number) => {
     try {
-      const res = await fetch(`${SEARCH_CREATOR}?search=${search}&limit=6`, {
+      const res = await fetch(`${SEARCH_CREATOR}?search=${search}&limit=${limit}`, {
         method: "GET",
       });
       if (!res.ok) {

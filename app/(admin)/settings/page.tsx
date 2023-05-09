@@ -32,6 +32,7 @@ import { useAppDispatch } from "@/context/hooks";
 // API ==============================================
 import { getUserProfile } from '../../api/admin/dashboard'
 import { getNotificationSetting, updateNotificationSetting, updateUserProfile } from '../../api/admin/settings'
+import { Loaders } from "@/ui-kits/Loaders";
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
@@ -231,7 +232,7 @@ const ProfileSettings = () => {
           </div>
         </div>
 
-        {loadingProfile ? <div>loading...</div>: (
+        {loadingProfile ? <div><Loaders /></div>: (
         <Formik initialValues={user} onSubmit={handleSubmit}>
           {formik => (
             <Form className="px-5 md:px-10 py-5 space-y-5">
@@ -402,7 +403,7 @@ const NotificationSettings = () => {
         <H5>Notifications Settings</H5>
       </div>
       {/* links   */}
-      {loadingProfile ?(<>Loading...</>):
+      {loadingProfile ?(<><Loaders /></>):
       <div>
         <Formik initialValues={user} onSubmit={handleSubmit}>
           {formik => (
