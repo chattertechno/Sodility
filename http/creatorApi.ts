@@ -6,7 +6,7 @@ const GET_CREATOR_BY_CATEGORY =`${baseUrl}/creator/content/category`;
 
 export const searchCreatorApi = async (search:string, limit: number) => {
     try {
-      const res = await fetch(`${SEARCH_CREATOR}/search?search=${search}&limit=${limit}`, {
+      const res = await fetch(`${SEARCH_CREATOR}?search=${search}&limit=${limit}`, {
         method: "GET",
       });
       if (!res.ok) {
