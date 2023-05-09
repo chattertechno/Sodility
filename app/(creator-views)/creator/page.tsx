@@ -58,7 +58,8 @@ export default function CreatorPage() {
       route.push(`/creator-creator?key=${searchQuery}`);
     // else if (data == null && !userType) route.push("/login");
 
-    else if (searchQuery) {
+    else if (searchQuery&&searchQuery?.length>0) {
+      console.log("call-creator")
       getCreatorByIdApi(searchQuery || "").then((_data) => {
         setIsLoading(false);
         setData(_data);
