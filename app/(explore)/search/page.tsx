@@ -13,8 +13,8 @@ export default function SearchCreatorsPage() {
   
   const [data, setData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const searchInput = document.getElementById("search") as HTMLInputElement | null;
-  const searchValue = searchInput?.value;
+  const searchInput = typeof document !== "undefined"?document.getElementById("search"):null as any | null;
+  const searchValue = searchInput&&searchInput?.value;
   
   console.log(searchValue);
   useEffect(()=>{
