@@ -34,6 +34,9 @@ import { Loaders } from "@/ui-kits/Loaders";
 // ==========================================================
 export default function DashboardPage() {
   const [userType , setUserType] = useState("")
+  const [content, setContent] = React.useState([]);
+  const [loading, setLoading] = React.useState(false);
+  const [user, setUser] = React.useState<any>(null)
   const route = useRouter()
 
   useEffect(()=>{
@@ -43,18 +46,83 @@ export default function DashboardPage() {
     setUserType(data?.role)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   },[userType])
+
+  useEffect(() => {
+    setLoading(true);
+    getUserProfile().then((res: any) => {
+      if(res?.data?.status === 200 && res?.data?.msg === 'success') {
+        // setLoadingProfile(false)
+        setUser(res?.data?.data);
+      } else {
+        // setLoadingProfile(false)
+        errorToast("Unable to fetch user profile")
+        console.log('error')
+      }
+    })
+    getAllContents().then((res: any) => {
+      if(res.data.status === 200 && res.data.msg === 'success') {
+        if(res?.data?.data?.length > 0) {
+          const data = res.data.data.map((item: any) => {
+            return { articleType: {
+                    content: extentionHandler(item.type || 'audio'),
+                    status: item?.locked ? 'locked' : ""
+                },
+                content: item.body || "",
+                img: cardUserImgPlaceholder,
+                video: (item.ipfs_url ? {
+                  blurDataURL: item.ipfs_url,
+                  blurHeight: 4,
+                  blurWidth: 8,
+                  height: 431,
+                  src: item.ipfs_url,
+                  width: 768
+                } : videoPlaceholder),
+                metadata: item.created_at,
+                title: item.title,
+                image: (
+                  item.ipfs_url ?
+                  {
+                    "src":item.ipfs_url,
+                    "height":61,
+                    "width":60,
+                    "blurDataURL":item.ipfs_url,
+                    "blurWidth":8,
+                    "blurHeight":8
+                } : ""
+                ),
+            }
+          })
+          setTimeout(()=>{
+
+            setLoading(false);
+            setContent(data);
+          },2000)
+        } else {
+          setLoading(false);
+        }
+      
+      } else {
+        setLoading(false);
+        setContent([]);
+        alert('Unable to fetch data');
+      }
+    })
+
+  }, []);
+
   if(userType != "creator") return <></>
+  if(loading) return<div className="flex justify-center items-center h-96"><ReactLoading type="spin" color="blue" height={'10%'} width={'10%'} /></div>
   return (
     <section className="py-8 md:py-14 md:w-[90%] mx-auto  px-6 flex flex-col md:flex-row gap-8">
       {/* left - info  */}
       <div className="md:w-[30%] space-y-8">
-        <UserInfo />
+        <UserInfo user={user}/>
         <Supporting />
       </div>
 
       {/* right - content  */}
       <div className="flex-1">
-        <CreatorContent />
+        <CreatorContent content={content} />
       </div>
     </section>
   );
@@ -62,24 +130,25 @@ export default function DashboardPage() {
 
 // EXTENDED COMPONENTS ====================================
 
-const UserInfo = () => {
-  const [user, setUser] = React.useState<any>({})
-  const [loadingProfile, setLoadingProfile] = React.useState<boolean>(true)
-  useEffect(() => {
-    getUserProfile().then((res: any) => {
-      if(res.data.status === 200 && res.data.msg === 'success') {
-        setLoadingProfile(false)
-        setUser(res.data.data);
-      } else {
-        setLoadingProfile(false)
-        alert("Unable to fetch user profile")
-        console.log('error')
-      }
-    })
-  }, [])
+const UserInfo = ({user}:any) => {
+  // const [user, setUser] = React.useState<any>({})
+  // const [loadingProfile, setLoadingProfile] = React.useState<boolean>(true)
+  // useEffect(() => {
+  //   getUserProfile().then((res: any) => {
+  //     if(res?.data?.status === 200 && res?.data?.msg === 'success') {
+  //       setLoadingProfile(false)
+  //       setUser(res?.data?.data);
+  //     } else {
+  //       setLoadingProfile(false)
+  //       errorToast("Unable to fetch user profile")
+  //       console.log('error')
+  //     }
+  //   })
+  // }, [])
 
-  return (<>
-    { loadingProfile ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> <Loaders /> </div>:
+  return (
+  <>
+    {/* { loadingProfile ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loading </div>: */}
     <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10">
       <div className="flex justify-center">
         <Image
@@ -103,7 +172,7 @@ const UserInfo = () => {
         </P1>
       </div>
     </div>
-   }
+   {/* } */}
   </>
   );
 };
@@ -114,11 +183,11 @@ const Supporting = () => {
   const [loadingSupporters, setLoadingSupporters] = React.useState<boolean>(true)
   useEffect(() => {
     getUserProfile().then((res: any) => {
-      if(res.data.status === 200 && res.data.msg === 'success') {
-        getSupporterTransactions(res.data.data._id).then((res: any) => {
-          if(res.data.status === 200 && res.data.msg === 'success') {
+      if(res?.data?.status === 200 && res?.data?.msg === 'success') {
+        getSupporterTransactions(res?.data?.data?._id).then((res: any) => {
+          if(res?.data?.status === 200 && res?.data?.msg === 'success') {
             if(res?.data?.data?.length > 0) {
-              setSupporters(res.data.data)
+              setSupporters(res?.data?.data)
             } else {
               setSupporters([]);
             }
@@ -181,11 +250,11 @@ const Supporting = () => {
             <SupportItem
               key={item._id}
               img={
-                item.user_detail && item.user_detail.avatar
-                ? item.user_detail.avatar
+                item?.user_detail && item?.user_detail?.avatar
+                ? item?.user_detail?.avatar
                 : userPlaceholder}
-              title={`${item.user_detail.username || 'N/A'} ( Digital Cash Network )`}
-              amount={item.donate || 0}
+              title={`${item?.user_detail?.username || 'N/A'} ( Digital Cash Network )`}
+              amount={item?.donate || 0}
             />
           );
         })}
@@ -197,68 +266,20 @@ const Supporting = () => {
   );
 };
 
-const CreatorContent = () => {
-  const [content, setContent] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
+const CreatorContent = ({content}:any) => {
+  // const [content, setContent] = React.useState([]);
+  // const [loading, setLoading] = React.useState(true);
   
-  useEffect(() => {
-
-    getAllContents().then((res: any) => {
-      if(res.data.status === 200 && res.data.msg === 'success') {
-        if(res?.data?.data?.length > 0) {
-          const data = res.data.data.map((item: any) => {
-            return { articleType: {
-                    content: extentionHandler(item.type || 'audio'),
-                    status: ''//item.locked ? 'locked' : ""
-                },
-                content: item.body || "",
-                img: cardUserImgPlaceholder,
-                video: (item.ipfs_url ? {
-                  blurDataURL: item.ipfs_url,
-                  blurHeight: 4,
-                  blurWidth: 8,
-                  height: 431,
-                  src: item.ipfs_url,
-                  width: 768
-                } : videoPlaceholder),
-                metadata: item.created_at,
-                title: item.title,
-                image: (
-                  item.ipfs_url ?
-                  {
-                    "src":item.ipfs_url,
-                    "height":61,
-                    "width":60,
-                    "blurDataURL":item.ipfs_url,
-                    "blurWidth":8,
-                    "blurHeight":8
-                } : ""
-                ),
-            }
-          })
-          setContent(data);
-          setLoading(false);
-        } else {
-          setLoading(false);
-        }
-      
-      } else {
-        setLoading(false);
-        setContent([]);
-        alert('Unable to fetch data');
-      }
-    })
-
-  }, []);
+  
 
   return (
     
     <div className="flex-1 space-y-8">
       {
-        loading ? <div className="flex justify-center items-center h-96"><><Loaders /></></div> :
+        // loading ? <div className="flex justify-center items-center h-96"><>loading...</></div> :
         content.length > 0 ? 
         content.map((item: any, index: number) => {
-          if(item.articleType.content === 'video') {
+          if(item?.articleType?.content === 'video') {
             return <VideoArticle content={item} key={index} />
           } else if(item.articleType.content === 'audio') {
             return <AudioArticle content={item} key={index} />

@@ -156,7 +156,7 @@ const Navigation = ({userType}:any) => {
           {navItem.hasDropDown ? (
             <div
               onClick={() => setDropDownActive(!dropDownActive)}
-              className={`text-sm cursor-pointer relative`}
+              className={`z-50 text-sm cursor-pointer relative`}
             >
               <div
                 className={`${
@@ -431,7 +431,7 @@ const CreatorNavigation = ({user}:any) => {
           parentPositionAndPadding="top-16 right-0 !w-48 p-3"
           arrowPosition="-top-2 right-7"
         >
-          <ul className="py-2 pt-5 bg-white relative flex flex-col justify-between">
+          <ul className=" py-2 pt-5 bg-white relative flex flex-col justify-between">
             {navList.map((navItem) => (
               <Link
                 key={navItem.name}

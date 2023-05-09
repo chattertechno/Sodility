@@ -96,7 +96,7 @@ const SearchInput = () => {
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
         />
       </svg>
-      {(dropDownActive && search!="") && (
+      {(dropDownActive && search.length>1) && (
         <DropDown
           parentPositionAndPadding="top-14 left-0"
           arrowPosition="-top-2 left-8"

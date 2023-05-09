@@ -50,7 +50,7 @@ export const CreatorsListSection = ({
               link={item._id}
               header_image={item.header_image}
             />
-          ))):<>No data found</>}
+          ))):<>No creators yet in this category, please try others</>}
         </div>
         {/* pagination  */}
         {list?.length>0 && <Pagination title="Results" />}

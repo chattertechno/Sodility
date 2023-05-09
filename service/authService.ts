@@ -12,7 +12,9 @@ const logout =()=> {
     removeLocaleData('user');
     removeLocaleData('token');
     userSubject.next(null);
-    Router.push('/login');
+    // Router.push('/login');
+    if(typeof window !== "undefined")
+        window.location.href = '/';
 }
 
 export const userService = {

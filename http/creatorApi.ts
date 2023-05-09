@@ -1,6 +1,6 @@
 import { baseUrl } from "./index";
 import { errorToast, successToast } from "../helper/toster";
-const SEARCH_CREATOR =`${baseUrl}/creator`;
+const SEARCH_CREATOR =`${baseUrl}/creator/search`;
 const GET_CREATOR_BY_ID =`${baseUrl}/user`;
 const GET_CREATOR_BY_CATEGORY =`${baseUrl}/creator/content/category`;
 
