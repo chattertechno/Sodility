@@ -57,7 +57,7 @@ export default function DashboardPage() {
         setUser(res?.data?.data);
       } else {
         // setLoadingProfile(false)
-        errorToast("Unable to fetch user profile")
+        // errorToast("Unable to fetch user profile")
         console.log('error')
       }
     })
@@ -113,7 +113,7 @@ export default function DashboardPage() {
   }, []);
 
   if(userType != "creator") return <></>
-  if(loading) return<div className="flex justify-center items-center h-96"><ReactLoading type="spin" color="blue" height={'10%'} width={'10%'} /></div>
+  if(loading) return<div className="flex justify-center items-center h-96"><Loaders /></div>
   return (
     <section className="py-8 md:py-14 md:w-[90%] mx-auto  px-6 flex flex-col md:flex-row gap-8">
       {/* left - info  */}
