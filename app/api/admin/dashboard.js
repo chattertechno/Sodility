@@ -1,5 +1,6 @@
 import axios from "axios";
 import  HeaderAPI from "../headerConfig";
+import { userService } from "../../../service/authService";
 
 export const getAllContents = () => {
     var authOptions = {
@@ -29,6 +30,9 @@ export const getUserProfile = () => {
             return response;
         })
         .catch((error) => {
+            if(error && error.response.status == 401){
+                userService.logout()
+            }
             console.log("error :", error);
         });
 };
