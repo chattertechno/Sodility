@@ -27,40 +27,63 @@ import supporterIcon from "@/assets/creator/supporter.png";
 import { openModal } from "@/context/features/modal/modalSlice";
 import { useAppDispatch } from "@/context/hooks";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { getLocaleData } from "../../../service/localStorageService";
 // ======================================================
 // CREATOR PAGE COMPONENT ===============================
 // ======================================================
 
 // API
-import { getAllContentsForSupporter, getUserProfile } from '../../api/admin/dashboard'
+import {
+  getAllContentsForSupporter,
+  getUserProfile,
+} from "../../api/admin/dashboard";
 
-import { extentionHandler } from '../../utils/handler'
-import { Loaders } from "@/ui-kits/Loaders";
+import { extentionHandler } from "../../utils/handler";
+import { getContentByCreatorIdApi } from "@/http/contentApi";
+import { getCreatorByIdApi } from "@/http/creatorApi";
+import { errorToast } from "@/helper/toster";
 
 export default function CreatorAdminPage() {
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("key");
+  const [data, setData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const [userType , setUserType] = useState("")
-  const route = useRouter()
-  
-  useEffect(()=>{
-    const data = getLocaleData("user") as any
-    if(data && data?.role != "creator" ) route.push("/")
-    else if(data==null&&userType==undefined) route.push("/login")
-    setUserType(data?.role)
-  },[userType])
-  if(userType != "creator") return <></>
+  const [userType, setUserType] = useState("");
+  const route = useRouter();
+
+  useEffect(() => {
+    setIsLoading(true);
+    const data = getLocaleData("user") as any;
+    if (data && data?.role != "creator")
+      route.push(`/creator?key=${searchQuery}`);
+    else if (data == null && !userType) route.push("/login");
+
+    else if (searchQuery) {
+      getCreatorByIdApi(searchQuery || "").then((_data) => {
+        setIsLoading(false);
+        setData(_data);
+      });
+    } else {
+      setIsLoading(false);
+      setData(null);
+      errorToast("creator doesn't existed");
+    }
+    setUserType(data?.role);
+  }, [searchQuery]);
+  if (userType != "creator") return <></>;
   return (
     <main>
       <section className="bg-creator-banner py-28" />
       <section className="md:w-[90%] mx-auto  px-6 py-8 pb-28">
-        <CreatorInfo 
-          img={cardUserImgPlaceholder}
-          username="TheDesertLynx"
-          bio="Joël Valenzuela is documenting the global digital cash revolution."
-          supporters={7392}
-          followers={1390}
+        <CreatorInfo
+          img={data?.avatar || cardUserImgPlaceholder}
+          username={data?.username || "N/A"}
+          bio={data?.bio || "N/A"}
+          supporters={data?.supporters || 0}
+          followers={data?.followers || 0}
+          isLoading={isLoading}
         />
         <SupportSection />
         <div className="flex flex-col md:flex-row gap-8">
@@ -81,7 +104,7 @@ export default function CreatorAdminPage() {
             </Button>
             <SideBar />
           </div>
-          <CreatorContent />
+          <CreatorContent creatorId={searchQuery} />
         </div>
       </section>
     </main>
@@ -96,15 +119,23 @@ const CreatorInfo = ({
 
   supporters,
   followers,
+  isLoading,
 }: {
   img: StaticImageData;
   username: string;
   bio: string;
   supporters: number;
   followers: number;
+  isLoading: boolean;
 }) => {
   const dispatch = useAppDispatch();
-
+  if (isLoading)
+    return (
+      <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10">
+        {" "}
+        Loading ...{" "}
+      </div>
+    );
   return (
     <div className="flex flex-col md:flex-row gap-4 justify-between">
       {/* left - user  */}
@@ -114,6 +145,7 @@ const CreatorInfo = ({
             src={img}
             alt={username}
             width={100}
+            height={100}
             className="rounded-full p-1 border border-appGray-400"
           />
         </div>
@@ -224,7 +256,7 @@ const SideBar = () => {
   return (
     <aside className="h-fit rounded border border-appGray-450 p-8  w-72 hover:shadow-sm flex justify-center">
       <div className="space-y-4">
-        <H5 >Digital Cash Network</H5>
+        <H5>Digital Cash Network</H5>
         <P1>
           Documenting the global digital cash revolution, the greatest financial
           revolution the world has seen in recent times.
@@ -241,8 +273,7 @@ const SideBar = () => {
   );
 };
 
-const CreatorContent = () => {
-  
+const CreatorContent = ({ creatorId }: any) => {
   const content1 = [
     {
       articleType: {
@@ -287,79 +318,93 @@ const CreatorContent = () => {
     },
   ];
 
-
   const [content, setContent] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  
-  useEffect(() => {
 
-    getAllContentsForSupporter().then((res: any) => {
-      if(res.data.status === 200 && res.data.msg === 'success') {
-        if(res?.data?.data?.length > 0) {
-          const data = res.data.data.map((item: any) => {
-            item.ipfs_url = item.ipfs_url && item.ipfs_url.includes('http') ? item.ipfs_url : "";
-            return { articleType: {
-                    content: extentionHandler(item.type || 'audio'),
-                    status: item.locked ? 'locked' : ""
-                },
-                content: item.body || "",
-                img: cardUserImgPlaceholder,
-                video: (item.ipfs_url ? {
-                  blurDataURL: item.ipfs_url,
-                  blurHeight: 4,
-                  blurWidth: 8,
-                  height: 431,
-                  src: item.ipfs_url,
-                  width: 768
-                } : videoPlaceholder),
-                metadata: item.created_at,
-                title: item.title,
-                image: (
-                  item.ipfs_url ?
-                  {
-                    "src":item.ipfs_url,
-                    "height":61,
-                    "width":60,
-                    "blurDataURL":item.ipfs_url,
-                    "blurWidth":8,
-                    "blurHeight":8
-                } : ""
-                ),
-            }
-          })
-          setContent(data);
+  useEffect(() => {
+    setLoading(true);
+    if (creatorId) {
+      getContentByCreatorIdApi(creatorId).then((data: any) => {
+        // if(res.data.status === 200 && res.data.msg === 'success') {
+        if (data && data?.length > 0) {
+          const _data = data.map((item: any) => {
+            item.ipfs_url =
+              item.ipfs_url && item.ipfs_url.includes("http")
+                ? item.ipfs_url
+                : "";
+            return {
+              articleType: {
+                content: extentionHandler(item.type || "audio"),
+                status: item.locked ? "locked" : "",
+              },
+              content: item.body || "",
+              img: cardUserImgPlaceholder,
+              video: item.ipfs_url
+                ? {
+                    blurDataURL: item.ipfs_url,
+                    blurHeight: 4,
+                    blurWidth: 8,
+                    height: 431,
+                    src: item.ipfs_url,
+                    width: 768,
+                  }
+                : videoPlaceholder,
+              metadata: item.created_at,
+              title: item.title,
+              image: item.ipfs_url
+                ? {
+                    src: item.ipfs_url,
+                    height: 61,
+                    width: 60,
+                    blurDataURL: item.ipfs_url,
+                    blurWidth: 8,
+                    blurHeight: 8,
+                  }
+                : "",
+            };
+          });
+          setContent(_data);
           setLoading(false);
+          // } else {
+          //   setLoading(false);
+          // }
         } else {
           setLoading(false);
+          setContent([]);
+          // errorToast('Unable to fetch creator content')
+          // alert('Unable to fetch data');
         }
-      
-      } else {
-        setLoading(false);
-        setContent([]);
-        alert('Unable to fetch data');
-      }
-    })
-
-  }, []);
+      });
+    }else{
+      setContent([])
+      setLoading(false)
+      errorToast("unable to get content")
+    }
+  }, [creatorId]);
 
   return (
-
     <div className="flex-1 space-y-8">
-      {
-        loading ? <div className="flex justify-center items-center h-96"><><Loaders /></></div> :
-        content.length > 0 ? 
+      {loading ? (
+        <div className="flex justify-center items-center h-96">
+          <>loading...</>
+        </div>
+      ) : content.length > 0 ? (
         content.map((item: any, index: number) => {
-          if(item.articleType.content === 'video') {
-            return <VideoArticle content={item} key={index} />
-          } else if(item.articleType.content === 'audio') {
-            return <AudioArticle content={item} key={index} />
-          } else if(item.articleType.content === 'text') {
-            return <TextArticle content={item} key={index} />
-          } else if(item.articleType.content === 'image') {
-            return <ImageArticle content={item} key={index} />
+          if (item.articleType.content === "video") {
+            return <VideoArticle content={item} key={index} />;
+          } else if (item.articleType.content === "audio") {
+            return <AudioArticle content={item} key={index} />;
+          } else if (item.articleType.content === "text") {
+            return <TextArticle content={item} key={index} />;
+          } else if (item.articleType.content === "image") {
+            return <ImageArticle content={item} key={index} />;
           }
-        }): <div className="flex justify-center items-center h-96"><>No any article posted yet</></div>
-      }
+        })
+      ) : (
+        <div className="flex justify-center items-center h-96">
+          <>No any article posted yet</>
+        </div>
+      )}
       <div className="">
         <Pagination title="Posts" />
       </div>
