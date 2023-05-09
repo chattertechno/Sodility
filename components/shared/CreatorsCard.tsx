@@ -4,6 +4,7 @@ import { H5, P1, SubH1 } from "../typography";
 // ASSETS
 import heartIcon from "@/assets/heart.png";
 import Link from "next/link";
+import { getRedirectRouteByRole } from "@/helper/roleHelper";
 
 const CreatorCard = ({
   img,
@@ -24,7 +25,7 @@ const CreatorCard = ({
 }) => {
   return (
     <Link
-      href={`/creator?key=${link}`}
+      href={getRedirectRouteByRole(link)}
       className="rounded overflow-hidden bg-white md:w-[22rem]"
     >
       {/* top  */}

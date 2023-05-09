@@ -368,28 +368,28 @@ const CreatorNavigation = ({user}:any) => {
   const navList = [
     {
       name: "Dashboard",
-      link: "/creator-creator",
-      active: pathname === "/creator-creator",
+      link: "/dashboard",
+      active: pathname === "/dashboard",
     },
     {
       name: "Add Post",
       link: pathname,
       active: pathname === "/add post",
     },
-    {
-      name: "My Page",
-      link: "/dashboard",
-      active: pathname === "/dashboard",
-    },
+    // {
+    //   name: "My Page",
+    //   link: "/dashboard",
+    //   active: pathname === "/dashboard",
+    // },
     {
       name: "Creator Settings",
-      link: "/",
-      active: pathname === "/settings",
+      link: "/profile",
+      active: pathname === "/profile",
     },
     {
       name: "My Profile",
-      link: "/profile",
-      active: pathname === "/profile",
+      link: "/dashboard",
+      active: pathname === "/dashboard",
     },
     {
       name: "Help & FAQ",
