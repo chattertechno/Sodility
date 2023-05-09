@@ -13,14 +13,14 @@ export default function SearchCreatorsPage() {
   
   const [data, setData] = useState([])
   const [isLoading, setIsLoading] = useState(false)
-  const searchInput = typeof document !== "undefined"?document.getElementById("search"):null as any | null;
-  const searchValue = searchInput&&searchInput?.value;
-  
-  console.log(searchValue);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("query");
+
+  console.log(searchQuery);
   useEffect(()=>{
     setIsLoading(true)
-    if(searchValue){
-      searchCreatorApi(searchValue ? searchValue : '', 0).then((_data)=>{
+    if(searchQuery){
+      searchCreatorApi(searchQuery ? searchQuery : '', 0).then((_data)=>{
         setIsLoading(false)
         setData(_data)
       })
@@ -28,12 +28,12 @@ export default function SearchCreatorsPage() {
       setIsLoading(false)
     }
 
-  },[searchValue])
+  },[searchQuery])
 
  
   return (
     <main>
-      <HeroSection text={searchValue} />
+      <HeroSection text={searchQuery} />
       <div className="md:w-[90%] mx-auto  px-6 pt-8 -mb-10">
         <P1>Results {`(${data?.length ? data?.length : 0})`}</P1>
       </div>
