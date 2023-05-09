@@ -39,6 +39,7 @@ import { errorToast } from "../../../helper/toster";
 import { getAllContentsForSupporter } from '../../api/admin/dashboard'
 
 import { extentionHandler } from '../../utils/handler'
+import { Loaders } from "@/ui-kits/Loaders";
 
 export default function CreatorPage() {
   const searchParams = useSearchParams();
@@ -56,7 +57,7 @@ export default function CreatorPage() {
     }else{
       setIsLoading(false)
       setData(null)
-      errorToast("creator doesn't existed")
+      errorToast("creator doesn't exist")
     }
   },[searchQuery])
   return (
@@ -99,7 +100,7 @@ const CreatorInfo = ({
 }) => {
   const dispatch = useAppDispatch();
 
-  if(isLoading) return<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> Loading ... </div>
+  if(isLoading) return<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> <Loaders /> </div>
 
   return (
     <div className="flex flex-col md:flex-row gap-4 justify-between">
@@ -340,7 +341,7 @@ const CreatorContent = () => {
   return (
     <div className="flex-1 space-y-8">
       {
-        loading ? <div className="flex justify-center items-center h-96"><>loading...</></div> :
+        loading ? <div className="flex justify-center items-center h-96"><><Loaders /></></div> :
         content.length > 0 ? 
         content.map((item: any, index: number) => {
           if(item.articleType.content === 'video') {

@@ -97,7 +97,7 @@ const Navigation = ({userType}:any) => {
   const navList = [
     { name: "Home", link: "/", active: pathname === "/", hasDropDown: false },
     {
-      name: "Explore",
+      name: "Explore", 
       link: "/explore",
       active: pathname === "/explore/*",
       hasDropDown: true,

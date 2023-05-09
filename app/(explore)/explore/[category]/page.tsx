@@ -11,6 +11,7 @@ import { categories } from "../../../../staticData";
 import { extentionHandler } from "@/app/utils/handler";
 import cardUserImgPlaceholder from "@/assets/avatar.png";
 import videoPlaceholder from "@/assets/creator/post-video.png";
+import { Loaders } from "@/ui-kits/Loaders";
 // ======================================================
 // WRITERS AND JOURNALIST PAGE COMPONENT ================
 // ======================================================
@@ -71,7 +72,7 @@ useEffect(()=>{
   return (
     <main>
       <HeroSection title={category} />
-      {isLoading?<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> Loading ... </div>:
+      {isLoading?<div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> <Loaders /> </div>:
       <div className="px-5">
         <ContentCard list={data}/>
       </div>

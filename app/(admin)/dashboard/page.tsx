@@ -28,6 +28,7 @@ import { getLocaleData } from "../../../service/localStorageService";
 import { getAllContents, getUserProfile, getSupporterTransactions } from '../../api/admin/dashboard'
 
 import { extentionHandler } from '../../utils/handler'
+import { Loaders } from "@/ui-kits/Loaders";
 // ==========================================================
 // DASHBOARD PAGE COMPONENT =================================
 // ==========================================================
@@ -78,7 +79,7 @@ const UserInfo = () => {
   }, [])
 
   return (<>
-    { loadingProfile ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loading </div>:
+    { loadingProfile ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> <Loaders /> </div>:
     <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10">
       <div className="flex justify-center">
         <Image
@@ -168,7 +169,7 @@ const Supporting = () => {
     <div className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       {loadingSupporters ?
-      <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding.... </div>
+      <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> <Loaders /> </div>
       :<><div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Supporters</H5>
       </div>
@@ -254,7 +255,7 @@ const CreatorContent = () => {
     
     <div className="flex-1 space-y-8">
       {
-        loading ? <div className="flex justify-center items-center h-96"><>loading...</></div> :
+        loading ? <div className="flex justify-center items-center h-96"><><Loaders /></></div> :
         content.length > 0 ? 
         content.map((item: any, index: number) => {
           if(item.articleType.content === 'video') {
