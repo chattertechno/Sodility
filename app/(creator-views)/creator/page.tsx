@@ -395,7 +395,7 @@ const CreatorContent = ({creatorId}:any) => {
         </div>
       )}
       <div className="">
-        <Pagination title="Posts" />
+       { content.length > 0&&<Pagination title="Posts" />}
       </div>
     </div>
   );
