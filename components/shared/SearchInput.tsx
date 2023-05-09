@@ -13,6 +13,7 @@ import { searchCreatorApi } from "../../http/creatorApi";
 // ASSETS
 import userImgPlaceholder from "../../assets/avatar.png";
 import { useRouter } from "next/navigation";
+import { getRedirectRouteByRole } from "@/helper/roleHelper";
 
 // ===========================================
 // SEARCH INPUT COMPONENT ====================
@@ -107,7 +108,8 @@ const SearchInput = () => {
                 name={itm.username}
                 username={itm.username||""}
                 img={itm.avatar}
-                link={`/creator?key=${itm._id}`}
+                // link={`/creator?key=${itm._id}`}
+                link={getRedirectRouteByRole(itm._id)}
               />
             </div>)
 

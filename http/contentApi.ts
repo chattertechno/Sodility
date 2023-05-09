@@ -69,7 +69,8 @@ export const searchContentApi = async (search:string) => {
       }
       const result = await res.json();
       // successToast("Fetched successfully")
-      return result.data
+      if(!result.data) return []
+      else return result.data
     } catch (error:any) {
       errorToast(error.toString())
       console.log("error", JSON.stringify(error));

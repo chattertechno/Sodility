@@ -359,7 +359,8 @@ const CreatorContent = ({creatorId}:any) => {
       } else {
         setLoading(false);
         setContent([]);
-        alert('Unable to fetch data');
+        // errorToast('Unable to fetch creator content')
+        // alert('Unable to fetch data');
       }
     })}
 
