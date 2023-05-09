@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 // COMPONENTS
@@ -25,6 +25,7 @@ import { successToast } from "../../helper/toster";
 export default function Header() {
   const [userType, setUserType]= useState("public");
   const [user, setUser]= useState(null);
+  const route = useRouter()
 
   useEffect(()=>{
     const _user = getLocaleData("user") as any
@@ -62,7 +63,7 @@ export default function Header() {
             <Button
               variant="primary"
               className="py-3"
-              action={() => {}}
+              action={() => {route.push("/register")}}
               type="button"
             >
               Get Started

@@ -54,9 +54,9 @@ export default function CreatorPage() {
   useEffect(() => {
     setIsLoading(true);
     const data = getLocaleData("user") as any;
-    if (data && data?.role != "supporter")
+    if (data && data?.role == "creator")
       route.push(`/creator-creator?key=${searchQuery}`);
-    else if (data == null && userType == undefined) route.push("/login");
+    // else if (data == null && !userType) route.push("/login");
 
     else if (searchQuery) {
       getCreatorByIdApi(searchQuery || "").then((_data) => {
@@ -70,7 +70,7 @@ export default function CreatorPage() {
     }
     setUserType(data?.role);
   }, [searchQuery]);
-  if (userType != "supporter") return <></>;
+  if (userType == "creator") return <></>;
   return (
     <main>
       <section className="bg-creator-banner py-28" />

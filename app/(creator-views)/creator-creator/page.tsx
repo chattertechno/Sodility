@@ -58,7 +58,7 @@ export default function CreatorAdminPage() {
     const data = getLocaleData("user") as any;
     if (data && data?.role != "creator")
       route.push(`/creator?key=${searchQuery}`);
-    else if (data == null && userType == undefined) route.push("/login");
+    else if (data == null && !userType) route.push("/login");
 
     else if (searchQuery) {
       getCreatorByIdApi(searchQuery || "").then((_data) => {
