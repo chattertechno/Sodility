@@ -1,9 +1,10 @@
 import axios from "axios";
+import { baseUrl  } from "../../../http/index";
 
 export const getAllCreatorList = () => {
     var authOptions = {
         method: "GET",
-        url: process.env.NEXT_PUBLIC_BASE_URL + "/api/v1/creator/all"
+        url: baseUrl + "/api/v1/creator/all"
     };
     return axios(authOptions)
         .then((response) => {
