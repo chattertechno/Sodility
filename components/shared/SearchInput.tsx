@@ -78,7 +78,7 @@ const SearchInput = () => {
         type="text"
         id="search"
         placeholder="Search Creators"
-        value={search ? search : searchQuery}
+        value={search}
         onChange={handleSearch}
         onBlur={_ => bebouncingBlur()}
         onKeyDown={handleKeyDown}
