@@ -1,6 +1,6 @@
 export const categories = [
   { key: "writers-and-journalists", value: "Writers & Journalists" },
-  { key: "gaming", value: "Gaming Creators" },
+  { key: "gaming-creators", value: "Gaming Creators" },
   { key: "video-creators", value: "Video Creators" },
   { key: "musicians", value: "Musicians" },
   { key: "visual-artist", value: "Visual Artists" },

@@ -108,7 +108,7 @@ const Navigation = ({userType}:any) => {
             name: "Writers & Journalists",
             link: "/explore/writers-and-journalists",
           },
-          { name: "Gaming Creators", link: "/explore/gaming" },
+          { name: "Gaming Creators", link: "/explore/gaming-creators" },
           { name: "Non-Profits", link: "/explore/non-profits" },
           { name: "Local Businesses", link: "/explore/local-business" },
           {
