@@ -118,7 +118,7 @@ export default function Register() {
   return (
     <>
       <div className="h-full mt-3  bg-white-200  flex items-center  align-middle w-full justify-center">
-        <form onSubmit={handleSubmit(onSubmit)} className="bg-white-500 shadow-xl shadow-gray-500/20  border w-1/3 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="sm:w-2/3 md:w-2/3 lg:w-2/3 xl:w-1/3 bg-white-500 shadow-xl shadow-gray-500/20  border w-full h-3/6 border-gray-400 rounded-md mt-5 px-4 mx-5 pt-4 pb-8">
         <div className='flex justify-center  font-medium text-2xl  mb-2'>Registration</div>
         <h4 >Your Dash Address is:<div className='font-bold text-blue-500'>{`"${accountInfo?.address?accountInfo?.address:""}"`}</div></h4>
             <hr className='my-2 border-black-500 border'/>
