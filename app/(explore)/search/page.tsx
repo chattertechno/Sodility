@@ -16,7 +16,6 @@ export default function SearchCreatorsPage() {
   const searchParams = useSearchParams();
   const searchQuery = searchParams.get("query");
 
-  console.log(searchQuery);
   useEffect(()=>{
     setIsLoading(true)
     if(searchQuery){
@@ -35,7 +34,7 @@ export default function SearchCreatorsPage() {
     <main>
       <HeroSection text={searchQuery} />
       <div className="md:w-[90%] mx-auto  px-6 pt-8 -mb-10">
-        <P1>Results {`(${data?.length ? data?.length : 0})`}</P1>
+        <P1> {data?.length && !isLoading ? `Results (${data?.length })` : ''}</P1>
       </div>
       {isLoading ? <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> <Loaders /> </div>
        :<CreatorsListSection list={data} pagination={false} />}
