@@ -41,14 +41,14 @@ export const CreatorsListSection = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {list?.map((item, i) => (
             <CreatorCard
-              key={item._id}
-              img={item.avatar || cardUserImgPlaceholder}
-              username={`${item.username ||  "N/A"}`}
-              title={item.title || "N/A"}
-              description={item.description || "N/A"}
-              supporters={item.supporters||0}
-              link={item._id}
-              header_image={item.header_image}
+              key={item?._id}
+              img={item?.avatar || cardUserImgPlaceholder}
+              username={`${item?.username ||  "N/A"}`}
+              title={item?.title || "N/A"}
+              description={item?.description || "N/A"}
+              supporters={item?.supporters||0}
+              link={item?._id}
+              header_image={item?.header_image}
             />
           ))}
           {!list ? 'No creators yet in this category, please try others' : ''}

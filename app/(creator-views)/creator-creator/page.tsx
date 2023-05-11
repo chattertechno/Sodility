@@ -102,7 +102,13 @@ export default function CreatorAdminPage() {
               />
               <span>Add a Post</span>
             </Button>
-            <SideBar />
+            <SideBar
+               mediaLink={{
+                facebook: data?.facebook,
+                twitter: data?.twitter,
+                youtube: data?.youtube,
+              }}
+            />
           </div>
           <CreatorContent creatorId={searchQuery} />
         </div>
@@ -252,7 +258,7 @@ const SupportSection = () => {
   );
 };
 
-const SideBar = () => {
+const SideBar = ({ mediaLink }: any) => {
   return (
     <aside className="h-fit rounded border border-appGray-450 p-8  w-72 hover:shadow-sm flex justify-center">
       <div className="space-y-4">
@@ -267,7 +273,7 @@ const SideBar = () => {
           decentralization.
         </P1>
         {/* social media  */}
-        <SocialMedias />
+        <SocialMedias {...mediaLink} />
       </div>
     </aside>
   );
@@ -406,7 +412,7 @@ const CreatorContent = ({ creatorId }: any) => {
         </div>
       )}
       <div className="">
-        <Pagination title="Posts" />
+      { content.length > 0&& <Pagination title="Posts" />}
       </div>
     </div>
   );

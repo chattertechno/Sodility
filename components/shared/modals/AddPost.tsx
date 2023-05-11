@@ -81,6 +81,7 @@ const AddPost = () => {
       ipfs_url:values.ipfs_url,
       body,
       type,
+      category_name:values.category_name,
       content_type: selectedLockedFor,
       currency_type:"USD"
     }
