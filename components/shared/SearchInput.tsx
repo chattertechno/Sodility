@@ -3,6 +3,7 @@
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 // Components
 import { P1 } from "../typography";
@@ -22,6 +23,8 @@ import { Loaders } from "@/ui-kits/Loaders";
 const SearchInput = () => {
   const   route = useRouter()
   const [search, setSearch] = useState<string>("");
+  const searchParams = useSearchParams();
+  const searchQuery: any = searchParams.get("query");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [dropDownActive, setDropDownActive] = useState(false);
   const [noData, setNoData] = useState("");
@@ -57,7 +60,7 @@ const SearchInput = () => {
     if (event.key === 'Enter') {
       // Handle the Enter key press event here
       setDropDownActive(false)
-      route.push(`/search`)
+      route.push(`/search?query=${search}`)
     }
   };
 
@@ -121,7 +124,7 @@ const SearchInput = () => {
 
            })} 
 
-           {searchResults.length > 5 && !isLoading && <div onClick={() => route.push(`/search`)} className="w-full flex pb-3 justify-center items-center cursor-pointer hover:text-blue-500">See all results</div>}
+           {searchResults.length > 5 && !isLoading && <div onClick={() => route.push(`/search?query=${search}`)} className="w-full flex pb-3 justify-center items-center cursor-pointer hover:text-blue-500">See all results</div>}
 
 
            {searchResults.length === 0 && <li className="px-5 mb-3">{search ? noData : "You haven't searched anything."}</li>}

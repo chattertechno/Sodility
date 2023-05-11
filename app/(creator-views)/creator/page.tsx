@@ -79,6 +79,7 @@ export default function CreatorPage() {
         <CreatorInfo
           img={data?.avatar || cardUserImgPlaceholder}
           username={data?.username || "N/A"}
+          title={data?.title || 'N/A' }
           bio={data?.bio || "N/A"}
           supporters={data?.supporters || 0}
           followers={data?.followers || 0}
@@ -108,6 +109,7 @@ const CreatorInfo = ({
   supporters,
   followers,
   isLoading,
+  title
 }: {
   img: StaticImageData;
   username: string;
@@ -115,6 +117,7 @@ const CreatorInfo = ({
   supporters: number;
   followers: number;
   isLoading: boolean;
+  title: string;
 }) => {
   const dispatch = useAppDispatch();
 
@@ -140,7 +143,7 @@ const CreatorInfo = ({
         </div>
         <div className="flex flex-col">
           <SubH1 className="text-appGray-500">@{username}</SubH1>
-          <H4>{bio}</H4>
+          <H4>{title}</H4>
           <div className="flex gap-4 capitalize mt-2">
             <P1 className="flex gap-1.5 items-center">
               <span className="">

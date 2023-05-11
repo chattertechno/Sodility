@@ -39,7 +39,7 @@ export const CreatorsListSection = ({
         )}
         {/* cards - list  */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {list?.length>0?(list?.map((item, i) => (
+          {list?.map((item, i) => (
             <CreatorCard
               key={item?._id}
               img={item?.avatar || cardUserImgPlaceholder}
@@ -50,7 +50,9 @@ export const CreatorsListSection = ({
               link={item?._id}
               header_image={item?.header_image}
             />
-          ))):<>No creators yet in this category, please try others</>}
+          ))}
+          {!list ? 'No creators yet in this category, please try others' : ''}
+          
         </div>
         {/* pagination  */}
         {list?.length>0 && <Pagination title="Results" />}

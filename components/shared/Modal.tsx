@@ -18,7 +18,7 @@ const Modal = ({ children,closeCall=false }: { children: ReactNode ,closeCall?:b
           <button
             className="focus:outline-none"
             onClick={() => {
-              if(closeCall) route.push("./")
+              if(closeCall) route.push("/login")
               dispatch(closeModal()
               )}}
           >
