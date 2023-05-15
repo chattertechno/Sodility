@@ -34,15 +34,11 @@ import { getLocaleData } from "../../../service/localStorageService";
 // ======================================================
 
 // API
-import {
-  getAllContentsForSupporter,
-  getUserProfile,
-} from "../../api/admin/dashboard";
 
 import { extentionHandler } from "../../utils/handler";
 import { getContentByCreatorIdApi } from "@/http/contentApi";
-import { getCreatorByIdApi } from "@/http/creatorApi";
-import { errorToast } from "@/helper/toster";
+import { followACreator, getCreatorByIdApi, getCreatorFollowers, UnfollowACreator } from "@/http/creatorApi";
+import { errorToast, successToast } from "@/helper/toster";
 
 export default function CreatorAdminPage() {
   const searchParams = useSearchParams();
@@ -52,6 +48,52 @@ export default function CreatorAdminPage() {
   const dispatch = useAppDispatch();
   const [userType, setUserType] = useState("");
   const route = useRouter();
+  const [Follow, setFollow] = useState<boolean>(false);
+  const [flwrsCount, setFlwrsCount] = useState<number>();
+  const loginUserID = getLocaleData('user')._id;
+
+  const followAUser = () => {
+    if (searchQuery) {
+      followACreator(searchQuery).then(() => {
+
+        getCreatorByIdApi(searchQuery || "").then((_data) => {
+          setIsLoading(false);
+          setData(_data);
+        });
+        getCreatorFollowers(searchQuery).then((flwrs) => {
+          setFlwrsCount(flwrs?.count);
+        });
+        successToast('you have follow a user');
+        setFollow(true);  
+
+        })
+    }
+    else {
+      errorToast('User Id Not Found');
+    }  
+  }
+
+
+
+  const UnfollowAUser = () => {
+    if (searchQuery) {
+      UnfollowACreator(searchQuery).then(() => {
+
+        getCreatorByIdApi(searchQuery || "").then((_data) => {
+          setIsLoading(false);
+          setData(_data);
+        });
+        getCreatorFollowers(searchQuery).then((flwrs) => {
+          setFlwrsCount(flwrs?.count);
+        });
+        successToast('you have unfollow a user');
+        setFollow(true);  
+        })
+    }
+    else {
+      errorToast('User Id Not Found');
+    }  
+  }
 
   useEffect(() => {
     setIsLoading(true);
@@ -72,7 +114,16 @@ export default function CreatorAdminPage() {
     }
     setUserType(data?.role);
   }, [searchQuery]);
+
+  useEffect(() => {
+    if (searchQuery)
+      getCreatorFollowers(searchQuery).then((flwrs) => {
+        setFlwrsCount(flwrs?.count);
+      })
+  }, [Follow])
+
   if (userType != "creator") return <></>;
+
   return (
     <main>
       <section className="bg-creator-banner py-28" />
@@ -83,17 +134,20 @@ export default function CreatorAdminPage() {
           bio={data?.bio || "N/A"}
           supporters={data?.supporters || 0}
           followers={data?.followers || 0}
-          isLoading={isLoading}
+          isLoading={isLoading} searchQuery={searchQuery}
+          Follow={data?.creator_followers?.includes(loginUserID)} userId={data?._id} followerCount={flwrsCount}
+          followAUser={data?.creator_followers?.includes(loginUserID) ? UnfollowAUser : followAUser}
         />
         <SupportSection />
         <div className="flex flex-col md:flex-row gap-8">
           <div className="space-y-3">
-            <Button
+            {loginUserID !== searchQuery ? null : (
+              <Button
               className="w-full py-4 flex items-center gap-2 justify-center"
               action={() => {
                 dispatch(openModal("addPost"));
               }}
-            >
+              >
               <Image
                 src={addPostIcon}
                 alt="add post icon"
@@ -101,7 +155,9 @@ export default function CreatorAdminPage() {
                 height={20}
               />
               <span>Add a Post</span>
-            </Button>
+              </Button>
+            )}
+           
             <SideBar
                mediaLink={{
                 facebook: data?.facebook,
@@ -122,19 +178,28 @@ const CreatorInfo = ({
   img,
   username,
   bio,
-
+  followerCount,
+  Follow,
+  searchQuery,
   supporters,
   followers,
+  followAUser,
   isLoading,
 }: {
   img: StaticImageData;
   username: string;
   bio: string;
+  followerCount: number | null | undefined;
   supporters: number;
-  followers: number;
+  followers: number | null;
+  Follow: boolean | null;
+  searchQuery?: string | null;
+  userId: string | null;
+  followAUser?: any;
   isLoading: boolean;
 }) => {
   const dispatch = useAppDispatch();
+  const loginUserID = getLocaleData('user')._id;
   if (isLoading)
     return (
       <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10">
@@ -163,7 +228,7 @@ const CreatorInfo = ({
               <span className="">
                 <Image src={userIcon} alt="user icon" />
               </span>
-              {followers} followers
+              {followerCount ? followerCount : '0'} followers
             </P1>
             <P1 className="flex gap-1.5 items-center">
               <span className="">
@@ -175,12 +240,15 @@ const CreatorInfo = ({
         </div>
       </div>
       {/* right - buttons  */}
-      <div className="flex items-center justify-center md:justify-start gap-4">
-        <Button variant="primary-outline" action={() => {}}>
-          Follow
-        </Button>
-        <Button action={() => dispatch(openModal("donate"))}>Donate</Button>
-      </div>
+      {searchQuery === loginUserID ? null : (
+          <div className="flex items-center justify-center md:justify-start gap-4">
+          <Button variant="primary-outline" action={() => followAUser()}>
+            {Follow ? 'Unfollow' : 'Follow'}
+          </Button>
+          <Button action={() => dispatch(openModal("donate"))}>Donate</Button>
+          </div>
+      )}
+     
     </div>
   );
 };

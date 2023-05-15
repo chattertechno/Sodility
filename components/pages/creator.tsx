@@ -16,11 +16,14 @@ import lockIcon from "@/assets/lock-white.svg";
 import lockedIcon from "@/assets/lock.png";
 import textIcon from "@/assets/text.png";
 import videoIcon from "@/assets/video.png";
+import { getDateandTime } from "@/app/utils/commonMethods";
 
 // =======================================================
 // VIDEO ARTICLE COMPONENT ===============================
 // =======================================================
 export const VideoArticle = ({ content }: any) => {
+
+
   return (
     <article className="overflow-hidden rounded border border-appGray-450  hover:shadow-md">
       {/* top - info  */}
@@ -33,7 +36,7 @@ export const VideoArticle = ({ content }: any) => {
             className="rounded-full p-1 border border-appGray-400"
           />
           <div className="">
-            <SubH2>{content.metadata}</SubH2>
+            <SubH2>{getDateandTime(content.metadata)}</SubH2>
             <P1 className="!font-medium">{content.title}</P1>
           </div>
         </div>
@@ -118,7 +121,7 @@ export const AudioArticle = ({ content }: any) => {
             className="rounded-full p-1 border border-appGray-400"
           />
           <div className="">
-            <SubH2>{content.metadata}</SubH2>
+            <SubH2>{getDateandTime(content.metadata)}</SubH2>
             <P1 className="!font-medium">{content.title}</P1>
           </div>
         </div>
@@ -234,7 +237,7 @@ export const TextArticle = ({ content }: any) => {
             className="rounded-full p-1 border border-appGray-400"
           />
           <div className="">
-            <SubH2>{content.metadata}</SubH2>
+            <SubH2>{getDateandTime(content.metadata)}</SubH2>
             <P1 className="!font-medium">{content.title}</P1>
           </div>
         </div>
@@ -317,7 +320,7 @@ export const ImageArticle = ({ content }: any) => {
             className="rounded-full p-1 border border-appGray-400"
           />
           <div className="">
-            <SubH2>{content.metadata}</SubH2>
+            <SubH2>{getDateandTime(content.metadata)}</SubH2>
             <P1 className="!font-medium">{content.title}</P1>
           </div>
         </div>
