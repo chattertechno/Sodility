@@ -25,7 +25,7 @@ const CreatorCard = ({
 }) => {
   return (
     <Link
-      href={getRedirectRouteByRole(link)}
+      href={getRedirectRouteByRole(link, username)}
       className="rounded overflow-hidden bg-white md:w-[22rem]"
     >
       {/* top  */}
