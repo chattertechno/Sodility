@@ -117,7 +117,7 @@ const SearchInput = () => {
                 username={itm.username||""}
                 img={itm.avatar}
                 // link={`/creator?key=${itm._id}`}
-                link={getRedirectRouteByRole(itm._id)}
+                link={getRedirectRouteByRole(itm._id, itm?.username)}
               />
             </div>
             )

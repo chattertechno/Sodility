@@ -2,9 +2,9 @@
 
 const allAccess = ["/", "/search", "/explore", "/about"]
 const auth = ["/profile"]
-const creator = ["/creator-creator"]
+const creator = ["/username"]
 const creatorAll = ["/dashboard", ...creator, ...allAccess, ...auth]
-const dynamicRouteForCreator = ["/creator-creator", "/explore"]
+const dynamicRouteForCreator = ["/username", "/explore"]
 const supporter = ["/supporter"]
 const supporterAll = ["/creator", ...supporter,...allAccess, ...auth]
 const dynamicRouteForSupporter = ["/creator", "/explore"]

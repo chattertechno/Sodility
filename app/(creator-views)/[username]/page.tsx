@@ -99,9 +99,9 @@ export default function CreatorAdminPage() {
     setLoginUserId(loginUserID);
 
     setIsLoading(true);
-    const data = getLocaleData("user") as any;
-    if (data && data?.role != "creator")
-      route.push(`/creator-creator?key=${searchQuery}`);
+    const userdata = getLocaleData("user") as any;
+    if (userdata && userdata?.role != "creator")
+        route.push(`/${data?.usernmae}?key=${searchQuery}`);
 
     if (searchQuery) {
       getCreatorByIdApi(searchQuery || "").then((_data) => {
