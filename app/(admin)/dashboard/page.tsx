@@ -161,7 +161,7 @@ const UserInfo = ({user}:any) => {
           height={90}
         />
       </div>
-      <H4 className="text-appGray-500 my-4">{user.username}</H4>
+      <H4 className="text-appGray-500 my-4">{user?.username}</H4>
       <div className="text-center space-y-2">
         <P1 className="hover:text-primary">
           <Link href="/">My Creator Page</Link>
