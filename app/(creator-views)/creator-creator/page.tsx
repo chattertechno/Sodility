@@ -46,11 +46,10 @@ export default function CreatorAdminPage() {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const [userType, setUserType] = useState("");
   const route = useRouter();
   const [Follow, setFollow] = useState<boolean>(false);
   const [flwrsCount, setFlwrsCount] = useState<number>();
-  const loginUserID = getLocaleData('user')._id;
+  const [loginUserId, setLoginUserId] = useState<string>();
 
   const followAUser = () => {
     if (searchQuery) {
@@ -96,13 +95,15 @@ export default function CreatorAdminPage() {
   }
 
   useEffect(() => {
+    const loginUserID = getLocaleData('user')?._id;
+    setLoginUserId(loginUserID);
+
     setIsLoading(true);
     const data = getLocaleData("user") as any;
     if (data && data?.role != "creator")
-      route.push(`/creator?key=${searchQuery}`);
-    else if (data == null && !userType) route.push("/login");
+      route.push(`/creator-creator?key=${searchQuery}`);
 
-    else if (searchQuery) {
+    if (searchQuery) {
       getCreatorByIdApi(searchQuery || "").then((_data) => {
         setIsLoading(false);
         setData(_data);
@@ -112,64 +113,61 @@ export default function CreatorAdminPage() {
       setData(null);
       errorToast("creator doesn't existed");
     }
-    setUserType(data?.role);
   }, [searchQuery]);
 
   useEffect(() => {
     if (searchQuery)
       getCreatorFollowers(searchQuery).then((flwrs) => {
-        setFlwrsCount(flwrs?.count);
+        if (flwrs) setFlwrsCount(flwrs?.count);
       })
   }, [Follow])
 
-  if (userType != "creator") return <></>;
-
   return (
-    <main>
-      <section className="bg-creator-banner py-28" />
-      <section className="md:w-[90%] mx-auto  px-6 py-8 pb-28">
-        <CreatorInfo
-          img={data?.avatar || cardUserImgPlaceholder}
-          username={data?.username || "N/A"}
-          bio={data?.bio || "N/A"}
-          supporters={data?.supporters || 0}
-          followers={data?.followers || 0}
-          isLoading={isLoading} searchQuery={searchQuery}
-          Follow={data?.creator_followers?.includes(loginUserID)} userId={data?._id} followerCount={flwrsCount}
-          followAUser={data?.creator_followers?.includes(loginUserID) ? UnfollowAUser : followAUser}
-        />
-        <SupportSection />
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="space-y-3">
-            {loginUserID !== searchQuery ? null : (
-              <Button
-              className="w-full py-4 flex items-center gap-2 justify-center"
-              action={() => {
-                dispatch(openModal("addPost"));
-              }}
-              >
-              <Image
-                src={addPostIcon}
-                alt="add post icon"
-                width={20}
-                height={20}
+      <main>
+        <section className="bg-creator-banner py-28" />
+        <section className="md:w-[90%] mx-auto  px-6 py-8 pb-28">
+          
+          <CreatorInfo
+            img={data?.avatar || cardUserImgPlaceholder}
+            username={data?.username || "N/A"}
+            bio={data?.bio || "N/A"}
+            supporters={data?.supporters || 0}
+            followers={data?.followers || 0} loginUserID={loginUserId}
+            isLoading={isLoading} searchQuery={searchQuery}
+            Follow={data?.creator_followers?.includes(loginUserId)} userId={data?._id} followerCount={flwrsCount}
+            followAUser={data?.creator_followers?.includes(loginUserId) ? UnfollowAUser : followAUser}
+          />
+          <SupportSection />
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="space-y-3">
+              { searchQuery !== loginUserId ? null : !loginUserId ? null : (
+                <Button
+                className="w-full py-4 flex items-center gap-2 justify-center"
+                action={() => {
+                  dispatch(openModal("addPost"));
+                }}
+                >
+                <Image
+                  src={addPostIcon}
+                  alt="add post icon"
+                  width={20}
+                  height={20}
+                />
+                <span>Add a Post</span>
+                </Button>
+              )}            
+              <SideBar
+                mediaLink={{
+                  facebook: data?.facebook,
+                  twitter: data?.twitter,
+                  youtube: data?.youtube,
+                }}
               />
-              <span>Add a Post</span>
-              </Button>
-            )}
-           
-            <SideBar
-               mediaLink={{
-                facebook: data?.facebook,
-                twitter: data?.twitter,
-                youtube: data?.youtube,
-              }}
-            />
+            </div>
+            <CreatorContent creatorId={searchQuery} />
           </div>
-          <CreatorContent creatorId={searchQuery} />
-        </div>
-      </section>
-    </main>
+        </section>
+      </main>
   );
 }
 
@@ -181,6 +179,7 @@ const CreatorInfo = ({
   followerCount,
   Follow,
   searchQuery,
+  loginUserID,
   supporters,
   followers,
   followAUser,
@@ -191,6 +190,7 @@ const CreatorInfo = ({
   bio: string;
   followerCount: number | null | undefined;
   supporters: number;
+  loginUserID?: string | null;
   followers: number | null;
   Follow: boolean | null;
   searchQuery?: string | null;
@@ -199,7 +199,6 @@ const CreatorInfo = ({
   isLoading: boolean;
 }) => {
   const dispatch = useAppDispatch();
-  const loginUserID = getLocaleData('user')._id;
   if (isLoading)
     return (
       <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10">
@@ -240,14 +239,15 @@ const CreatorInfo = ({
         </div>
       </div>
       {/* right - buttons  */}
-      {searchQuery === loginUserID ? null : (
-          <div className="flex items-center justify-center md:justify-start gap-4">
-          <Button variant="primary-outline" action={() => followAUser()}>
-            {Follow ? 'Unfollow' : 'Follow'}
-          </Button>
-          <Button action={() => dispatch(openModal("donate"))}>Donate</Button>
-          </div>
-      )}
+
+      {searchQuery === loginUserID ? null : !loginUserID ? null : (
+      <div className="flex items-center justify-center md:justify-start gap-4">
+            <Button variant="primary-outline" action={() => followAUser()}>
+              {Follow ? 'Unfollow' : 'Follow'}
+            </Button>
+            <Button action={() => dispatch(openModal("donate"))}>Donate</Button>
+        </div>
+        )}
      
     </div>
   );
