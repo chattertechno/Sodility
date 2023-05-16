@@ -7,7 +7,7 @@ export const getRedirectRouteByRole = (id:any)=>{
     {
         str = `${str}/creator-creator?key=${id}`
     } else{
-        str = `${str}/creator?key=${id}`
+        str = `${str}/creator-creator?key=${id}`
     }
     return str
 }

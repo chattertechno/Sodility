@@ -340,7 +340,7 @@ const SupporterNavigation = ({user}:any) => {
                   removeLocaleData("token")
                   removeLocaleData("user")
                   // router.push("/")
-                  successToast("LogOut SuccessFully")
+                  successToast("Logging Out ...")
                   if(typeof window !== "undefined")
                     window.location.href = '/';
                 }):(() => setDropDownActive(!dropDownActive))}
@@ -441,7 +441,7 @@ const CreatorNavigation = ({user}:any) => {
                   removeLocaleData("token")
                   removeLocaleData("user")
                   // router.push("/")
-                  successToast("LogOut SuccessFully")
+                  successToast("Logging Out ...")
                   if(typeof window !== "undefined")
                     window.location.href = '/';
                 }):(navItem.name== "Add Post"?(()=>dispatch(openModal("addPost"))):() => setDropDownActive(!dropDownActive))}
