@@ -5,9 +5,9 @@ export const getRedirectRouteByRole = (id:string, username: string)=>{
     let str = ""
     if(user?.role == "creator")
     {
-        str = `${str}/${username}?key=${id}`
+        str = `${str}/${username}`
     } else{
-        str = `${str}/${username}?key=${id}`
+        str = `${str}/${username}`
     }
     return str
 }
