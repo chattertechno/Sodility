@@ -23,6 +23,7 @@ import { AddContentApi } from "../../../http/contentApi";
 import { getLocaleData } from "../../../service/localStorageService";
 import { useAppDispatch } from "@/context/hooks";
 import { closeModal } from "../../../context/features/modal/modalSlice";
+import { Loaders } from "@/ui-kits/Loaders";
 
 // =============================================
 // ADD POST MODAL COMPONENT ====================
@@ -104,7 +105,7 @@ const AddPost = () => {
       onSubmit={handleSubmit}
     >
       {() => (
-        <Form className="pb-5">
+        <Form className="pb-5 overflow-x-hidden">
           <H5>Add a New Post</H5>
           <div className="mt-4">
             <FormControl
@@ -140,6 +141,16 @@ const AddPost = () => {
               </Button>
             ))}
           </div>
+
+          <div className="my-4 flex justify-between">
+            <label htmlFor="fileUpload" className="file-upload-label border border-dashed border-black  hover:bg-blue-500 text-black px-4 py-3 rounded cursor-pointer transition-colors duration-300">
+              Choose a file
+              <input id="fileUpload" type="file" className="hidden" />
+            </label>
+            <div className="mr-24 -mt-12"><Loaders/></div>
+
+          </div>
+
           {/* form fields  */}
           <div className="">
             {selectedPostType === "video" && (

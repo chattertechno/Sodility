@@ -30,7 +30,6 @@ import { getAllContents, getUserProfile, getSupporterTransactions } from '../../
 import { extentionHandler } from '../../utils/handler'
 import { Loaders } from "@/ui-kits/Loaders";
 import { errorToast } from "@/helper/toster";
-import ReactLoading from 'react-loading';
 // ==========================================================
 // DASHBOARD PAGE COMPONENT =================================
 // ==========================================================
@@ -164,13 +163,13 @@ const UserInfo = ({user}:any) => {
       <H4 className="text-appGray-500 my-4">{user?.username}</H4>
       <div className="text-center space-y-2">
         <P1 className="hover:text-primary">
-          <Link href="/">My Creator Page</Link>
+          <Link href={`/${user?.username}`}>My Creator Page</Link>
         </P1>
         <P1 className="hover:text-primary">
-          <Link href="/">Creator Settings</Link>
+          <Link href="/settings">Creator Settings</Link>
         </P1>
         <P1 className="hover:text-primary">
-          <Link href="/">User Settings</Link>
+          <Link href="/profile">User Settings</Link>
         </P1>
       </div>
     </div>

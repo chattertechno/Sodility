@@ -64,8 +64,8 @@ const UserSettingsLink = () => {
   return (
     <div className="flex justify-center rounded border border-appGray-450 hover:shadow-sm p-3 px-4">
       <div className="flex gap-2">
-        <Link
-          href="/"
+        <Link 
+        href="/"
           className={`hover:text-primary w-full h-full flex gap-2 items-center`}
         >
           <FaRegUserCircle className="" />
@@ -93,8 +93,8 @@ const CreatorSettingsLinks = () => {
         className={` p-3 px-4  flex gap-2 items-center hover:text-primary ${active}`}
       >
         <div className="">{icon}</div>
-        <P1 className={`hover:text-primary w-full h-full ${active}`}>
-          <Link href={link}>{title}</Link>
+        <P1 className={`hover:text-primary w-full h-full cursor-pointer ${active}`}>
+        <Link href={link}>{title}</Link>
         </P1>
       </div>
     );
@@ -115,22 +115,22 @@ const CreatorSettingsLinks = () => {
         <LinkItem
           icon={<FaRegBell className="" />}
           title="Creator Notifications"
-          link="#"
+          link="/settings#notificationsetting"
         />
         <LinkItem
           icon={<FaRegSun className="" />}
           title="Payment Settings"
-          link="#"
+          link="/settings#paymentsetting"
         />
         <LinkItem
           icon={<FaUserFriends className="" />}
           title="Supporters Tiers"
-          link="#"
+          link="/settings#supporterstier"
         />
         <LinkItem
           icon={<HiOutlineLockClosed className="" />}
           title="Creator Security Settings"
-          link="#"
+          link="/settings#securitysetting"
         />
       </div>
     </div>
@@ -191,7 +191,7 @@ const ProfileSettings = () => {
     else errorToast('Title, subtitle and description is required');
   }
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id="profilesetting" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Profile Settings</H5>
@@ -400,7 +400,7 @@ const NotificationSettings = () => {
   };
 
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id="notificationsetting" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Notifications Settings</H5>
@@ -477,7 +477,7 @@ const PaymentSettings = () => {
   };
 
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id="paymentsetting" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Payment Settings</H5>
@@ -548,7 +548,7 @@ const SupportersTier = () => {
   };
 
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id = "supporterstier" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Supporter Tiers</H5>
@@ -647,7 +647,7 @@ const SupportersTier = () => {
 const SecuritySettings = () => {
   const dispatch = useAppDispatch();
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id = "securitysetting" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Security Settings</H5>
