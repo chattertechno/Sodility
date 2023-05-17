@@ -33,6 +33,7 @@ import { useAppDispatch } from "@/context/hooks";
 import { getUserProfile } from '../../api/admin/dashboard'
 import { getNotificationSetting, updateNotificationSetting, updateUserProfile } from '../../api/admin/settings'
 import { Loaders } from "@/ui-kits/Loaders";
+import { errorToast, successToast } from "@/helper/toster";
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
@@ -178,14 +179,16 @@ const ProfileSettings = () => {
   const handleSubmit = (values: any) => {
     const selectCategories = categories.filter((item, index) => { if(values[`category_${index}`]){return categories[index]}  } )
     values.categories = selectCategories;
-    updateUserProfile(values).then((res: any) => {
-      if(res?.data?.status === 200) {
-        alert("Profile updated successfully")
-      } else {
-        alert("Unable to update profile")
-        console.log('error')
-      }
-    })
+    if (values?.title && values?.subtitle && values?.description)
+      updateUserProfile(values).then((res: any) => {
+        if(res?.data?.status === 200) {
+          successToast("Profile updated successfully")
+        } else {
+          errorToast("Unable to update profile")
+          console.log('error')
+        }
+      })
+    else errorToast('Title, subtitle and description is required');
   }
   return (
     <div className="rounded border border-appGray-450 hover:shadow-sm">
@@ -241,7 +244,7 @@ const ProfileSettings = () => {
                 <FormControl
                   name="title"
                   type="text"
-                  placeholder="Enter your email"
+                  placeholder="Enter your Title"
                   control="input"
                   label={""}
                 />
@@ -252,7 +255,7 @@ const ProfileSettings = () => {
                 <FormControl
                   name="subtitle"
                   type="text"
-                  placeholder="Enter your email"
+                  placeholder="Enter your subtitle"
                   control="input"
                   label={""}
                 />
@@ -263,7 +266,7 @@ const ProfileSettings = () => {
                 <FormControl
                   name="description"
                   type="textarea"
-                  placeholder="Enter your email"
+                  placeholder="Enter your description"
                   control="input"
                   label={""}
                 />
@@ -330,10 +333,10 @@ const ProfileSettings = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end">
-                <Button type="submit" action={formik.handleSubmit}>
+              <div className="flex justify-end ">
+                <button type="submit" className="border border-primary py-3 px-5 rounded bg-blue-500 hover:bg-blue-500 text-white" onClick={() => formik.handleSubmit}>
                   Save changes
-                </Button>
+                </button>
               </div>
 
             </Form>

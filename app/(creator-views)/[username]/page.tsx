@@ -27,7 +27,7 @@ import supporterIcon from "@/assets/creator/supporter.png";
 import { openModal } from "@/context/features/modal/modalSlice";
 import { useAppDispatch } from "@/context/hooks";
 import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import {  useRouter, usePathname } from "next/navigation";
 import { getLocaleData } from "../../../service/localStorageService";
 // ======================================================
 // CREATOR PAGE COMPONENT ===============================
@@ -41,8 +41,8 @@ import { followACreator, getCreatorByIdApi, getCreatorFollowers, UnfollowACreato
 import { errorToast, successToast } from "@/helper/toster";
 
 export default function CreatorAdminPage() {
-  const searchParams = useSearchParams();
-  const searchQuery = searchParams.get("key");
+  const pathname = usePathname();
+  const username = pathname.split('/').join('')
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
@@ -50,16 +50,18 @@ export default function CreatorAdminPage() {
   const [Follow, setFollow] = useState<boolean>(false);
   const [flwrsCount, setFlwrsCount] = useState<number>();
   const [loginUserId, setLoginUserId] = useState<string>();
+  const [content, setContent] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
 
   const followAUser = () => {
-    if (searchQuery) {
-      followACreator(searchQuery).then(() => {
+    if (data?._id) {
+      followACreator(data?._id).then(() => {
 
-        getCreatorByIdApi(searchQuery || "").then((_data) => {
+        getCreatorByIdApi(data?.username || "").then((_data) => {
           setIsLoading(false);
           setData(_data);
         });
-        getCreatorFollowers(searchQuery).then((flwrs) => {
+        getCreatorFollowers(data?._id).then((flwrs) => {
           setFlwrsCount(flwrs?.count);
         });
         successToast('you have follow a user');
@@ -75,14 +77,14 @@ export default function CreatorAdminPage() {
 
 
   const UnfollowAUser = () => {
-    if (searchQuery) {
-      UnfollowACreator(searchQuery).then(() => {
+    if (data?._id) {
+      UnfollowACreator(data?._id).then(() => {
 
-        getCreatorByIdApi(searchQuery || "").then((_data) => {
+        getCreatorByIdApi(data?.username || "").then((_data) => {
           setIsLoading(false);
           setData(_data);
         });
-        getCreatorFollowers(searchQuery).then((flwrs) => {
+        getCreatorFollowers(data?._id).then((flwrs) => {
           setFlwrsCount(flwrs?.count);
         });
         successToast('you have unfollow a user');
@@ -97,30 +99,84 @@ export default function CreatorAdminPage() {
   useEffect(() => {
     const loginUserID = getLocaleData('user')?._id;
     setLoginUserId(loginUserID);
-
+    setLoading(true);
+    
     setIsLoading(true);
     const userdata = getLocaleData("user") as any;
     if (userdata && userdata?.role != "creator")
-        route.push(`/${data?.usernmae}?key=${searchQuery}`);
+        route.push(`/${data?.usernmae}`);
 
-    if (searchQuery) {
-      getCreatorByIdApi(searchQuery || "").then((_data) => {
-        setIsLoading(false);
-        setData(_data);
+    if (username) {
+      getCreatorByIdApi(username || "").then((_data) => {
+        if (_data) {
+          setIsLoading(false);
+          setData(_data);
+          getCreatorFollowers(_data?._id).then((flwrs) => {
+            if (flwrs) setFlwrsCount(flwrs?.count);
+          })
+          if (_data?._id) {
+            getContentByCreatorIdApi(_data?._id).then((data: any) => {
+              // if(res.data.status === 200 && res.data.msg === 'success') {
+              if (data && data?.length > 0) {
+                const _data = data.map((item: any) => {
+                  item.ipfs_url =
+                    item.ipfs_url && item.ipfs_url.includes("http")
+                      ? item.ipfs_url
+                      : "";
+                  return {
+                    articleType: {
+                      content: extentionHandler(item.type || "audio"),
+                      status: item.locked ? "locked" : "",
+                    },
+                    content: item.body || "",
+                    img: cardUserImgPlaceholder,
+                    video: item.ipfs_url
+                      ? {
+                          blurDataURL: item.ipfs_url,
+                          blurHeight: 4,
+                          blurWidth: 8,
+                          height: 431,
+                          src: item.ipfs_url,
+                          width: 768,
+                        }
+                      : videoPlaceholder,
+                    metadata: item.created_at,
+                    title: item.title,
+                    image: item.ipfs_url
+                      ? {
+                          src: item.ipfs_url,
+                          height: 61,
+                          width: 60,
+                          blurDataURL: item.ipfs_url,
+                          blurWidth: 8,
+                          blurHeight: 8,
+                        }
+                      : "",
+                  };
+                });
+                setContent(_data);
+                setLoading(false);
+                // } else {
+                //   setLoading(false);
+                // }
+              } else {
+                setLoading(false);
+                setContent([]);
+                // errorToast('Unable to fetch creator content')
+                // alert('Unable to fetch data');
+              }
+            });
+          }
+        }
+       
       });
     } else {
       setIsLoading(false);
       setData(null);
       errorToast("creator doesn't existed");
     }
-  }, [searchQuery]);
+  }, [username, Follow]);
 
-  useEffect(() => {
-    if (searchQuery)
-      getCreatorFollowers(searchQuery).then((flwrs) => {
-        if (flwrs) setFlwrsCount(flwrs?.count);
-      })
-  }, [Follow])
 
   return (
       <main>
@@ -133,14 +189,14 @@ export default function CreatorAdminPage() {
             bio={data?.bio || "N/A"}
             supporters={data?.supporters || 0}
             followers={data?.followers || 0} loginUserID={loginUserId}
-            isLoading={isLoading} searchQuery={searchQuery}
+            isLoading={isLoading} searchQuery={data?._id}
             Follow={data?.creator_followers?.includes(loginUserId)} userId={data?._id} followerCount={flwrsCount}
             followAUser={data?.creator_followers?.includes(loginUserId) ? UnfollowAUser : followAUser}
           />
           <SupportSection />
           <div className="flex flex-col md:flex-row gap-8">
             <div className="space-y-3">
-              { searchQuery !== loginUserId ? null : !loginUserId ? null : (
+              { data?._id !== loginUserId ? null : !loginUserId ? null : (
                 <Button
                 className="w-full py-4 flex items-center gap-2 justify-center"
                 action={() => {
@@ -164,7 +220,7 @@ export default function CreatorAdminPage() {
                 }}
               />
             </div>
-            <CreatorContent creatorId={searchQuery} />
+            <CreatorContent creatorId={data?._id} content={content} loading={loading} />
           </div>
         </section>
       </main>
@@ -347,114 +403,51 @@ const SideBar = ({ mediaLink }: any) => {
   );
 };
 
-const CreatorContent = ({ creatorId }: any) => {
-  const content1 = [
-    {
-      articleType: {
-        content: "video",
-        status: "locked",
-      },
-      img: cardUserImgPlaceholder,
-      video: videoPlaceholder,
-      metadata: "APR 16, 2021 AT 5:36 PM",
-      title:
-        "See Something Say Something Online takes aim at Freedom of Speech",
-    },
-    {
-      articleType: {
-        content: "audio",
-        status: "locked",
-      },
-      img: cardUserImgPlaceholder,
-      metadata: "APR 16, 2021 AT 5:36 PM ",
-      title: "Interview: Roger Ver on Dash",
-    },
-    {
-      articleType: {
-        content: "text",
-        status: "locked",
-      },
-      img: cardUserImgPlaceholder,
-      metadata: "APR 16, 2021 AT 5:36 PM",
-      title: "Cryptocurrency's Usability Crisis",
-      content:
-        "Next month marks the 11th anniversary of Bitcoin Pizza Day, the first recorded instance of an item purchased with cryptocurrency. Over the following decade we've seen an absolute explosion in both interest and investment into the digital currency space. Despite this, however, we've seen comparatively few actual instances of it being used as a day-to-day money. Of course, there are exceptions. I've been living un-banked off of crypto since 2016. But the fact that people still disbelieve me when I tell them this is a sign that “peer-to-peer electronic cash system” is still very much more a theoretical concept than a present-day reality.",
-    },
-    {
-      articleType: {
-        content: "image",
-        status: "locked",
-      },
-      img: cardUserImgPlaceholder,
-      metadata: "APR 16, 2021 AT 5:36 PM",
-      title: "Just another day hard at work on the job.",
-      image: imagePlaceholder,
-    },
-  ];
+const CreatorContent = ({ creatorId, content, loading }: any) => {
+  // const content1 = [
+  //   {
+  //     articleType: {
+  //       content: "video",
+  //       status: "locked",
+  //     },
+  //     img: cardUserImgPlaceholder,
+  //     video: videoPlaceholder,
+  //     metadata: "APR 16, 2021 AT 5:36 PM",
+  //     title:
+  //       "See Something Say Something Online takes aim at Freedom of Speech",
+  //   },
+  //   {
+  //     articleType: {
+  //       content: "audio",
+  //       status: "locked",
+  //     },
+  //     img: cardUserImgPlaceholder,
+  //     metadata: "APR 16, 2021 AT 5:36 PM ",
+  //     title: "Interview: Roger Ver on Dash",
+  //   },
+  //   {
+  //     articleType: {
+  //       content: "text",
+  //       status: "locked",
+  //     },
+  //     img: cardUserImgPlaceholder,
+  //     metadata: "APR 16, 2021 AT 5:36 PM",
+  //     title: "Cryptocurrency's Usability Crisis",
+  //     content:
+  //       "Next month marks the 11th anniversary of Bitcoin Pizza Day, the first recorded instance of an item purchased with cryptocurrency. Over the following decade we've seen an absolute explosion in both interest and investment into the digital currency space. Despite this, however, we've seen comparatively few actual instances of it being used as a day-to-day money. Of course, there are exceptions. I've been living un-banked off of crypto since 2016. But the fact that people still disbelieve me when I tell them this is a sign that “peer-to-peer electronic cash system” is still very much more a theoretical concept than a present-day reality.",
+  //   },
+  //   {
+  //     articleType: {
+  //       content: "image",
+  //       status: "locked",
+  //     },
+  //     img: cardUserImgPlaceholder,
+  //     metadata: "APR 16, 2021 AT 5:36 PM",
+  //     title: "Just another day hard at work on the job.",
+  //     image: imagePlaceholder,
+  //   },
+  // ];
 
-  const [content, setContent] = React.useState([]);
-  const [loading, setLoading] = React.useState(true);
-
-  useEffect(() => {
-    setLoading(true);
-    if (creatorId) {
-      getContentByCreatorIdApi(creatorId).then((data: any) => {
-        // if(res.data.status === 200 && res.data.msg === 'success') {
-        if (data && data?.length > 0) {
-          const _data = data.map((item: any) => {
-            item.ipfs_url =
-              item.ipfs_url && item.ipfs_url.includes("http")
-                ? item.ipfs_url
-                : "";
-            return {
-              articleType: {
-                content: extentionHandler(item.type || "audio"),
-                status: item.locked ? "locked" : "",
-              },
-              content: item.body || "",
-              img: cardUserImgPlaceholder,
-              video: item.ipfs_url
-                ? {
-                    blurDataURL: item.ipfs_url,
-                    blurHeight: 4,
-                    blurWidth: 8,
-                    height: 431,
-                    src: item.ipfs_url,
-                    width: 768,
-                  }
-                : videoPlaceholder,
-              metadata: item.created_at,
-              title: item.title,
-              image: item.ipfs_url
-                ? {
-                    src: item.ipfs_url,
-                    height: 61,
-                    width: 60,
-                    blurDataURL: item.ipfs_url,
-                    blurWidth: 8,
-                    blurHeight: 8,
-                  }
-                : "",
-            };
-          });
-          setContent(_data);
-          setLoading(false);
-          // } else {
-          //   setLoading(false);
-          // }
-        } else {
-          setLoading(false);
-          setContent([]);
-          // errorToast('Unable to fetch creator content')
-          // alert('Unable to fetch data');
-        }
-      });
-    }else{
-      setContent([])
-      setLoading(false)
-      errorToast("unable to get content")
-    }
-  }, [creatorId]);
 
   return (
     <div className="flex-1 space-y-8">

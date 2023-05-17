@@ -2,7 +2,7 @@ import { baseUrl } from "./index";
 import { errorToast, successToast } from "../helper/toster";
 import { getLocaleData } from "@/service/localStorageService";
 const SEARCH_CREATOR =`${baseUrl}/creator/search`;
-const GET_CREATOR_BY_ID =`${baseUrl}/user`;
+const GET_CREATOR_BY_USERNAME =`${baseUrl}/user/username`;
 const GET_CREATOR_BY_CATEGORY =`${baseUrl}/creator/get/category`;
 const FOLLOW_CREATOR = `${baseUrl}/creator/follow`;
 const UN_FOLLOW_CREATOR = `${baseUrl}/creator/unfollow`;
@@ -30,7 +30,7 @@ export const searchCreatorApi = async (search:string, limit: number) => {
 
 export const getCreatorByIdApi = async (id:string) => {
   try {
-    const res = await fetch(`${GET_CREATOR_BY_ID}/${id}`, {
+    const res = await fetch(`${GET_CREATOR_BY_USERNAME}/${id}`, {
       method: "GET",
     });
     if (!res.ok) {

@@ -26,7 +26,7 @@ export default function Header() {
   const [userType, setUserType]= useState("public");
   const [user, setUser]= useState(null);
   const route = useRouter()
-
+  
   useEffect(()=>{
     const _user = getLocaleData("user") as any
     setUser(_user)
@@ -50,13 +50,14 @@ export default function Header() {
     <header className="py-7 border-b border-b-appGray-400">
       <div className="md:w-[90%] mx-auto  px-6 flex flex-col md:flex-row justify-between md:items-center gap-4 md:gap-0">
         <div className="flex flex-col md:flex-row gap-2 md:gap-6 md:items-center">
-          <a href="/#">
+          <a href={`${user ? '/dashboard': '/#'}`}>
             <Image src={logo} alt="logo" />
           </a>
           <SearchInput />
         </div>
 
         {/* navigation  */}
+        {userType === 'creator' ? null : (
           <div className="flex flex-col md:flex-row gap-6 md:items-center">
             <Navigation userType={userType}/>
         {userType === "public" && (
@@ -70,6 +71,8 @@ export default function Header() {
             </Button>
             )}
           </div>
+        )}
+          
         {userType === "supporter" 
         // && connectedUser 
         ? (
