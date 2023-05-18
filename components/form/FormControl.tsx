@@ -16,6 +16,8 @@ type FormControlType = {
   name: string;
   placeholder?: string;
   options?: any[];
+  onChange?: any;
+  value?: string;
   subHeader?: string;
 };
 
@@ -27,6 +29,8 @@ const FormControl = ({
   label,
   type,
   name,
+  onChange,
+  value,
   placeholder,
   options,
   subHeader,
@@ -38,6 +42,8 @@ const FormControl = ({
           label={label}
           type={type!}
           name={name}
+          onChange={onChange}
+          value={value}
           placeholder={placeholder!}
           subHeader={subHeader}
         />

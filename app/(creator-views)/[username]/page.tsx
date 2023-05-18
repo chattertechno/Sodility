@@ -37,12 +37,13 @@ import { getLocaleData } from "../../../service/localStorageService";
 
 import { extentionHandler } from "../../utils/handler";
 import { getContentByCreatorIdApi } from "@/http/contentApi";
-import { followACreator, getCreatorByIdApi, getCreatorFollowers, UnfollowACreator } from "@/http/creatorApi";
+import { followACreator, getCreatorByIdApi, getCreatorFollowers, getCreatorTiers, UnfollowACreator } from "@/http/creatorApi";
 import { errorToast, successToast } from "@/helper/toster";
+import { Loaders } from "@/ui-kits/Loaders";
 
 export default function CreatorAdminPage() {
   const pathname = usePathname();
-  const username = pathname.split('/').join('')
+  const username = pathname.split('/').join('')  
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
@@ -193,7 +194,7 @@ export default function CreatorAdminPage() {
             Follow={data?.creator_followers?.includes(loginUserId)} userId={data?._id} followerCount={flwrsCount}
             followAUser={data?.creator_followers?.includes(loginUserId) ? UnfollowAUser : followAUser}
           />
-          <SupportSection />
+          <SupportSection username={username}/>
           <div className="flex flex-col md:flex-row gap-8">
             <div className="space-y-3">
               { data?._id !== loginUserId ? null : !loginUserId ? null : (
@@ -309,7 +310,7 @@ const CreatorInfo = ({
   );
 };
 
-const SupportSection = () => {
+const SupportSection = ({username}: any) => {
   const Card = ({
     img,
     width = 100,
@@ -325,6 +326,7 @@ const SupportSection = () => {
     action: () => void;
     subH?: boolean;
   }) => {
+
     return (
       <div className="rounded border border-appGray-450 py-3 px-5 w-96 hover:shadow-sm flex justify-center">
         <div className="w-14 flex flex-col items-center gap-4 my-10">
@@ -348,36 +350,50 @@ const SupportSection = () => {
     );
   };
 
+  const [tiers, setTiers] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(false);
+    
+    useEffect(() => {
+      setLoading(true);
+      getCreatorTiers(username).then((res) => {
+        setTiers(res);
+        setLoading(false);   
+      })
+    }, []);
+
   return (
     <div className="my-10 flex flex-col md:flex-row gap-5 justify-between items-center text-center">
-      <Card
-        img={supporterIcon}
-        title="Supporter"
-        amount="$1.00"
-        action={() => {}}
-      />
-      <Card
-        img={fanIcon}
-        width={42}
-        title="Fan"
-        amount="$5.00"
-        action={() => {}}
-      />
-      <Card
-        img={superFanIcon}
-        width={38}
-        title="Super Fan"
-        amount="$10.00"
-        action={() => {}}
-      />
-      <Card
-        img={oneOffIcon}
-        width={53}
-        title="One-off Donation"
-        amount=""
-        action={() => {}}
-        subH={false}
-      />
+      {loading ? <Loaders /> : (
+      <> 
+      {tiers?.tier_one_name || tiers?.tier_one_price || tiers?.tier_three_price || tiers?.tier_two_name || tiers?.tier_three_name || tiers?.tier_two_price ? (
+        <>
+          <Card
+          img={supporterIcon}
+          title={tiers?.tier_one_name ? tiers?.tier_one_name : 'No Tier 1'}
+          amount={`$${tiers?.tier_one_price ? tiers?.tier_one_price : 0}`}
+          action={() => {}}
+        />
+          <Card
+            img={fanIcon}
+            width={42}
+            title={tiers?.tier_two_name ? tiers?.tier_two_name : "No Tier 2"}
+            amount={`$${tiers?.tier_two_price ? tiers?.tier_two_price : 0}`}
+            action={() => {}}
+          />
+          <Card
+            img={superFanIcon}
+            width={38}
+            title={tiers?.tier_three_name ? tiers?.tier_three_name : 'No Tier 3'}
+            amount={`$${tiers?.tier_three_price ? tiers?.tier_three_price : 0}`}
+            action={() => {}}
+          />
+        </>
+      ): <p className="flex justify-center">{"This user doesn't has any tiers"}</p>}       
+        
+      </>
+
+      )}
+      
     </div>
   );
 };

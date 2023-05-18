@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import React from "react";
 import { Form, Formik } from "formik";
 import { Url } from "next/dist/shared/lib/router/router";
@@ -34,6 +34,8 @@ import { getUserProfile } from '../../api/admin/dashboard'
 import { getNotificationSetting, updateNotificationSetting, updateUserProfile } from '../../api/admin/settings'
 import { Loaders } from "@/ui-kits/Loaders";
 import { errorToast, successToast } from "@/helper/toster";
+import { getCreatorTiers, postSupporterTier } from "@/http/creatorApi";
+import { getLocaleData } from "@/service/localStorageService";
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
@@ -64,8 +66,8 @@ const UserSettingsLink = () => {
   return (
     <div className="flex justify-center rounded border border-appGray-450 hover:shadow-sm p-3 px-4">
       <div className="flex gap-2">
-        <Link
-          href="/"
+        <Link 
+        href="/"
           className={`hover:text-primary w-full h-full flex gap-2 items-center`}
         >
           <FaRegUserCircle className="" />
@@ -93,8 +95,8 @@ const CreatorSettingsLinks = () => {
         className={` p-3 px-4  flex gap-2 items-center hover:text-primary ${active}`}
       >
         <div className="">{icon}</div>
-        <P1 className={`hover:text-primary w-full h-full ${active}`}>
-          <Link href={link}>{title}</Link>
+        <P1 className={`hover:text-primary w-full h-full cursor-pointer ${active}`}>
+        <Link href={link}>{title}</Link>
         </P1>
       </div>
     );
@@ -115,22 +117,22 @@ const CreatorSettingsLinks = () => {
         <LinkItem
           icon={<FaRegBell className="" />}
           title="Creator Notifications"
-          link="#"
+          link="/settings#notificationsetting"
         />
         <LinkItem
           icon={<FaRegSun className="" />}
           title="Payment Settings"
-          link="#"
+          link="/settings#paymentsetting"
         />
         <LinkItem
           icon={<FaUserFriends className="" />}
           title="Supporters Tiers"
-          link="#"
+          link="/settings#supporterstier"
         />
         <LinkItem
           icon={<HiOutlineLockClosed className="" />}
           title="Creator Security Settings"
-          link="#"
+          link="/settings#securitysetting"
         />
       </div>
     </div>
@@ -191,7 +193,7 @@ const ProfileSettings = () => {
     else errorToast('Title, subtitle and description is required');
   }
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id="profilesetting" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Profile Settings</H5>
@@ -400,7 +402,7 @@ const NotificationSettings = () => {
   };
 
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id="notificationsetting" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Notifications Settings</H5>
@@ -477,7 +479,7 @@ const PaymentSettings = () => {
   };
 
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id="paymentsetting" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Payment Settings</H5>
@@ -536,19 +538,41 @@ const PaymentSettings = () => {
 };
 
 const SupportersTier = () => {
-  const initialValues = {
-    tier1: { name: "", amount: "" },
-    tier2: { name: "", amount: "" },
-    tier3: { name: "", amount: "" },
-  };
+ 
+  const username = getLocaleData('user')?.username;
 
-  const handleSubmit = (values: any) => {
-    alert("Submitted");
-    console.log("Values: ", values);
+
+  const [initialValues, setInitialValues] = useState<any>({
+    tier_one_name: "",
+    tier_one_price: '',
+    tier_two_name: "",
+    tier_two_price: '',
+    tier_three_name: "",
+    tier_three_price: ''
+  });
+
+  useEffect(() => {
+    getCreatorTiers(username).then((res) => {
+      setInitialValues({
+        tier_one_name: res?.tier_one_name,
+        tier_one_price: res?.tier_one_price,
+        tier_three_name: res?.tier_three_name,
+        tier_three_price: res?.tier_three_price,
+        tier_two_name: res?.tier_two_name,
+        tier_two_price: res?.tier_two_price,
+      });
+    })
+  }, [])
+
+  const handleSubmit = () => {
+    postSupporterTier(initialValues).then((res) => {
+      if (res === 200) successToast('Tiers added to your profile');
+      else errorToast('Something wrong has happened')
+    })
   };
 
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id = "supporterstier" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Supporter Tiers</H5>
@@ -562,72 +586,41 @@ const SupportersTier = () => {
                 <div className="flex-1">
                   <P1 className="text-black">Tier 1 Name: </P1>
 
-                  <FormControl
-                    name="tier1.name"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Name" value={initialValues?.tier_one_name ? initialValues?.tier_one_name : ''} onChange={(e) => setInitialValues({...initialValues, tier_one_name: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
                 </div>
                 <div className="flex-1">
                   <P1 className="text-black">Amount(USD): </P1>
 
-                  <FormControl
-                    name="tier1.amount"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_one_price ? initialValues?.tier_one_price : ''} onChange={(e) => setInitialValues({...initialValues, tier_one_price: parseFloat(e.target.value)})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
               </div>
               <div className="flex items-center gap-5">
                 <div className="flex-1">
                   <P1 className="text-black">Tier 2 Name: </P1>
 
-                  <FormControl
-                    name="tier2.name"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_two_name ? initialValues?.tier_two_name : ''} onChange={(e) => setInitialValues({...initialValues, tier_two_name: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
                 <div className="flex-1">
                   <P1 className="text-black">Amount(USD): </P1>
 
-                  <FormControl
-                    name="tier2.amount"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_two_price ? initialValues?.tier_two_price : ''} onChange={(e) => setInitialValues({...initialValues, tier_two_price: parseFloat(e.target.value)})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
               </div>
               <div className="flex items-center gap-5">
                 <div className="flex-1">
                   <P1 className="text-black">Tier 3 Name: </P1>
 
-                  <FormControl
-                    name="tier3.name"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_three_name ? initialValues?.tier_three_name : ''} onChange={(e) => setInitialValues({...initialValues, tier_three_name: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
                 <div className="flex-1">
                   <P1 className="text-black">Amount(USD): </P1>
 
-                  <FormControl
-                    name="tier3.amount"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_three_price ? initialValues?.tier_three_price : ''} onChange={(e) => setInitialValues({...initialValues, tier_three_price: parseFloat(e.target.value)})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
               </div>
 
@@ -647,7 +640,7 @@ const SupportersTier = () => {
 const SecuritySettings = () => {
   const dispatch = useAppDispatch();
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id = "securitysetting" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Security Settings</H5>
