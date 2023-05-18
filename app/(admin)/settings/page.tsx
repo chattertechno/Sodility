@@ -36,6 +36,7 @@ import { Loaders } from "@/ui-kits/Loaders";
 import { errorToast, successToast } from "@/helper/toster";
 import { getCreatorTiers, postSupporterTier } from "@/http/creatorApi";
 import { getLocaleData } from "@/service/localStorageService";
+import { getProfileApi } from "@/http";
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
@@ -67,7 +68,7 @@ const UserSettingsLink = () => {
     <div className="flex justify-center rounded border border-appGray-450 hover:shadow-sm p-3 px-4">
       <div className="flex gap-2">
         <Link 
-        href="/"
+        href="/profile"
           className={`hover:text-primary w-full h-full flex gap-2 items-center`}
         >
           <FaRegUserCircle className="" />
@@ -176,15 +177,26 @@ const ProfileSettings = () => {
         console.log('error')
       }
     })
-  }, [])
+  }, []);
+
+  const [initialValues, setInitialValues] = useState({
+    title: '',
+    subtitle: '',
+    description: ''
+  })
+
+  const token: any = localStorage.getItem('token');
 
   const handleSubmit = (values: any) => {
     const selectCategories = categories.filter((item, index) => { if(values[`category_${index}`]){return categories[index]}  } )
     values.categories = selectCategories;
-    if (values?.title && values?.subtitle && values?.description)
-      updateUserProfile(values).then((res: any) => {
+    if (initialValues?.title && initialValues?.subtitle && initialValues?.description)
+      updateUserProfile(initialValues).then((res: any) => {
         if(res?.data?.status === 200) {
           successToast("Profile updated successfully")
+          getProfileApi(JSON.parse(token) ?? "").then((res) => {
+            setInitialValues({...initialValues, title: res?.title, subtitle: res?.subtitle, description: res?.description})
+        });
         } else {
           errorToast("Unable to update profile")
           console.log('error')
@@ -243,35 +255,20 @@ const ProfileSettings = () => {
             <Form className="px-5 md:px-10 py-5 space-y-5">
               <div className="">
                 <P1 className="text-black">Title: </P1>
-                <FormControl
-                  name="title"
-                  type="text"
-                  placeholder="Enter your Title"
-                  control="input"
-                  label={""}
-                />
+                <input type="text" placeholder="Title" value={initialValues?.title ? initialValues?.title : ''} onChange={(e) => setInitialValues({...initialValues, title: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
               </div>
 
               <div className="">
                 <P1 className="text-black">Subtitle: </P1>
-                <FormControl
-                  name="subtitle"
-                  type="text"
-                  placeholder="Enter your subtitle"
-                  control="input"
-                  label={""}
-                />
+                <input type="text" placeholder="Title" value={initialValues?.subtitle ? initialValues?.subtitle : ''} onChange={(e) => setInitialValues({...initialValues, subtitle: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
               </div>
 
               <div className="">
                 <P1 className="text-black">Description: </P1>
-                <FormControl
-                  name="description"
-                  type="textarea"
-                  placeholder="Enter your description"
-                  control="input"
-                  label={""}
-                />
+                <input type="text" placeholder="Title" value={initialValues?.description ? initialValues?.description : ''} onChange={(e) => setInitialValues({...initialValues, description: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
               </div>
 
               <div className="space-y-5">
