@@ -185,7 +185,8 @@ const ProfileSettings = () => {
     description: ''
   })
 
-  const token: any = localStorage.getItem('token');
+  const token = getLocaleData('token');
+  console.log(token);
 
   const handleSubmit = (values: any) => {
     const selectCategories = categories.filter((item, index) => { if(values[`category_${index}`]){return categories[index]}  } )
