@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import React from "react";
 import { Form, Formik } from "formik";
 import { Url } from "next/dist/shared/lib/router/router";
@@ -34,6 +34,8 @@ import { getUserProfile } from '../../api/admin/dashboard'
 import { getNotificationSetting, updateNotificationSetting, updateUserProfile } from '../../api/admin/settings'
 import { Loaders } from "@/ui-kits/Loaders";
 import { errorToast, successToast } from "@/helper/toster";
+import { getCreatorTiers, postSupporterTier } from "@/http/creatorApi";
+import { getLocaleData } from "@/service/localStorageService";
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
@@ -536,15 +538,37 @@ const PaymentSettings = () => {
 };
 
 const SupportersTier = () => {
-  const initialValues = {
-    tier1: { name: "", amount: "" },
-    tier2: { name: "", amount: "" },
-    tier3: { name: "", amount: "" },
-  };
+ 
+  const username = getLocaleData('user')?.username;
 
-  const handleSubmit = (values: any) => {
-    alert("Submitted");
-    console.log("Values: ", values);
+
+  const [initialValues, setInitialValues] = useState<any>({
+    tier_one_name: "",
+    tier_one_price: '',
+    tier_two_name: "",
+    tier_two_price: '',
+    tier_three_name: "",
+    tier_three_price: ''
+  });
+
+  useEffect(() => {
+    getCreatorTiers(username).then((res) => {
+      setInitialValues({
+        tier_one_name: res?.tier_one_name,
+        tier_one_price: res?.tier_one_price,
+        tier_three_name: res?.tier_three_name,
+        tier_three_price: res?.tier_three_price,
+        tier_two_name: res?.tier_two_name,
+        tier_two_price: res?.tier_two_price,
+      });
+    })
+  }, [])
+
+  const handleSubmit = () => {
+    postSupporterTier(initialValues).then((res) => {
+      if (res === 200) successToast('Tiers added to your profile');
+      else errorToast('Something wrong has happened')
+    })
   };
 
   return (
@@ -562,72 +586,41 @@ const SupportersTier = () => {
                 <div className="flex-1">
                   <P1 className="text-black">Tier 1 Name: </P1>
 
-                  <FormControl
-                    name="tier1.name"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Name" value={initialValues?.tier_one_name ? initialValues?.tier_one_name : ''} onChange={(e) => setInitialValues({...initialValues, tier_one_name: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
                 </div>
                 <div className="flex-1">
                   <P1 className="text-black">Amount(USD): </P1>
 
-                  <FormControl
-                    name="tier1.amount"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_one_price ? initialValues?.tier_one_price : ''} onChange={(e) => setInitialValues({...initialValues, tier_one_price: parseFloat(e.target.value)})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
               </div>
               <div className="flex items-center gap-5">
                 <div className="flex-1">
                   <P1 className="text-black">Tier 2 Name: </P1>
 
-                  <FormControl
-                    name="tier2.name"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_two_name ? initialValues?.tier_two_name : ''} onChange={(e) => setInitialValues({...initialValues, tier_two_name: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
                 <div className="flex-1">
                   <P1 className="text-black">Amount(USD): </P1>
 
-                  <FormControl
-                    name="tier2.amount"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_two_price ? initialValues?.tier_two_price : ''} onChange={(e) => setInitialValues({...initialValues, tier_two_price: parseFloat(e.target.value)})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
               </div>
               <div className="flex items-center gap-5">
                 <div className="flex-1">
                   <P1 className="text-black">Tier 3 Name: </P1>
 
-                  <FormControl
-                    name="tier3.name"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_three_name ? initialValues?.tier_three_name : ''} onChange={(e) => setInitialValues({...initialValues, tier_three_name: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
                 <div className="flex-1">
                   <P1 className="text-black">Amount(USD): </P1>
 
-                  <FormControl
-                    name="tier3.amount"
-                    type="text"
-                    placeholder="..."
-                    control="input"
-                    label={""}
-                  />
+                  <input type="text" placeholder="Tier 1 Amount" value={initialValues?.tier_three_price ? initialValues?.tier_three_price : ''} onChange={(e) => setInitialValues({...initialValues, tier_three_price: parseFloat(e.target.value)})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+
                 </div>
               </div>
 

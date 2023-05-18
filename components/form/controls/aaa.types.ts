@@ -58,6 +58,8 @@ export type InputProps = {
   label?: string;
   type: string;
   name: string;
+  onChange: any
+  value: string | undefined;
   placeholder: string;
   icon?: ReactNode;
   subHeader?: string;

@@ -19,11 +19,12 @@ import textIcon from "@/assets/text.png";
 import videoIcon from "@/assets/video.png";
 import { FaAngleDown } from "react-icons/fa";
 import { DropDown } from "..";
-import { AddContentApi } from "../../../http/contentApi";
+import { AddContentApi, UploadContentForPost } from "../../../http/contentApi";
 import { getLocaleData } from "../../../service/localStorageService";
 import { useAppDispatch } from "@/context/hooks";
 import { closeModal } from "../../../context/features/modal/modalSlice";
 import { Loaders } from "@/ui-kits/Loaders";
+import { errorToast } from "@/helper/toster";
 
 // =============================================
 // ADD POST MODAL COMPONENT ====================
@@ -32,7 +33,10 @@ const AddPost = () => {
   const dispatch = useAppDispatch();
   const postType = ["video", "audio", "image", "text"];
   const [selectedPostType, setSelectedPostType] = useState("video");
-  const [isLoading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false);
+  const [fileLoading, setFileLoading] = useState<boolean>(false);
+  const token = getLocaleData("token");
+  
 
   const lockedFor = [
     "All donators",
@@ -44,18 +48,19 @@ const AddPost = () => {
   const [selectedLockedFor, setSelectedLockedFor] = useState("All donators");
   const [showDropDown, setShowDropDown] = useState(false);
 
-  const initialValues = {
+  const [initialValues, setInitialValues] = useState({
     title: "",
     // video: "",
     // audio: "",
     // image: "",
     ipfs_url:"",
     body: "",
-  };
+    public: false,
+  });
 
   const validationSchema = Yup.object({
     title: Yup.string().required("Required"),
-    ipfs_url: Yup.string(),
+    // ipfs_url: Yup.string().required("Required"),
     // video: Yup.string(),
     // audio: Yup.string(),
     // image: Yup.string(),
@@ -64,11 +69,12 @@ const AddPost = () => {
   
 
   const handleSubmit = (values: any) => {
-    setLoading(true)
+
+    console.log(values)
+
     let body ="";
     let type = "";
     if(values.body){
-      console.log(values)
       const parsBody = JSON.parse(values.body)
       body = parsBody.blocks[0].text
     }
@@ -78,44 +84,69 @@ const AddPost = () => {
     else if(selectedPostType=="image") type="jpg"
     const token = getLocaleData("token")
     let data = {
-      title:values.title,
-      ipfs_url:values.ipfs_url,
+      title:initialValues.title,
+      ipfs_url:initialValues.ipfs_url,
       body,
       type,
       category_name:values.category_name,
       content_type: selectedLockedFor,
-      currency_type:"USD"
+      currency_type:"USD",
+      public: initialValues.public
     }
-    if(token)
-    AddContentApi(token,data).then((data)=>{
-      if(data){
-        setLoading(false)
-        dispatch( closeModal())
-      }else{
-        setLoading(false)
-        dispatch(closeModal())
-      }
-    })
+
+    if(token && data?.title && data?.category_name){
+      setLoading(true)
+
+      AddContentApi(token,data).then((data)=>{
+        if(data){
+          setLoading(false)
+          dispatch( closeModal())
+        }else{
+          setLoading(false)
+          dispatch(closeModal())
+        }
+      })
+    } else {
+      errorToast("Please insert title and category");
+    }
+    
+    
   };
+
+  const HandleFileEvent = (event: any): void => {
+    const file = event.target.files[0];
+    // Do something with the selected file
+    const formData = new FormData();
+    setFileLoading(true);
+
+    if (file) {
+      formData.append('file', file);
+      UploadContentForPost(formData, token).then((res) => {
+        if (res) {
+          setFileLoading(false)
+          setInitialValues({...initialValues, ipfs_url: res?.ipfs_url})
+        } 
+       
+      });
+    }
+    else {
+      errorToast("Uploading Failed.")
+    }
+  };
+
   if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loading </div>
   return (
     <Formik
       initialValues={initialValues}
-      validationSchema={validationSchema}
       onSubmit={handleSubmit}
+      
     >
       {() => (
         <Form className="pb-5 overflow-x-hidden">
           <H5>Add a New Post</H5>
-          <div className="mt-4">
-            <FormControl
-              control="input"
-              label="Title"
-              name="title"
-              type="text"
-              placeholder="Placeholder"
-              subHeader="100 characters"
-            />
+          <div className="mt-4">    
+            <label htmlFor="">Title</label>
+            <input placeholder="Title" type="text" className="w-full p-2 mt-2 flex-1 border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" onChange={(e) => setInitialValues({...initialValues, title: e.target.value})} />
           </div>
           <div className="mt-4">
             <FormControl
@@ -141,52 +172,50 @@ const AddPost = () => {
               </Button>
             ))}
           </div>
-
-          <div className="my-4 flex justify-between">
+          <div className="my-4 flex justify-between items-center">
             <label htmlFor="fileUpload" className="file-upload-label border border-dashed border-black  hover:bg-blue-500 text-black px-4 py-3 rounded cursor-pointer transition-colors duration-300">
               Choose a file
-              <input id="fileUpload" type="file" className="hidden" />
+              <input id="fileUpload" type="file" accept={selectedPostType === 'video' ? 'video/mp4' : selectedPostType === 'audio' ? "audio/mp3" : selectedPostType === 'image' ? 'image/png, image/jpg' : '*'} className="hidden" onChange={HandleFileEvent} />
             </label>
-            <div className="mr-24 -mt-12"><Loaders/></div>
+            {fileLoading && initialValues?.ipfs_url && <div className="mr-24 -mt-8"><Loaders/></div>}
+            {initialValues?.ipfs_url && !fileLoading && <div className="text-sm text-green-400">Succesfully Uploaded</div>}
 
           </div>
 
           {/* form fields  */}
           <div className="">
             {selectedPostType === "video" && (
-              <FormControl
-                control="input"
-                label="Video URL"
-                name="ipfs_url"
-                type="text"
-                placeholder="https://odysee.com/@JulianC:9/juliansquarantineday1:9"
-                subHeader="Embed supported from: Odysee, Youtube, Vimeo"
-              />
+              <>
+                <div className="flex justify-between text-sm mb-2">
+                  <label htmlFor="">Video URL</label>
+                  <span>Embed supported from: Odysee, Youtube, Vimeo</span>
+                </div>
+                <input value={initialValues?.ipfs_url} placeholder="https://odysee.com/@JulianC:9/juliansquarantineday1:9" type="text" className="w-full p-2 flex-1 border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" onChange={(e) => setInitialValues({...initialValues, title: e.target.value})} />
+              </>
             )}
             {selectedPostType === "audio" && (
-              <FormControl
-                control="input"
-                label="Audio URL"
-                name="ipfs_url"
-                type="text"
-                placeholder="https://soundcloud.com/heryptohow/olga-feldmeir-and-robert-wieko-smartvalorcom"
-                subHeader="Embed supported from: Buzzsprout, Soundcloud"
-              />
+              <>
+                <div className="flex justify-between text-sm mb-2">
+                  <label htmlFor="">Audio URL</label>
+                  <span>Embed supported from: Buzzsprout, Soundcloud</span>
+                </div>
+                <input value={initialValues?.ipfs_url} placeholder="https://soundcloud.com/heryptohow/olga-feldmeir-and-robert-wieko-smartvalorcom" type="text" className="w-full p-2 flex-1 border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" onChange={(e) => setInitialValues({...initialValues, title: e.target.value})} />
+              </>
+             
             )}
-            {selectedPostType === "image" && (
-              <FormControl
-                control="input"
-                label="Image URL"
-                name="ipfs_url"
-                type="text"
-                placeholder="Placeholder"
-                subHeader="Embed supported from: ..."
-              />
+            {selectedPostType === "image" && ( 
+            <>
+              <div className="flex justify-between text-sm mb-2">
+                <label htmlFor="">Image URL</label>
+                <span>Embed supported from: ...</span>
+              </div>
+              <input value={initialValues?.ipfs_url} placeholder="https://cdn.pixabay.com/photo/2015/10/27/08/51/autumn-1008520_1280.png" type="text" className="w-full p-2 flex-1 border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" onChange={(e) => setInitialValues({...initialValues, title: e.target.value})} />
+            </>
             )}
             {selectedPostType === "text" && (
               <FormControl
                 control="textarea"
-                label="Content"
+                label="Text"
                 name="body"
                 type="text"
                 placeholder="Start typing..."
@@ -201,9 +230,9 @@ const AddPost = () => {
               <P1 className="text-secondary">Visibility</P1>
               <div className="flex gap-3 mt-1 items-center">
                 <Button
-                  action={() => {}}
-                  variant="secondary"
-                  className="!text-gray-400 !border-gray-400 flex gap-2 items-center"
+                  action={() => {setInitialValues({...initialValues, public: !initialValues.public})}}
+                  variant={`${initialValues?.public ? 'primary' : 'secondary'}`}
+                  className={` !text-gray-400 !border-gray-400 flex gap-2 items-center`}
                 >
                   <Image
                     src={globeIcon}
@@ -261,7 +290,7 @@ const AddPost = () => {
             {/* publish */}
             <Button
               type="submit"
-              action={() => {}}
+              action={() => {handleSubmit}}
               className="!px-16 py-2.5 mt-auto flex gap-2 items-center w-full md:w-fit justify-center "
             >
               <Image

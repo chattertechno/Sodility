@@ -7,6 +7,10 @@ const GET_CREATOR_BY_CATEGORY =`${baseUrl}/creator/get/category`;
 const FOLLOW_CREATOR = `${baseUrl}/creator/follow`;
 const UN_FOLLOW_CREATOR = `${baseUrl}/creator/unfollow`;
 const GET_CREATOR_FOLLOWERS = `${baseUrl}/creator`;
+const GET_CREATOR_TIERS = `${baseUrl}/creator/tiers`;
+
+const POST_SUPPORTER_TIER = `${baseUrl}/creator/tiers/update`;
+
 const token = getLocaleData("token");
 
 export const searchCreatorApi = async (search:string, limit: number) => {
@@ -114,6 +118,49 @@ export const UnfollowACreator = async (userId:string) => {
 export const getCreatorFollowers = async (id:string) => {
   try {
     const res = await fetch(`${GET_CREATOR_FOLLOWERS}/${id}/followers/`, {
+      method: "GET",
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      errorToast(err.msg)
+      return null
+    }
+    const result = await res.json();
+    return result.data
+  } catch (error:any) {
+    errorToast(error.toString())
+    console.log("error", JSON.stringify(error));
+    return null
+  }
+};
+
+export const postSupporterTier = async (initial:any) => {
+  try {
+    const res = await fetch(`${POST_SUPPORTER_TIER}`, {
+      method: "PUT",
+      body: JSON.stringify(initial),
+      headers: {
+        'Authorization' : `Bearer ${token}`
+      }
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      errorToast(err.msg)
+      return null
+    }
+    const result = await res.json();
+    return result.status
+  } 
+  catch (error:any) {
+    errorToast(error.toString())
+    console.log("error", JSON.stringify(error));
+    return null
+  }
+};
+
+export const getCreatorTiers = async (username:string) => {
+  try {
+    const res = await fetch(`${GET_CREATOR_TIERS}/${username}`, {
       method: "GET",
     });
     if (!res.ok) {
