@@ -58,13 +58,19 @@ export default function Login() {
         // errorToast("erro")
         return
       }
+
       setLoading(false)
-      if(result?.user?.role == "supporter") {
+      
+      if (result?.user?.is_new) {
+        if(typeof window !== "undefined")
+        window.location.href = '/settings';
+      }
+      else if(result?.user?.role == "supporter" && !result?.user?.is_new) {
         if(typeof window !== "undefined")
           window.location.href = '/supporter';
         // router.push("/supporter")
       }
-      else if(result?.user?.role == "creator") {
+      else if(result?.user?.role === "creator" && !result?.user?.is_new) {
         // router.push("/dashboard")
         if(typeof window !== "undefined")
           window.location.href = '/dashboard';

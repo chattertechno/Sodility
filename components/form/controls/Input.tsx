@@ -11,6 +11,8 @@ const Input = ({
   name,
   placeholder,
   icon,
+  onChange,
+  value,
   subHeader,
 }: InputProps) => {
   return (
@@ -28,7 +30,10 @@ const Input = ({
             icon && "pl-10"
           } p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary ${animation} rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade`}
           type={type}
+          onChange={onChange}
+          value={value}
           name={name}
+          
           placeholder={placeholder}
         />
       </div>
