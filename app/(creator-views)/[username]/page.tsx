@@ -105,7 +105,7 @@ export default function CreatorAdminPage() {
     setIsLoading(true);
     const userdata = getLocaleData("user") as any;
     if (userdata && userdata?.role != "creator")
-        route.push(`/${data?.usernmae}`);
+        route.push(`/${data?.username}`);
 
     if (username) {
       getCreatorByIdApi(username || "").then((_data) => {

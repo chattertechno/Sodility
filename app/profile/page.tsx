@@ -70,7 +70,7 @@ const CreatorSettingsLink = () => {
           <Image src={gearIcon} alt="gear icon" width={18} height={18} />
         </div>
         <P1 className={`hover:text-primary w-full h-full`}>
-          <Link href="/">Creator Settings</Link>
+          <Link href="/settings">Creator Settings</Link>
         </P1>
       </div>
     </div>
