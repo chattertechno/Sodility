@@ -29,8 +29,8 @@ import { closeModal } from "../../../context/features/modal/modalSlice";
 // =============================================
 const AddPost = () => {
   const dispatch = useAppDispatch();
-  const postType = ["mp4", "mp3", "jpg", "text"];
-  const [selectedPostType, setSelectedPostType] = useState("mp4");
+  const postType = ["video", "audio", "image", "text"];
+  const [selectedPostType, setSelectedPostType] = useState("video");
   const [isLoading, setLoading] = useState(false)
 
   const lockedFor = [
@@ -63,20 +63,25 @@ const AddPost = () => {
   
 
   const handleSubmit = (values: any) => {
-    let body =""
+    setLoading(true)
+    let body ="";
+    let type = "";
     if(values.body){
       console.log(values)
       const parsBody = JSON.parse(values.body)
       body = parsBody.blocks[0].text
     }
     // return
-    setLoading(true)
+    if(selectedPostType=="video") type="mp4"
+    else if(selectedPostType=="audio") type="mp3"
+    else if(selectedPostType=="image") type="jpg"
     const token = getLocaleData("token")
     let data = {
       title:values.title,
       ipfs_url:values.ipfs_url,
       body,
-      type: selectedPostType,
+      type,
+      category_name:values.category_name,
       content_type: selectedLockedFor,
       currency_type:"USD"
     }
@@ -91,7 +96,7 @@ const AddPost = () => {
       }
     })
   };
-  if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loadding </div>
+  if(isLoading) return <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10"> loading </div>
   return (
     <Formik
       initialValues={initialValues}
@@ -137,7 +142,7 @@ const AddPost = () => {
           </div>
           {/* form fields  */}
           <div className="">
-            {selectedPostType === "mp4" && (
+            {selectedPostType === "video" && (
               <FormControl
                 control="input"
                 label="Video URL"
@@ -147,7 +152,7 @@ const AddPost = () => {
                 subHeader="Embed supported from: Odysee, Youtube, Vimeo"
               />
             )}
-            {selectedPostType === "mp3" && (
+            {selectedPostType === "audio" && (
               <FormControl
                 control="input"
                 label="Audio URL"
@@ -157,7 +162,7 @@ const AddPost = () => {
                 subHeader="Embed supported from: Buzzsprout, Soundcloud"
               />
             )}
-            {selectedPostType === "jpg" && (
+            {selectedPostType === "image" && (
               <FormControl
                 control="input"
                 label="Image URL"

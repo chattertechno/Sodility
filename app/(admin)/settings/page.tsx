@@ -14,7 +14,7 @@ import { H5, P1 } from "@/components/typography";
 
 // ASSETS ===========================================
 import banner from "@/assets/creator/banner.png";
-import { default as userPlaceholder } from "@/assets/index/avatar.png";
+import { default as userPlaceholder } from "@/assets/avatar.png";
 import { BsCloudUpload } from "react-icons/bs";
 import {
   FaRegBell,
@@ -31,7 +31,9 @@ import { useAppDispatch } from "@/context/hooks";
 
 // API ==============================================
 import { getUserProfile } from '../../api/admin/dashboard'
-import { getNotificationSetting, updateNotificationSetting } from '../../api/admin/settings'
+import { getNotificationSetting, updateNotificationSetting, updateUserProfile } from '../../api/admin/settings'
+import { Loaders } from "@/ui-kits/Loaders";
+import { errorToast, successToast } from "@/helper/toster";
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
@@ -136,13 +138,36 @@ const CreatorSettingsLinks = () => {
 };
 
 const ProfileSettings = () => {
-  const [user, setUser] = React.useState<any>({})
+  const categories = [
+    "Writers & Journalists",
+    "Gaming Creators",
+    "Video Creators",
+    "Musicians",
+    "Visual Artists",
+    "Communities",
+    "Podcasters",
+    "Tutorials & Education",
+    "Local Business",
+    "Non-Profits",
+  ]
+
+  const defaultCat = categories.reduce((acc: any, curr: any, index: any)=>{
+    acc[`category_${index}`] = false; return acc
+  }, {})
+  const [user, setUser] = React.useState<any>({
+...defaultCat
+  })
   const [loadingProfile, setLoadingProfile] = React.useState<boolean>(true)
   useEffect(() => {
     getUserProfile().then((res: any) => {
-      if(res.data.status === 200 && res.data.msg === 'success') {
+      if(res?.data?.status === 200 && res?.data?.msg === 'success') {
         setLoadingProfile(false)
-        setUser(res.data.data)
+      
+        const catKeys = res?.data?.data?.categories || []
+        const catHas = categories.reduce((acc: any, curr: any, index: any)=>{
+          acc[`category_${index}`] = catKeys.includes(curr); return acc
+        }, {})
+        setUser({...res.data.data, ...catHas})
       } else {
         setLoadingProfile(false)
         alert("Unable to fetch user profile")
@@ -151,6 +176,20 @@ const ProfileSettings = () => {
     })
   }, [])
 
+  const handleSubmit = (values: any) => {
+    const selectCategories = categories.filter((item, index) => { if(values[`category_${index}`]){return categories[index]}  } )
+    values.categories = selectCategories;
+    if (values?.title && values?.subtitle && values?.description)
+      updateUserProfile(values).then((res: any) => {
+        if(res?.data?.status === 200) {
+          successToast("Profile updated successfully")
+        } else {
+          errorToast("Unable to update profile")
+          console.log('error')
+        }
+      })
+    else errorToast('Title, subtitle and description is required');
+  }
   return (
     <div className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
@@ -158,7 +197,7 @@ const ProfileSettings = () => {
         <H5>Profile Settings</H5>
       </div>
       {/* links   */}
-      <form className="px-5 md:px-10 py-5 space-y-5">
+      <div className="px-5 md:px-10 py-5 space-y-5">
         <div className="flex gap-5">
           <P1 className="text-black">Username: </P1>
           <P1 className="">{user.username}</P1>
@@ -195,77 +234,117 @@ const ProfileSettings = () => {
             </div>
           </div>
         </div>
-        <div className="space-y-1">
-          <P1 className="text-black">Title: </P1>
-          <input
-            placeholder="Digital Cash Network"
-            value={user?.title || ''}
-            className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
-          />
-        </div>
-        <div className="space-y-1">
-          <P1 className="text-black">Subtitle: </P1>
-          <input
-            value={user?.subtitle || ''}
-            placeholder="Joël Valenzuela is documenting the global digital cash revolution."
-            className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
-          />
-        </div>
-        <div className="space-y-1">
-          <P1 className="text-black">Description: </P1>
-          <textarea
-            value={user?.description || ''}
-            placeholder="Documenting the global digital cash revolution, the greatest financial revolution the world has seen in recent times.
-             Podcasts, news videos, interviews, articles, and more about the exciting world of cryptocurrency, blockchain tech, and decentralization."
-            className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
-            rows={5}
-          ></textarea>
-        </div>
-        {/* social media links */}
-        <div className="space-y-5">
-          <div className="flex gap-4">
-            <div className="space-y-1 flex-1">
-              <P1 className="text-black">Facebook: </P1>
-              <input
-                value={user?.facebook || ''}
-                placeholder="https://www.facebook.com/DashPay/"
-                className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
-              />
-            </div>
-            <div className="space-y-1 flex-1">
-              <P1 className="text-black">Twitter: </P1>
-              <input
-                value={user?.twitter || ''}
-                placeholder="https://twitter.com/dashincubator"
-                className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
-              />
-            </div>
-          </div>
-          <div className="flex gap-4">
-            <div className="space-y-1 flex-1">
-              <P1 className="text-black">Youtube: </P1>
-              <input
-                value={user?.youtube || ''}
-                placeholder="https://www.youtube.com/channel/UCA"
-                className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
-              />
-            </div>
-            <div className="space-y-1 flex-1">
-              <P1 className="text-black">Odysee: </P1>
-              <input
-                value={user?.odysee || ''}
-                placeholder="https://odysee.com/@DigitalCashNetwo"
-                className="border border-appGray-450 hover:border-secondary rounded focus:outline-none focus:border-secondary placeholder:text-sm w-full p-2"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-end">
-          <Button type="submit" action={() => {}}>
-            Save changes
-          </Button>
-        </div>
-      </form>
+
+        {loadingProfile ? <div><Loaders /></div>: (
+        <Formik initialValues={user} onSubmit={handleSubmit}>
+          {formik => (
+            <Form className="px-5 md:px-10 py-5 space-y-5">
+              <div className="">
+                <P1 className="text-black">Title: </P1>
+                <FormControl
+                  name="title"
+                  type="text"
+                  placeholder="Enter your Title"
+                  control="input"
+                  label={""}
+                />
+              </div>
+
+              <div className="">
+                <P1 className="text-black">Subtitle: </P1>
+                <FormControl
+                  name="subtitle"
+                  type="text"
+                  placeholder="Enter your subtitle"
+                  control="input"
+                  label={""}
+                />
+              </div>
+
+              <div className="">
+                <P1 className="text-black">Description: </P1>
+                <FormControl
+                  name="description"
+                  type="textarea"
+                  placeholder="Enter your description"
+                  control="input"
+                  label={""}
+                />
+              </div>
+
+              <div className="space-y-5">
+                <div className="flex gap-4">
+                  <div className="space-y-1 flex-1">
+                    <P1 className="text-black">Facebook: </P1>
+                    <FormControl
+                      name="facebook"
+                      type="textarea"
+                      placeholder="https://www.facebook.com/DashPay/"
+                      control="input"
+                      label={""}/>
+                  </div>
+                  <div className="space-y-1 flex-1">
+                    <P1 className="text-black">Twitter: </P1>
+                    <FormControl
+                      name="twitter"
+                      type="textarea"
+                      placeholder="https://twitter.com/dashincubator"
+                      control="input"
+                      label={""}/>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="space-y-1 flex-1">
+                    <P1 className="text-black">Youtube: </P1>
+                    <FormControl
+                      name="youtube"
+                      type="textarea"
+                      placeholder="https://www.youtube.com/channel/UCA"
+                      control="input"
+                      label={""}/>
+                  </div>
+                  <div className="space-y-1 flex-1">
+                    <P1 className="text-black">Odysee: </P1>
+                    <FormControl
+                      name="odysee"
+                      type="textarea"
+                      placeholder="https://odysee.com/@DigitalCashNetwo"
+                      control="input"
+                      label={""}/>
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center gap-5">
+                <div className="flex items-center gap-5">
+                  {/* create a checkbox group */}
+                  <div className="flex flex-col gap-2">
+                    <P1 className="text-black">Creator Categories: </P1>
+                    {
+                      categories.map((category, index) => (
+                        <FormControl
+                          key={index}
+                          name={`category_${index}`}
+                          type="checkbox"
+                          control="checkbox"
+                          label={category}
+                    />))
+                    }
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end ">
+                <button type="submit" className="border border-primary py-3 px-5 rounded bg-blue-500 hover:bg-blue-500 text-white" onClick={() => formik.handleSubmit}>
+                  Save changes
+                </button>
+              </div>
+
+            </Form>
+          )}
+        </Formik>)}
+
+     
+      </div>
     </div>
   );
 };
@@ -303,7 +382,6 @@ const NotificationSettings = () => {
   
 
   const handleSubmit = (values: any) => {
-    console.log("Values: ", values);
     const data = { email: values.email,
       new_supporters_alerts: values.supporterAlerts,
       weekly_tips: values.weeklyTips,
@@ -328,7 +406,7 @@ const NotificationSettings = () => {
         <H5>Notifications Settings</H5>
       </div>
       {/* links   */}
-      {loadingProfile ?(<>Loading...</>):
+      {loadingProfile ?(<><Loaders /></>):
       <div>
         <Formik initialValues={user} onSubmit={handleSubmit}>
           {formik => (
@@ -396,7 +474,6 @@ const PaymentSettings = () => {
 
   const handleSubmit = (values: any) => {
     alert("Submitted");
-    console.log("Values: ", values);
   };
 
   return (

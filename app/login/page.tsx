@@ -82,7 +82,7 @@ export default function Login() {
     <>
     
       <div className="h-full mt-5  bg-white-200  flex items-center  align-middle w-full justify-center">
-        <form onSubmit={handleSubmit(onSubmit)} className="  bg-white-500 shadow-xl shadow-gray-500/20  border  w-1/3 h-3/6 border-gray-400 rounded-md mt-5 px-4 pt-4 pb-8">
+        <form onSubmit={handleSubmit(onSubmit)} className="sm:w-2/3 md:w-2/3 lg:w-1/3 bg-white-500 shadow-xl shadow-gray-500/20  border  w-full h-3/6 border-gray-400 rounded-md mt-5 px-4 mx-5 pt-4 pb-8">
           <div className='flex justify-center  font-medium text-2xl  mb-4'>Login</div>
           <div className="mb-4  " >
             <label htmlFor="username" className=" block text-gray-700  font-medium mb-2">
@@ -93,7 +93,7 @@ export default function Login() {
               autoComplete="off"
               id="username"
               type="username"
-              placeholder="Email"
+              placeholder="Username"
               className={` shadow  border w-full border border-gray-300 hover:shadow-lg hover:shadow-gray-500/20 font-small  text-black px-3 py-3 rounded-md  leading-tight focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary focus:shadow-lg focus:shadow-gray-500/20 
               ${
                 (errors&&errors.username) ? 'border-red-500' : ''

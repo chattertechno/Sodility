@@ -3,7 +3,7 @@
 import CreatorCard from "../shared/CreatorsCard";
 import { H4, SubH1 } from "../typography";
 
-import cardUserImgPlaceholder from "@/assets/index/avatar.png";
+import cardUserImgPlaceholder from "@/assets/avatar.png";
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Pagination } from "../shared";
@@ -16,7 +16,7 @@ export const CreatorsListSection = ({
   pagination = true,
   link,
   title,
-  padding,
+  padding
 }: {
   list: any[];
   pagination?: boolean;
@@ -39,19 +39,23 @@ export const CreatorsListSection = ({
         )}
         {/* cards - list  */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {list.map((item, i) => (
+          {list?.map((item, i) => (
             <CreatorCard
-              key={i}
-              img={cardUserImgPlaceholder}
-              username="TheDesertLynx"
-              title="Digital Cash Network"
-              description="Interviews, news breakdowns, and more about the exciting world of crypto..."
-              supporters={100}
+              key={item?._id}
+              img={item?.avatar || cardUserImgPlaceholder}
+              username={`${item?.username ||  "N/A"}`}
+              title={item?.title || "N/A"}
+              description={item?.description || "N/A"}
+              supporters={item?.supporters||0}
+              link={item?._id}
+              header_image={item?.header_image}
             />
           ))}
+          {!list ? 'No creators yet in this category, please try others' : ''}
+          
         </div>
         {/* pagination  */}
-        {pagination && <Pagination title="Results" />}
+        {list?.length>0 && <Pagination title="Results" />}
       </div>
     </section>
   );

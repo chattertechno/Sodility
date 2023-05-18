@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 
 // COMPONENTS
@@ -25,7 +25,8 @@ import { successToast } from "../../helper/toster";
 export default function Header() {
   const [userType, setUserType]= useState("public");
   const [user, setUser]= useState(null);
-
+  const route = useRouter()
+  
   useEffect(()=>{
     const _user = getLocaleData("user") as any
     setUser(_user)
@@ -49,26 +50,29 @@ export default function Header() {
     <header className="py-7 border-b border-b-appGray-400">
       <div className="md:w-[90%] mx-auto  px-6 flex flex-col md:flex-row justify-between md:items-center gap-4 md:gap-0">
         <div className="flex flex-col md:flex-row gap-2 md:gap-6 md:items-center">
-          <a href="/#">
+          <a href={`${user ? '/dashboard': '/#'}`}>
             <Image src={logo} alt="logo" />
           </a>
           <SearchInput />
         </div>
 
         {/* navigation  */}
+        {userType === 'creator' ? null : (
           <div className="flex flex-col md:flex-row gap-6 md:items-center">
             <Navigation userType={userType}/>
         {userType === "public" && (
             <Button
               variant="primary"
               className="py-3"
-              action={() => {}}
+              action={() => {route.push("/register")}}
               type="button"
             >
               Get Started
             </Button>
             )}
           </div>
+        )}
+          
         {userType === "supporter" 
         // && connectedUser 
         ? (
@@ -97,7 +101,7 @@ const Navigation = ({userType}:any) => {
   const navList = [
     { name: "Home", link: "/", active: pathname === "/", hasDropDown: false },
     {
-      name: "Explore",
+      name: "Explore", 
       link: "/explore",
       active: pathname === "/explore/*",
       hasDropDown: true,
@@ -156,7 +160,7 @@ const Navigation = ({userType}:any) => {
           {navItem.hasDropDown ? (
             <div
               onClick={() => setDropDownActive(!dropDownActive)}
-              className={`text-sm cursor-pointer relative`}
+              className={`z-50 text-sm cursor-pointer relative`}
             >
               <div
                 className={`${
@@ -339,7 +343,7 @@ const SupporterNavigation = ({user}:any) => {
                   removeLocaleData("token")
                   removeLocaleData("user")
                   // router.push("/")
-                  successToast("LogOut SuccessFully")
+                  successToast("Logging Out ...")
                   if(typeof window !== "undefined")
                     window.location.href = '/';
                 }):(() => setDropDownActive(!dropDownActive))}
@@ -367,28 +371,28 @@ const CreatorNavigation = ({user}:any) => {
   const navList = [
     {
       name: "Dashboard",
-      link: "/creator-creator",
-      active: pathname === "/creator-creator",
+      link: "/dashboard",
+      active: pathname === "/dashboard",
     },
     {
       name: "Add Post",
       link: pathname,
       active: pathname === "/add post",
     },
-    {
-      name: "My Page",
-      link: "/dashboard",
-      active: pathname === "/dashboard",
-    },
+    // {
+    //   name: "My Page",
+    //   link: "/dashboard",
+    //   active: pathname === "/dashboard",
+    // },
     {
       name: "Creator Settings",
-      link: "/",
-      active: pathname === "/settings",
+      link: "/profile",
+      active: pathname === "/profile",
     },
     {
       name: "My Profile",
-      link: "/profile",
-      active: pathname === "/profile",
+      link: "/dashboard",
+      active: pathname === "/dashboard",
     },
     {
       name: "Help & FAQ",
@@ -431,7 +435,7 @@ const CreatorNavigation = ({user}:any) => {
           parentPositionAndPadding="top-16 right-0 !w-48 p-3"
           arrowPosition="-top-2 right-7"
         >
-          <ul className="py-2 pt-5 bg-white relative flex flex-col justify-between">
+          <ul className=" py-2 pt-5 bg-white relative flex flex-col justify-between">
             {navList.map((navItem) => (
               <Link
                 key={navItem.name}
@@ -440,7 +444,7 @@ const CreatorNavigation = ({user}:any) => {
                   removeLocaleData("token")
                   removeLocaleData("user")
                   // router.push("/")
-                  successToast("LogOut SuccessFully")
+                  successToast("Logging Out ...")
                   if(typeof window !== "undefined")
                     window.location.href = '/';
                 }):(navItem.name== "Add Post"?(()=>dispatch(openModal("addPost"))):() => setDropDownActive(!dropDownActive))}

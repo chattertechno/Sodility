@@ -2,27 +2,73 @@
 
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 // Components
 import { P1 } from "../typography";
 import DropDown from "./DropDown";
+import { debounce } from 'lodash';
+import { searchCreatorApi } from "../../http/creatorApi";
 
 // ASSETS
-import userImgPlaceholder from "../../assets/index/avatar.png";
+import userImgPlaceholder from "../../assets/avatar.png";
+import { useRouter } from "next/navigation";
+import { getRedirectRouteByRole } from "@/helper/roleHelper";
+import { Loaders } from "@/ui-kits/Loaders";
 
 // ===========================================
 // SEARCH INPUT COMPONENT ====================
 // ===========================================
-const SearchInput = (props:any) => {
-  const {setSearch,search,placeholder} = props
-  // const [search, setSearch] = useState<string>("");
+const SearchInput = () => {
+  const   route = useRouter()
+  const [search, setSearch] = useState<string>("");
+  const searchParams = useSearchParams();
+  const searchQuery: any = searchParams.get("query");
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [dropDownActive, setDropDownActive] = useState(false);
+  const [noData, setNoData] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const delayedSearch = debounce(() => {
+      if (search) {
+        searchCreatorApi(search, 10).then((data:any)=>{
+          if(data){
+            setSearchResults(data.slice(0,6))
+            setIsLoading(false)
+          }else{
+            setSearchResults([])
+            setNoData("No Search Results Found")
+            setIsLoading(false)
+          }
+        })
+      }
+    }, 500);
+
+    delayedSearch();
+    return delayedSearch.cancel;
+  }, [search]);
+
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
-    // setDropDownActive(true);
+    setIsLoading(true)
+    setDropDownActive(true);
+  };
+  const handleKeyDown = (event:any) => {
+    if (event.key === 'Enter') {
+      // Handle the Enter key press event here
+      setDropDownActive(false)
+      route.push(`/search?query=${search}`)
+    }
+  };
+
+  const bebouncingBlur = debounce(()=>setDropDownActive(false),500)
+ 
+
+  const handleFocus = (event:any) => {
+    setDropDownActive(true);
   };
 
   return (
@@ -30,11 +76,15 @@ const SearchInput = (props:any) => {
       <input
         className="p-2.5 text-base pl-10 md:w-80 w-full rounded-md border border-appGray-400 relative hover:shadow-sm focus:outline-none focus:border focus:border-[#a0bbdb]"
         type="text"
-        placeholder={placeholder?placeholder:"Search Creators"}
+        id="search"
+        placeholder="Search Creators"
         value={search}
         onChange={handleSearch}
-        onBlur={_ => setDropDownActive(false)}
+        onBlur={_ => bebouncingBlur()}
+        onKeyDown={handleKeyDown}
+        onFocus={handleFocus}
       />
+
       <svg
         className="h-5 w-5 text-[#a0bbdb] absolute top-3 left-3"
         xmlns="http://www.w3.org/2000/svg"
@@ -50,21 +100,36 @@ const SearchInput = (props:any) => {
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
         />
       </svg>
-      {dropDownActive && (
+      {(dropDownActive && search.length>1) && (
         <DropDown
-          parentPositionAndPadding="top-14 left-0 p-2"
+          parentPositionAndPadding="top-14 left-0"
           arrowPosition="-top-2 left-8"
         >
-          <ul className="p-3 pt-4 bg-white relative flex justify-between">
-            <div>
+
+      { isLoading ? <div className="flex flex-col  rounded border border-appGray-450 hover:shadow-sm text-center py-10"> Loading ... </div>:
+          <ul className="pt-4 bg-white relative flex flex-col justify-between">
+           {searchResults.length > 0 && searchResults.map((itm, index)=>{
+           return (
+          
+           <div key={itm._id} className="py-2 px-5 hover:bg-blue-200 ">
               <SearchItem
-                name="John Doe"
-                username="johndoe"
-                img={userImgPlaceholder}
-                link="/"
+                name={itm.username}
+                username={itm.username||""}
+                img={itm.avatar}
+                // link={`/creator?key=${itm._id}`}
+                link={getRedirectRouteByRole(itm._id, itm?.username)}
               />
             </div>
-          </ul>
+            )
+
+           })} 
+
+           {searchResults.length > 5 && !isLoading && <div onClick={() => route.push(`/search?query=${search}`)} className="w-full flex pb-3 justify-center items-center cursor-pointer hover:text-blue-500">See all results</div>}
+
+
+           {searchResults.length === 0 && <li className="px-5 mb-3">{search ? noData : "You haven't searched anything."}</li>}
+            
+          </ul>}
         </DropDown>
       )}
     </div>
@@ -85,9 +150,9 @@ const SearchItem = ({
 }) => {
   return (
     <Link href={link} className="flex gap-3">
-      <div className="">
+      <div>
         <Image
-          src={img}
+          src={img|| userImgPlaceholder}
           alt={name + " image"}
           className="rounded-full"
           width={50}

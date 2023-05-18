@@ -1,10 +1,8 @@
-import { ADD_POST, SEARCH_CONTENT } from "./index";
+import { ADD_POST, SEARCH_CONTENT,baseUrl } from "./index";
 import { errorToast, successToast } from "../helper/toster";
-
+const GET_CONTENT_BY_CREATOR_ID = `${baseUrl}/creator/all/content`
 export const AddContentApi = async (_token:string, data:any) => {
     try {
-        console.log(_token,"_token_token_token_token",data)
-        // return
       const res = await fetch(ADD_POST, {
         method: "POST",
         body: JSON.stringify(data),
@@ -13,9 +11,11 @@ export const AddContentApi = async (_token:string, data:any) => {
             "Authorization": `Bearer ${_token}`
           },
       });
+      console.log(res)
       if (!res.ok) {
         const err = await res.json();
         errorToast(err.msg)
+        return false
       }
       console.log(res.ok,"res.okres.okres.okres.ok")
       const post = await res.json();
@@ -50,5 +50,30 @@ export const searchContentApi = async (search:string) => {
       errorToast(error.toString())
       console.log("error", JSON.stringify(error));
       return null
+    }
+  };
+
+  export const getContentByCreatorIdApi = async (id:string) => {
+    try {
+      const res = await fetch(`${GET_CONTENT_BY_CREATOR_ID}/${id}`, {
+        method: "GET",
+        // headers: {
+        //   "Content-Type": "application/json",
+        //   "Authorization": `Bearer ${_token}`
+        // },
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        errorToast(err.msg)
+        return []
+      }
+      const result = await res.json();
+      // successToast("Fetched successfully")
+      if(!result.data) return []
+      else return result.data
+    } catch (error:any) {
+      errorToast(error.toString())
+      console.log("error", JSON.stringify(error));
+      return []
     }
   };

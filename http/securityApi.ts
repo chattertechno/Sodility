@@ -46,6 +46,7 @@ export const PostVarifyOTPApi = async (_token:string,data:any) => {
     if (!res.ok) {
       const err = await res.json();
       throw err.msg;
+      return false
     }
     const result = await res.json();
     const update2fa = await update2FAApi(_token)
@@ -56,6 +57,7 @@ export const PostVarifyOTPApi = async (_token:string,data:any) => {
   } catch (error:any) {
     errorToast(error.toString())
     console.log("error", JSON.stringify(error));
+    return false
   }
 };
 
@@ -74,6 +76,7 @@ export const update2FAApi = async (_token:string) => {
     if (!res.ok) {
         const err = await res.json();
         errorToast(err.toString())
+        return false
       }
       const update = await res.json();
     return true
