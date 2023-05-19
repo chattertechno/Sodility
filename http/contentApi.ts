@@ -75,27 +75,34 @@ export const searchContentApi = async (search:string) => {
     }
   };
 
-export const UploadContentForPost = async (file: any, token: string) => {
+  export const UploadContentForPost = async (file: any, token: string) => {
     try {
       const res = await fetch(`${UPLOAD_CONTENT}`, {
         method: "POST",
         body: file,
         headers: {
           "Authorization": `Bearer ${token}`,
+          "mode": "no-cors",
         },
       });
+  
       if (!res.ok) {
         const err = await res.json();
-        errorToast(err.msg)
-        return []
+        errorToast(err.msg);
+        return [];
       }
-      const result = await res.json();
-      // successToast("Fetched successfully")
-      if(!result.data) return []
-      else return result.data
-    } catch (error:any) {
-      errorToast(error.toString())
+  
+      try {
+        const result = await res.json();
+        if (!result.data) return [];
+        else return result.data;
+      } catch (error) {
+        console.log("Invalid JSON response:", error);
+        return [];
+      }
+    } catch (error: any) {
+      errorToast(error.toString());
       console.log("error", JSON.stringify(error));
-      return []
+      return [];
     }
   };
