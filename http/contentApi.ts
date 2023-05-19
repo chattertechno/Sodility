@@ -1,7 +1,7 @@
 import { ADD_POST, SEARCH_CONTENT,baseUrl } from "./index";
 import { errorToast, successToast } from "../helper/toster";
 const GET_CONTENT_BY_CREATOR_ID = `${baseUrl}/creator/all/content`
-const UPLOAD_CONTENT = 'http://18.117.99.208:3000/api/v1/file/upload';
+const UPLOAD_CONTENT = `${baseUrl}/file/upload`;
 export const AddContentApi = async (_token:string, data:any) => {
     try {
       const res = await fetch(ADD_POST, {
@@ -82,7 +82,6 @@ export const searchContentApi = async (search:string) => {
         body: file,
         headers: {
           "Authorization": `Bearer ${token}`,
-          "mode": "no-cors",
         },
       });
   
