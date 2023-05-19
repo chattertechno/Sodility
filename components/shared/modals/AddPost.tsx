@@ -124,7 +124,7 @@ const AddPost = () => {
       UploadContentForPost(formData, token).then((res) => {
         if (res) {
           setFileLoading(false)
-          setInitialValues({...initialValues, ipfs_url: res?.ipfs_url})
+          setInitialValues({...initialValues, ipfs_url: res})
         } 
        
       });
