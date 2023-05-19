@@ -44,7 +44,8 @@ const TextArea = ({ label, name, placeholder, subHeader }: TextAreaProps) => {
             toolbarClassName="border-0 rounded-md"
               wrapperClassName="border border-appGray-450 rounded-md"
               editorClassName="h-32 overflow-x-hidden leading-0 border-t border-t-appGray-450"
-              editorState={EditorState.createWithContent(contentState)}
+              // editorState={EditorState.createWithContent(contentState)}
+              
               onEditorStateChange={onEditorStateChange}
               //   (val: any) =>
               //  { 

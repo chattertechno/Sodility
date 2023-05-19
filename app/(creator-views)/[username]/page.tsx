@@ -370,21 +370,28 @@ const SupportSection = ({username}: any) => {
           <Card
           img={supporterIcon}
           title={tiers?.tier_one_name ? tiers?.tier_one_name : 'No Tier 1'}
-          amount={`$${tiers?.tier_one_price ? tiers?.tier_one_price : 0}`}
+          amount={`$${tiers?.tier_one_price ? tiers?.tier_one_price.toFixed(2) : 0.00}`}
           action={() => {}}
         />
           <Card
             img={fanIcon}
             width={42}
             title={tiers?.tier_two_name ? tiers?.tier_two_name : "No Tier 2"}
-            amount={`$${tiers?.tier_two_price ? tiers?.tier_two_price : 0}`}
+            amount={`$${tiers?.tier_two_price ? tiers?.tier_two_price.toFixed(2) : 0.00}`}
             action={() => {}}
           />
           <Card
             img={superFanIcon}
             width={38}
             title={tiers?.tier_three_name ? tiers?.tier_three_name : 'No Tier 3'}
-            amount={`$${tiers?.tier_three_price ? tiers?.tier_three_price : 0}`}
+            amount={`$${tiers?.tier_three_price ? tiers?.tier_three_price.toFixed(2) : 0.00}`}
+            action={() => {}}
+          />
+          <Card
+            img={oneOffIcon}
+            width={38}
+            title={'One-off donation'}
+            amount={''}
             action={() => {}}
           />
         </>
