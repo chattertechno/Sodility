@@ -115,9 +115,8 @@ const SearchInput = () => {
               <SearchItem
                 name={itm.username}
                 username={itm.username||""}
-                img={itm.avatar}
-                // link={`/creator?key=${itm._id}`}
-                link={getRedirectRouteByRole(itm._id, itm?.username)}
+                img={itm.profile_image}
+                link={`/${itm.username}`}
               />
             </div>
             )

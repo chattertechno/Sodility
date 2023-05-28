@@ -116,17 +116,18 @@ const UserSettingsLinks = () => {
         <LinkItem
           icon={<FaRegBell className="" />}
           title="Notifications"
-          link="/notifications"
+          link="/profile#notifcation"
         />
         <LinkItem
           icon={<HiOutlineLockClosed className="" />}
           title="Security"
-          link="/security"
+          link="/profile#security"
         />
       </div>
     </div>
   );
 };
+
 
 const ProfileSettings = () => {
   const [user, setUser] = React.useState<any>({})
@@ -230,7 +231,7 @@ const NotificationSettings = () => {
   };
 
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id="notifcation" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Notifications Settings</H5>
@@ -306,7 +307,7 @@ const NotificationSettings = () => {
 const SecuritySettings = () => {
   const dispatch = useAppDispatch();
   return (
-    <div className="rounded border border-appGray-450 hover:shadow-sm">
+    <div id="security" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
       <div className="border-b p-3 border-b-appGray-450 flex gap-2 items-center">
         <H5>Security Settings</H5>

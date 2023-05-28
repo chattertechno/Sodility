@@ -62,12 +62,13 @@ export default function DashboardPage() {
     })
     getAllContents().then((res: any) => {
       if(res.data.status === 200 && res.data.msg === 'success') {
-        if(res?.data?.data?.length > 0) {
+        if(res?.data?.data?.length > 0) {          
           const data = res.data.data.map((item: any) => {
             return { articleType: {
                     content: extentionHandler(item.type || 'audio'),
                     status: item?.locked ? 'locked' : ""
                 },
+                userId: item?.user_id,
                 content: item.body || "",
                 img: cardUserImgPlaceholder,
                 video: (item.ipfs_url ? {
@@ -153,9 +154,10 @@ const UserInfo = ({user}:any) => {
     <div className="flex flex-col items-center rounded border border-appGray-450 hover:shadow-sm py-10">
       <div className="flex justify-center">
         <Image
-          src={user?.avatar || userPlaceholder}
+          style={{ borderRadius: "50%", overflow: "hidden", width: "50px", height: "50px" }}
+          src={user?.profile_image || userPlaceholder}
           alt="User image"
-          className="rounded-full"
+          className=""
           width={90}
           height={90}
         />
@@ -185,7 +187,7 @@ const Supporting = () => {
   useEffect(() => {
     getUserProfile().then((res: any) => {
       if(res?.data?.status === 200 && res?.data?.msg === 'success') {
-        getSupporterTransactions(res?.data?.data?._id).then((res: any) => {
+        getSupporterTransactions(res?.data?.data?.username).then((res: any) => {
           if(res?.data?.status === 200 && res?.data?.msg === 'success') {
             if(res?.data?.data?.length > 0) {
               setSupporters(res?.data?.data)
@@ -194,7 +196,7 @@ const Supporting = () => {
             }
           } else {
             setSupporters([]);
-            alert("Unable to fetch supporters transactions records");
+            // alert("Unable to fetch supporters transactions records");
             console.log('error')
           }
         })
@@ -218,14 +220,15 @@ const Supporting = () => {
     amount: string;
   }) => {
     return (
-      <div className="border-b p-3 px-4 border-b-appGray-450 flex gap-2 items-center">
+      <div className="border-b p-3 px-4 border-b-appGray-450 flex gap-2 items-center overflow-y-auto">
         <div className="">
           <Image
             src={img}
+            style={{ borderRadius: "50%", overflow: "hidden", width: "50px", height: "50px" }}
             alt="user image"
             width={50}
             height={50}
-            className="rounded-full border-4 border-gray-50"
+            className="border-4 border-gray-50"
           />
         </div>
         <div className="mt-1">
