@@ -320,7 +320,6 @@ const SupporterNavigation = ({user}:any) => {
           height={40}
           style={{ borderRadius: "50%", overflow: "hidden", width: "50px", height: "50px" }}
 
-          className=""
         />
       </div>
       <div>

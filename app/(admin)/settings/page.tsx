@@ -195,13 +195,13 @@ const ProfileSettings = () => {
   })
   const [loadingProfile, setLoadingProfile] = React.useState<boolean>(true);
 
-  const [initialValues, setInitialValues] = useState<{title: string; subtitle: string; description: string; profile_image: string; header_image: string; categories: any}>({
+  const [initialValues, setInitialValues] = useState<{title: string; subtitle: string; description: string; profile_image: string; header_image: string; categories: string[]}>({
     title: '',
     subtitle: '',
     description: '',
     profile_image: '',
     header_image: '',
-    categories: []
+    categories: ['0']
   })
 
   const [userAvatar, setUserAvatar] = useState<string>('');
@@ -220,7 +220,7 @@ const ProfileSettings = () => {
         setInitialValues({...initialValues, title: res?.data.data.title, 
           subtitle: res?.data.data.subtitle, description: res?.data.data.description,
           profile_image: res?.data.data.profile_image, header_image: res?.data.data.header_image,
-          categories: res?.data?.data.categories
+          categories: res?.data?.data.categories ? res?.data?.data.categories : ['0']
         })
       } else {
         setLoadingProfile(false)
@@ -235,7 +235,6 @@ const ProfileSettings = () => {
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
-
 
   const handleChangeCheckbox = (categoryKey: string, isChecked: boolean) => {
     if (isChecked) {
@@ -450,7 +449,7 @@ return React.useMemo(() => {
                     {
                       categories.map((category: any, index) => {
 
-                        const isChecked = initialValues.categories.includes(category.key);                        return (
+                        const isChecked = initialValues?.categories?.includes(category.key);                        return (
                           <div key={index}>
                             <input
                               type="checkbox"
