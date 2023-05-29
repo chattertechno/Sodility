@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import React from "react";
 import { Form, Formik } from "formik";
 import { Url } from "next/dist/shared/lib/router/router";
@@ -35,8 +35,9 @@ import { getNotificationSetting, updateNotificationSetting, updateUserProfile } 
 import { Loaders } from "@/ui-kits/Loaders";
 import { errorToast, successToast } from "@/helper/toster";
 import { getCreatorTiers, postSupporterTier } from "@/http/creatorApi";
-import { getLocaleData } from "@/service/localStorageService";
+import { getLocaleData, setLocaleData } from "@/service/localStorageService";
 import { getProfileApi } from "@/http";
+import { UploadContentForPost } from "@/http/contentApi";
 // ==========================================================
 // PROFILE PAGE COMPONENT =================================
 // ==========================================================
@@ -141,18 +142,50 @@ const CreatorSettingsLinks = () => {
 };
 
 const ProfileSettings = () => {
-  const categories = [
-    "Writers & Journalists",
-    "Gaming Creators",
-    "Video Creators",
-    "Musicians",
-    "Visual Artists",
-    "Communities",
-    "Podcasters",
-    "Tutorials & Education",
-    "Local Business",
-    "Non-Profits",
+  const categories = [{ 
+    key: "writers-and-journalists",
+    value: "Writers & Journalists"
+  },
+  {
+    key: "gaming-creators",
+    value: "Gaming Creators"
+  },
+  {
+    key: "video-creators",
+    value: "Video Creators"
+  },
+  {
+    key: "musicians",
+    value: "Musicians"
+  },
+  {
+    key: "visual-artists",
+    value: "Visual Artists"
+  },
+  {
+    key: "communities",
+    value: "Communities"
+  },
+  {
+    key: "podcasters",
+    value: "Podcasters"
+  },
+  {
+    key: "tutorials-and-education",
+    value: "Tutorials & Education"
+  },
+  {
+    key: "Local Business",
+    value: "local-business"
+  },
+  {
+    key: "non-profits",
+    value: "Non-Profits"
+  }
   ]
+
+  const token = getLocaleData("token");
+
 
   const defaultCat = categories.reduce((acc: any, curr: any, index: any)=>{
     acc[`category_${index}`] = false; return acc
@@ -160,7 +193,20 @@ const ProfileSettings = () => {
   const [user, setUser] = React.useState<any>({
 ...defaultCat
   })
-  const [loadingProfile, setLoadingProfile] = React.useState<boolean>(true)
+  const [loadingProfile, setLoadingProfile] = React.useState<boolean>(true);
+
+  const [initialValues, setInitialValues] = useState<{title: string; subtitle: string; description: string; profile_image: string; header_image: string; categories: string[]}>({
+    title: '',
+    subtitle: '',
+    description: '',
+    profile_image: '',
+    header_image: '',
+    categories: ['0']
+  })
+
+  const [userAvatar, setUserAvatar] = useState<string>('');
+  const [userCoverPic, setUserCoverPic] = useState<string>('');
+
   useEffect(() => {
     getUserProfile().then((res: any) => {
       if(res?.data?.status === 200 && res?.data?.msg === 'success') {
@@ -171,6 +217,11 @@ const ProfileSettings = () => {
           acc[`category_${index}`] = catKeys.includes(curr); return acc
         }, {})
         setUser({...res.data.data, ...catHas})
+        setInitialValues({...initialValues, title: res?.data.data.title, 
+          subtitle: res?.data.data.subtitle, description: res?.data.data.description,
+          profile_image: res?.data.data.profile_image, header_image: res?.data.data.header_image,
+          categories: res?.data?.data.categories ? res?.data?.data.categories : ['0']
+        })
       } else {
         setLoadingProfile(false)
         alert("Unable to fetch user profile")
@@ -179,24 +230,41 @@ const ProfileSettings = () => {
     })
   }, []);
 
-  const [initialValues, setInitialValues] = useState({
-    title: '',
-    subtitle: '',
-    description: ''
-  })
+  const fileInputRef: any = useRef(null);
 
-  const token = getLocaleData('token');
-  console.log(token);
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
 
-  const handleSubmit = (values: any) => {
-    const selectCategories = categories.filter((item, index) => { if(values[`category_${index}`]){return categories[index]}  } )
-    values.categories = selectCategories;
+  const handleChangeCheckbox = (categoryKey: string, isChecked: boolean) => {
+    if (isChecked) {
+      setInitialValues(prevState => ({
+        ...prevState,
+        categories: [...prevState.categories, categoryKey]
+      }));
+    } else {
+      setInitialValues(prevState => ({
+        ...prevState,
+        categories: prevState.categories.filter((key: any) => key !== categoryKey)
+      }));
+    }
+  };
+
+  const handleApiCall = (): void => {
+
     if (initialValues?.title && initialValues?.subtitle && initialValues?.description)
       updateUserProfile(initialValues).then((res: any) => {
         if(res?.data?.status === 200) {
           successToast("Profile updated successfully")
-          getProfileApi(JSON.parse(token) ?? "").then((res) => {
-            setInitialValues({...initialValues, title: res?.title, subtitle: res?.subtitle, description: res?.description})
+          getUserProfile().then((res) => {
+            setInitialValues({...initialValues, title: res?.data.data.title, 
+              subtitle: res?.data.data.subtitle, description: res?.data.data.description,
+              profile_image: res?.data.data?.profile_image,
+              header_image: res?.data?.data?.header_image,
+              categories: res?.data?.data.categories
+
+            })
+            setLocaleData("user", res?.data.data);
         });
         } else {
           errorToast("Unable to update profile")
@@ -205,6 +273,42 @@ const ProfileSettings = () => {
       })
     else errorToast('Title, subtitle and description is required');
   }
+
+  const handleSubmit = useCallback(() => {
+
+      handleApiCall();
+    
+  }, [categories, initialValues]) 
+
+    
+  const handleFileChange= useCallback((event: any, picType: string) => {
+    const file = event.target.files[0];
+
+    const formData = new FormData();
+
+    if (file) {
+      formData.append('file', file);
+      UploadContentForPost(formData, token).then((res) => {
+        if (res) {
+          if (picType === 'profile') {
+            setInitialValues({...initialValues, profile_image: res})
+            setUserAvatar(res);
+          } else if (picType === 'cover') {
+            setInitialValues({...initialValues, header_image: res})
+            setUserCoverPic(res);
+          }
+        } 
+       
+      });
+    }
+    else {
+      errorToast("Uploading Failed.")
+    }
+  }, [initialValues, token])  
+
+
+
+return React.useMemo(() => {
   return (
     <div id="profilesetting" className="rounded border border-appGray-450 hover:shadow-sm">
       {/* title  */}
@@ -220,13 +324,25 @@ const ProfileSettings = () => {
         <div className="flex items-center gap-5">
           <div className="w-56 flex items-center gap-5">
             <P1 className="text-black">User photo: </P1>
+            <label htmlFor="fileInput" className="rounded-full">
             <Image
-              src={user.avatar || userPlaceholder}
-              alt="user placeholder"
-              width={50}
-              height={50}
-              className="rounded-full"
-            />
+                style={{ borderRadius: "50%", overflow: "hidden", width: "40px", height: "40px" }}
+                src={userAvatar ? userAvatar : user?.profile_image ? user?.profile_image : userPlaceholder}
+                alt="user placeholder"
+                width={50}
+                height={50}
+                className="cursor-pointer"
+              />
+          </label>
+
+          <input
+            type="file"
+            id="fileInput"
+            accept="image/*"
+            onChange={(e) => handleFileChange(e, 'profile')}
+            className="hidden"
+            aria-hidden="true"
+          />
           </div>
           <div className="rounded bg-appGray-400 p-3">
             <P1>
@@ -238,15 +354,26 @@ const ProfileSettings = () => {
         <div className="space-y-1">
           <P1 className="text-black">Header Image: </P1>
           <div className="relative">
-            <Image src={banner} alt="banner" className="rounded-md" />
+            <Image src={initialValues.header_image === '' ? banner : userCoverPic ? userCoverPic : user?.header_image ? user?.header_image : banner} width={900} height={200} alt="banner" className="rounded-md w-full max-h-32 object-fill" />
             <div className="absolute top-2 right-2 flex gap-2">
-              <button className="bg-slate-600 rounded p-1.5">
+              <button onClick={() => setInitialValues({...initialValues, header_image: ''})} className="bg-slate-600 rounded p-1.5">
                 <FaRegTrashAlt className="text-white w-2.5 h-2.5" />
               </button>
-              <button className="bg-primary rounded p-1.5">
-                <BsCloudUpload className="text-white w-2.5 h-2.5" />
-              </button>
-            </div>
+              <label htmlFor="fileInput">
+                <button onClick={handleButtonClick} className="bg-primary rounded p-1.5">
+                  <BsCloudUpload className="text-white w-2.5 h-2.5" />
+                </button>
+              </label>
+              <input
+                type="file"
+                id="fileInput"
+                accept="image/*"
+                onChange={(e) => handleFileChange(e, 'cover')}
+                ref={fileInputRef}
+                className="hidden"
+                aria-hidden="true"
+              />          
+              </div>
           </div>
         </div>
 
@@ -262,13 +389,13 @@ const ProfileSettings = () => {
 
               <div className="">
                 <P1 className="text-black">Subtitle: </P1>
-                <input type="text" placeholder="Title" value={initialValues?.subtitle ? initialValues?.subtitle : ''} onChange={(e) => setInitialValues({...initialValues, subtitle: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+                <input type="text" placeholder="Sub Title" value={initialValues?.subtitle ? initialValues?.subtitle : ''} onChange={(e) => setInitialValues({...initialValues, subtitle: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
 
               </div>
 
               <div className="">
                 <P1 className="text-black">Description: </P1>
-                <input type="text" placeholder="Title" value={initialValues?.description ? initialValues?.description : ''} onChange={(e) => setInitialValues({...initialValues, description: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
+                <input type="text" placeholder="Description" value={initialValues?.description ? initialValues?.description : ''} onChange={(e) => setInitialValues({...initialValues, description: e.target.value})} className="w-full p-2 flex-1 bg-ban text-grapelight border border-appGray-450 hover:border-secondary transition duration-300 easeInOut rounded focus:outline-none focus:border-secondary placeholder:text-sm placeholder:text-grapeshade" />
 
               </div>
 
@@ -320,14 +447,21 @@ const ProfileSettings = () => {
                   <div className="flex flex-col gap-2">
                     <P1 className="text-black">Creator Categories: </P1>
                     {
-                      categories.map((category, index) => (
-                        <FormControl
-                          key={index}
-                          name={`category_${index}`}
-                          type="checkbox"
-                          control="checkbox"
-                          label={category}
-                    />))
+                      categories.map((category: any, index) => {
+
+                        const isChecked = initialValues?.categories?.includes(category.key);                        return (
+                          <div key={index}>
+                            <input
+                              type="checkbox"
+                              id={category?.key}
+                              name={category?.value}
+                              checked={isChecked}
+                              className="p-3"
+                              onChange={(e) => handleChangeCheckbox(category?.key, e.target.checked)}
+                            />
+                            <label style={{color: 'rgb(57 62 73)'}} className="pl-3" htmlFor={category?.key}>{category?.value}</label>
+                          </div>
+                        )})
                     }
                   </div>
                 </div>
@@ -347,6 +481,8 @@ const ProfileSettings = () => {
       </div>
     </div>
   );
+}, [categories, handleFileChange, handleSubmit, initialValues, loadingProfile, user, userAvatar, userCoverPic])
+  
 };
 
 const NotificationSettings = () => {

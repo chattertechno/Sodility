@@ -24,9 +24,6 @@ import { usePathname } from "next/navigation";
 // VIDEO ARTICLE COMPONENT ===============================
 // =======================================================
 export const VideoArticle = ({ content }: any) => {
-
-  const pathname = usePathname();
-  const username = pathname.split('/').join('')  
   const user = getLocaleData('user');
 
   return (
@@ -35,9 +32,10 @@ export const VideoArticle = ({ content }: any) => {
       <div className="flex items-center justify-between p-5">
         <div className="flex items-center gap-4">
           <Image
-            src={content.img}
+            src={user?.profile_image ?? content.img}
             alt="user icon"
             width={60}
+            height={60}
             className="rounded-full p-1 border border-appGray-400"
           />
           <div className="">
@@ -51,7 +49,7 @@ export const VideoArticle = ({ content }: any) => {
             <Image src={videoIcon} alt="video icon" width={10} height={10} />
             <SubH2 className="capitalize">{content.articleType.content}</SubH2>
           </div>
-          {content.articleType.status === "locked" && user?.username !== username ? (
+          {content.articleType.status === "locked" && user?._id !== content?.userId ? (
             <div className="flex items-center gap-2">
               <Image
                 src={lockedIcon}
@@ -76,7 +74,7 @@ export const VideoArticle = ({ content }: any) => {
       </div>
       {/* bottom - content  */}
       <div className="relative">
-        {content.articleType.status === "locked" && user?.username !== username && (
+        {content.articleType.status === "locked" && user?._id !== content?.userId && (
           <div className="z-10 absolute top-0 left-0 h-full w-full  backdrop-blur-md">
             <div className=" flex flex-col items-center justify-center h-full">
               <div className="flex gap-3 mb-3 items-center">
@@ -95,7 +93,7 @@ export const VideoArticle = ({ content }: any) => {
         <ReactPlayer url = {content?.video?.src || ""} controls={true} 
         // url='https://www.youtube.com/watch?v=wWgIAphfn2U'
         width={980} 
-        height={300}/>
+        height={550}/>
         {/* <Image
           src={content.video}
           alt="video placeholder"
@@ -114,8 +112,6 @@ export const AudioArticle = ({ content }: any) => {
   // const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(20);
 
-  const pathname = usePathname();
-  const username = pathname.split('/').join('')  
   const user = getLocaleData('user');
 
   return (
@@ -140,7 +136,7 @@ export const AudioArticle = ({ content }: any) => {
             <Image src={audioIcon} alt="audio icon" width={10} height={10} />
             <SubH2 className="capitalize">{content.articleType.content}</SubH2>
           </div>
-          {content.articleType.status === "locked" && user?.username !== username ? (
+          {content.articleType.status === "locked" && user?._id !== content?.userId ? (
             <div className="flex items-center gap-2">
               <Image
                 src={lockedIcon}
@@ -165,7 +161,7 @@ export const AudioArticle = ({ content }: any) => {
       </div>
       {/* bottom - content  */}
       <div className="relative border-t border-appGray-450">
-        {content.articleType.status === "locked" && user?.username !== username  && (
+        {content.articleType.status === "locked" && user?._id !== content?.userId  && (
           <div className="z-10 absolute top-0 left-0 h-full w-full  backdrop-blur-md bg-[#0B0F3B]/70 py-8">
             <div className="flex flex-col md:flex-row items-center md:justify-between justify-center px-10 h-full">
               <div className="">
@@ -235,8 +231,6 @@ export const AudioArticle = ({ content }: any) => {
 // =======================================================
 export const TextArticle = ({ content }: any) => {
 
-  const pathname = usePathname();
-  const username = pathname.split('/').join('')  
   const user = getLocaleData('user');
 
   return (
@@ -261,7 +255,7 @@ export const TextArticle = ({ content }: any) => {
             <Image src={textIcon} alt="video icon" width={10} height={10} />
             <SubH2 className="capitalize">{content.articleType.content}</SubH2>
           </div>
-          {content.articleType.status === "locked" && user?.username !== username ? (
+          {content.articleType.status === "locked" && user?._id !== content?.userId ? (
             <div className="flex items-center gap-2">
               <Image
                 src={lockedIcon}
@@ -286,7 +280,7 @@ export const TextArticle = ({ content }: any) => {
       </div>
       {/* bottom - content  */}
       <div className="relative border-t border-appGray-450">
-        {content.articleType.status === "locked" && user?.username !== username && (
+        {content.articleType.status === "locked" && user?._id !== content?.userId && (
           <div className="absolute top-0 left-0 h-full w-full  backdrop-blur-md bg-[#0B0F3B]/70">
             <div className="flex flex-col md:flex-row items-center md:justify-between justify-center px-10 h-full">
               <div className="">
@@ -323,8 +317,6 @@ export const TextArticle = ({ content }: any) => {
 // =======================================================
 export const ImageArticle = ({ content }: any) => {
 
-  const pathname = usePathname();
-  const username = pathname.split('/').join('')  
   const user = getLocaleData('user');
 
   return (
@@ -349,7 +341,7 @@ export const ImageArticle = ({ content }: any) => {
             <Image src={imageIcon} alt="video icon" width={10} height={10} />
             <SubH2 className="capitalize">{content.articleType.content}</SubH2>
           </div>
-          {content.articleType.status === "locked" && user?.username !== username ? (
+          {content.articleType.status === "locked" && user?._id !== content?.userId ? (
             <div className="flex items-center gap-2">
               <Image
                 src={lockedIcon}
@@ -374,7 +366,7 @@ export const ImageArticle = ({ content }: any) => {
       </div>
       {/* bottom - content  */}
       <div className="relative">
-        {content.articleType.status === "locked" && user?.username !== username && (
+        {content.articleType.status === "locked" && user?._id !== content?.userId && (
           <div className="z-10 absolute top-0 left-0 h-full w-full  backdrop-blur-md">
             <div className=" flex flex-col items-center justify-center h-full">
               <div className="flex gap-3 mb-3 items-center">
@@ -394,7 +386,7 @@ export const ImageArticle = ({ content }: any) => {
           src={content.image}
           alt="video placeholder"
           width={980}
-          // height={300}
+          height={550}
         />
       </div>
     </article>

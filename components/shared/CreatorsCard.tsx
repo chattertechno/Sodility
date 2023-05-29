@@ -13,7 +13,7 @@ const CreatorCard = ({
   description,
   supporters,
   link="",
-  header_image
+  header_image,
 }: {
   img: StaticImageData;
   username: string;
@@ -23,19 +23,29 @@ const CreatorCard = ({
   link:string;
   header_image:string;
 }) => {
+
+
   return (
     <Link
       href={getRedirectRouteByRole(link, username)}
       className="rounded overflow-hidden bg-white md:w-[22rem]"
     >
       {/* top  */}
-      <div className="pt-2 bg-card-pattern relative h-40">
+      <div className="relative h-40">
+        <Image 
+        src={header_image ?? img}
+        className="pt-2 relative h-40"
+        alt={username}
+        width={400}
+        height={250}
+        />
         <Image
-          src={header_image||img}
+          src={img}
           alt={username}
           width={40}
           height={40}
-          className="absolute z-0 rounded-full -bottom-6 right-6 border-4 border-white"
+          style={{ borderRadius: "50%", overflow: "hidden", width: "40px", height: "40px" }}
+          className="absolute z-0 -bottom-6 right-6 border-4 border-white"
         />
       </div>
       {/* bottom  */}
@@ -45,7 +55,7 @@ const CreatorCard = ({
         <P1>{description}</P1>
         <P1 className="flex gap-1.5 items-center">
           <span className="">
-            <Image src={heartIcon} alt="heart icon" />
+            <Image src={heartIcon} alt="cover photo" />
           </span>
           {supporters} supporters
         </P1>

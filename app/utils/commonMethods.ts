@@ -14,6 +14,8 @@ export const getDateandTime = (unformattedDate: Date) => {
     
     const formattedDateTime = `${formattedDate} AT ${formattedTime}`;
     
-    return formattedDateTime;
+    if (formattedDate !== 'Invalid Date' || formattedTime !== 'Invalid Date') 
+        return formattedDateTime;
+    else return null;
 
 }

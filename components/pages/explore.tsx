@@ -4,6 +4,8 @@ import CreatorCard from "../shared/CreatorsCard";
 import { H4, SubH1 } from "../typography";
 
 import cardUserImgPlaceholder from "@/assets/avatar.png";
+import banner from "@/assets/index/article.png";
+
 import { Url } from "next/dist/shared/lib/router/router";
 import Link from "next/link";
 import { Pagination } from "../shared";
@@ -42,13 +44,13 @@ export const CreatorsListSection = ({
           {list?.map((item, i) => (
             <CreatorCard
               key={item?._id}
-              img={item?.avatar || cardUserImgPlaceholder}
+              img={item?.profile_image || cardUserImgPlaceholder}
               username={`${item?.username ||  "N/A"}`}
               title={item?.title || "N/A"}
               description={item?.description || "N/A"}
               supporters={item?.supporters||0}
               link={item?._id}
-              header_image={item?.header_image}
+              header_image={item?.header_image || banner}
             />
           ))}
           {!list ? 'No creators yet in this category, please try others' : ''}

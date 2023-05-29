@@ -18,7 +18,7 @@ import videoPlaceholder from "@/assets/creator/post-video.png";
 import heartIcon from "@/assets/heart.png";
 import cardUserImgPlaceholder from "@/assets/index/avatar.png";
 import userIcon from "@/assets/user.png";
-
+import banner from '@/assets/creator/banner.png';
 // support
 import fanIcon from "@/assets/creator/fan.png";
 import oneOffIcon from "@/assets/creator/one-off.png";
@@ -29,6 +29,7 @@ import { useAppDispatch } from "@/context/hooks";
 import { useEffect, useState } from "react";
 import {  useRouter, usePathname } from "next/navigation";
 import { getLocaleData } from "../../../service/localStorageService";
+import CanvasJSReact from '@canvasjs/react-charts';
 // ======================================================
 // CREATOR PAGE COMPONENT ===============================
 // ======================================================
@@ -40,6 +41,10 @@ import { getContentByCreatorIdApi } from "@/http/contentApi";
 import { followACreator, getCreatorByIdApi, getCreatorFollowers, getCreatorTiers, UnfollowACreator } from "@/http/creatorApi";
 import { errorToast, successToast } from "@/helper/toster";
 import { Loaders } from "@/ui-kits/Loaders";
+import { getSupporterTransactions } from "@/app/api/admin/dashboard";
+import { getSupporterLatestSubscription } from "@/http/supporterApi";
+import { getDateandTime } from "@/app/utils/commonMethods";
+
 
 export default function CreatorAdminPage() {
   const pathname = usePathname();
@@ -47,12 +52,32 @@ export default function CreatorAdminPage() {
   const [data, setData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
-  const route = useRouter();
   const [Follow, setFollow] = useState<boolean>(false);
   const [flwrsCount, setFlwrsCount] = useState<number>();
   const [loginUserId, setLoginUserId] = useState<string>();
   const [content, setContent] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const CanvasJSChart = CanvasJSReact.CanvasJSChart;
+  const [latestSupporterSubscription, setLatestSuppoterSubscription] = useState<any>();
+
+  const [options, setOptions] = useState({
+    animationEnabled: true,
+
+    axisX: {
+      valueFormatString: "MMM",
+     
+    },
+    axisY: {
+      title: "",
+      minimum: 0,
+      maximum: 10,
+      interval: 1
+    },
+    data: [{
+      type: "spline",
+      dataPoints: []
+    }]
+  })
 
   const followAUser = () => {
     if (data?._id) {
@@ -74,8 +99,6 @@ export default function CreatorAdminPage() {
       errorToast('User Id Not Found');
     }  
   }
-
-
 
   const UnfollowAUser = () => {
     if (data?._id) {
@@ -103,10 +126,6 @@ export default function CreatorAdminPage() {
     setLoading(true);
     
     setIsLoading(true);
-    const userdata = getLocaleData("user") as any;
-    if (userdata && userdata?.role != "creator")
-        route.push(`/${data?.username}`);
-
     if (username) {
       getCreatorByIdApi(username || "").then((_data) => {
         if (_data) {
@@ -129,6 +148,7 @@ export default function CreatorAdminPage() {
                       content: extentionHandler(item.type || "audio"),
                       status: item.locked ? "locked" : "",
                     },
+                    userId: item.user_id,
                     content: item.body || "",
                     img: cardUserImgPlaceholder,
                     video: item.ipfs_url
@@ -178,54 +198,136 @@ export default function CreatorAdminPage() {
     }
   }, [username, Follow]);
 
+ useEffect(() => {
+      getSupporterTransactions(username).then((res: any) => {
+        if(res?.data?.status === 200 && res?.data?.msg === 'success') {
+          const Arr = res?.data?.data;
+          const date1 = new Date(1687961117 * 1000).toISOString();
+          const date2 = new Date(1690553117 * 1000).toISOString();
 
+            const newDataPoints = Arr?.map((item: any) => {
+              return {   
+                    type: 'spline',
+                    dataPoints: [
+                      {x: new Date(item.created_at), y: 1},
+                      {x: new Date(date1), y: 1},
+                      {x: new Date(date2), y: 4}
+                    ]
+              }
+          })
+          setOptions({...options, data: newDataPoints})
+        }
+      })
+   
+  }, [username])
+
+  useEffect(() => {
+
+    const role = getLocaleData('user')?.role;
+    const token = getLocaleData("token");
+
+    if (role === 'supporter') 
+      getSupporterLatestSubscription(token,username).then((res: any) => {
+        setLatestSuppoterSubscription(res);
+      })
+  }, [username])
+return React.useMemo(() => {
   return (
-      <main>
-        <section className="bg-creator-banner py-28" />
-        <section className="md:w-[90%] mx-auto  px-6 py-8 pb-28">
-          
-          <CreatorInfo
-            img={data?.avatar || cardUserImgPlaceholder}
-            username={data?.username || "N/A"}
-            bio={data?.bio || "N/A"}
-            supporters={data?.supporters || 0}
-            followers={data?.followers || 0} loginUserID={loginUserId}
-            isLoading={isLoading} searchQuery={data?._id}
-            Follow={data?.creator_followers?.includes(loginUserId)} userId={data?._id} followerCount={flwrsCount}
-            followAUser={data?.creator_followers?.includes(loginUserId) ? UnfollowAUser : followAUser}
-          />
-          <SupportSection username={username}/>
-          <div className="flex flex-col md:flex-row gap-8">
-            <div className="space-y-3">
-              { data?._id !== loginUserId ? null : !loginUserId ? null : (
-                <Button
-                className="w-full py-4 flex items-center gap-2 justify-center"
-                action={() => {
-                  dispatch(openModal("addPost"));
-                }}
-                >
-                <Image
-                  src={addPostIcon}
-                  alt="add post icon"
-                  width={20}
-                  height={20}
-                />
-                <span>Add a Post</span>
-                </Button>
-              )}            
-              <SideBar
-                mediaLink={{
-                  facebook: data?.facebook,
-                  twitter: data?.twitter,
-                  youtube: data?.youtube,
-                }}
+    <main>
+       <Image 
+        src={data?.header_image ? data?.header_image : banner}
+        alt=""
+        width={900}
+        height={300}
+        className="w-full h-60 object-cover"
+        />
+      <section className="md:w-[90%] mx-auto  px-6 py-8 pb-28"> 
+        <CreatorInfo
+          img={data?.profile_image || cardUserImgPlaceholder}
+          username={data?.username || "N/A"}
+          bio={data?.bio || "N/A"}
+          supporters={data?.supporters || 0}
+          followers={data?.followers || 0} loginUserID={loginUserId}
+          isLoading={isLoading} searchQuery={data?._id}
+          Follow={data?.creator_followers?.includes(loginUserId)} userId={data?._id} followerCount={flwrsCount}
+          followAUser={data?.creator_followers?.includes(loginUserId) ? UnfollowAUser : followAUser}
+        />
+        {getLocaleData('user')?.role === 'creator' ? <SupportSection username={username}/> : null }
+        {getLocaleData('user')?.role === 'supporter' ? 
+        <div className="my-10 flex flex-col md:flex-row gap-8 justify-between text-center">
+            <div className="rounded border border-appGray-450 py-3 px-5 hover:shadow-sm justify-center w-72 flex flex-col items-center gap-4 mb-4">
+              <Image
+                src={supporterIcon}
+                alt={" icon"}
+                width={50}
+                // className="rounded-full p-1 border border-appGray-400"
               />
+              <div className="space-y-1 text-center">
+                <H5>Current Supporting Average</H5>
+                <div className="flex gap-2 justify-center items-baseline">
+                  <H3>{`$${parseFloat(latestSupporterSubscription?.average_donate ?? 0).toFixed(2)}`}</H3>
+                  <SubH2 className="capitalize">per month</SubH2>
+                </div>
+              </div>
+              <Button className="px-8 my-2" action={() => {}}>
+                Top Up
+              </Button>
+              {latestSupporterSubscription ? (
+                <div className="">
+                  <P1 className="leading-6">
+                    You last donated <b>{`$${parseFloat(latestSupporterSubscription?.donate ?? 0).toFixed(2)}`}</b> <br />
+                    on <b>{`${getDateandTime(latestSupporterSubscription?.created_at)}`}</b>
+                    </P1> 
+                </div>
+              ) : null}
             </div>
-            <CreatorContent creatorId={data?._id} content={content} loading={loading} />
+            <div className="flex-1 rounded border h-full border-appGray-450 p-8 hover:shadow-sm flex justify-center">
+                <div className="w-full h-full text-end flex flex-col justify-between">
+                  <P1 className="font-semibold text-appGray-500">
+                    View Supporter Levels
+                  </P1>
+                    {latestSupporterSubscription ? <div>
+                      <CanvasJSChart options = {options}
+                      />
+                    </div> : <div className="flex justify-center p-16">No graph plotted against this creator because you have not donated anything.</div>}
+                </div>
+            </div>
+        </div>
+        : null }
+
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="space-y-3">
+            { data?._id !== loginUserId ? null : !loginUserId ? null : (
+              <Button
+              className="w-full py-4 flex items-center gap-2 justify-center"
+              action={() => {
+                dispatch(openModal("addPost"));
+              }}
+              >
+              <Image
+                src={addPostIcon}
+                alt="add post icon"
+                width={20}
+                height={20}
+              />
+              <span>Add a Post</span>
+              </Button>
+            )}            
+            <SideBar
+              mediaLink={{
+                facebook: data?.facebook,
+                twitter: data?.twitter,
+                youtube: data?.youtube,
+              }}
+            />
           </div>
-        </section>
-      </main>
-  );
+          <CreatorContent creatorId={data?._id} content={content} loading={loading} />
+        </div>
+      </section>
+    </main>
+);
+}, [CanvasJSChart, UnfollowAUser, content, data?._id, data?.bio, data?.creator_followers, data?.facebook, data?.followers, data?.header_image, data?.profile_image, data?.supporters, data?.twitter, data?.username, data?.youtube, dispatch, flwrsCount, followAUser, isLoading, latestSupporterSubscription, loading, loginUserId, options, username])
+  
 }
 
 // EXTENDED COMPONENTS =================================

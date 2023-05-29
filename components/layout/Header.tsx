@@ -314,11 +314,12 @@ const SupporterNavigation = ({user}:any) => {
       <P1>{user?.username}</P1>
       <div className="">
         <Image
-          src={userPlaceholder}
+          src={user?.profile_image ?? userPlaceholder }
           alt="user image"
           width={40}
           height={40}
-          className="rounded-full"
+          style={{ borderRadius: "50%", overflow: "hidden", width: "50px", height: "50px" }}
+
         />
       </div>
       <div>
@@ -415,11 +416,13 @@ const CreatorNavigation = ({user}:any) => {
       <P1>{user?.username}</P1>
       <div className="">
         <Image
-          src={userPlaceholder}
+          src={user?.profile_image ?? userPlaceholder }
           alt="user image"
           width={40}
+          style={{ borderRadius: "50%", overflow: "hidden", width: "40px", height: "40px" }}
+
           height={40}
-          className="rounded-full"
+          className=""
         />
       </div>
       <div>
