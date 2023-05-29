@@ -29,7 +29,7 @@ import { useAppDispatch } from "@/context/hooks";
 import { useEffect, useState } from "react";
 import {  useRouter, usePathname } from "next/navigation";
 import { getLocaleData } from "../../../service/localStorageService";
-import CanvasJSReact from '@canvasjs/react-charts';
+import CanvasJSReact from '../../utils/canvas.min.js';
 // ======================================================
 // CREATOR PAGE COMPONENT ===============================
 // ======================================================
