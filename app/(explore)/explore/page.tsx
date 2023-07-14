@@ -67,8 +67,7 @@ const allCategries = Object.keys(categoriesWise)
      
         {/* Writers & Journalists */}
         <div className="py-16" >
-          {/* @ts-ignore */}
-        { allCategries?.map((category: any, index: any)=> {
+        { allCategries.map((category: any, index: any)=> {
           if(categoriesWise[category]?.length) {
             return (
                 
