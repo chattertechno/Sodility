@@ -28,7 +28,8 @@ export default async function ExplorePage() {
   data = await getAllCreatorList();
   if(data?.data?.status === 200 && data?.data?.msg === 'success') { 
     data = data.data.data
-    data = data.map((item: any)=>{
+    if(data) {
+      data = data.map((item: any)=>{
     item.avatar = item.avatar ? ({
       "src": item.avatar,
       "height":61,
@@ -39,6 +40,10 @@ export default async function ExplorePage() {
       }) : cardUserImgPlaceholder
       return item;
     })
+    } else {
+      data = []
+    }
+    
   } else {
     data = []
   }
