@@ -1,6 +1,6 @@
 import { errorToast,successToast } from "../helper/toster";
 import { getLocaleData, setLocaleData } from "../service/localStorageService";
-export const baseUrl = `https://sodality-api.herokuapp.com/api/v1`;
+export const baseUrl = `https://sodality-backend-2aadeefd81e6.herokuapp.com/api/v1`;
 const LOGIN = `${baseUrl}/user/login`;
 const REGISTER = `${baseUrl}/user/register`;
 const GET_PROFILE =`${baseUrl}/user/profile/`
